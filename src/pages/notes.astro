@@ -1,0 +1,99 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout>
+  <main class="notes-page">
+    <div class="notes-header">
+      <a href="/" class="notes-back">&larr; izwarm</a>
+      <h1 class="notes-title">Notes</h1>
+      <p class="notes-desc">碎片、想法与记录。</p>
+    </div>
+    <div class="notes-grid">
+      <!-- 后续接入 Astro Content Collections 或手动填充 -->
+      <article class="notes-entry">
+        <time class="notes-entry-date">即将到来</time>
+        <h2 class="notes-entry-title">内容待填充</h2>
+        <p class="notes-entry-excerpt">Notes 页面骨架已就位，后续在此展示文章列表。</p>
+      </article>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .notes-page {
+    min-height: 100vh;
+    padding: clamp(40px, 8vw, 100px) clamp(24px, 6vw, 80px);
+    background: #08080f;
+    color: #ccc;
+    font-family: system-ui, sans-serif;
+  }
+
+  .notes-back {
+    display: inline-block;
+    color: var(--text-dim, #777);
+    text-decoration: none;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    margin-bottom: 32px;
+    transition: color 0.3s;
+  }
+
+  .notes-back:hover {
+    color: #fff;
+  }
+
+  .notes-title {
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 300;
+    letter-spacing: 0.06em;
+    color: #fff;
+    margin: 0 0 12px 0;
+  }
+
+  .notes-desc {
+    font-size: 14px;
+    color: var(--text-dim, #666);
+    letter-spacing: 0.1em;
+    margin: 0 0 48px 0;
+  }
+
+  .notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+  }
+
+  .notes-entry {
+    padding: 28px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: background 0.3s;
+  }
+
+  .notes-entry:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .notes-entry-date {
+    font-size: 11px;
+    color: var(--text-dim, #555);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .notes-entry-title {
+    font-size: 17px;
+    font-weight: 400;
+    color: #eee;
+    margin: 10px 0 8px 0;
+  }
+
+  .notes-entry-excerpt {
+    font-size: 13px;
+    color: #888;
+    line-height: 1.6;
+    margin: 0;
+  }
+</style>

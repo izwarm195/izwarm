@@ -367,11 +367,15 @@ landing?.addEventListener('click', function (e) {
 ['w', 'a', 'r', 'm'].forEach(function (key) {
   const el = document.getElementById('letter-' + key);
   if (!el) return;
-  const targetMap: Record<string, string> = { w: 'notes', a: 'projects', r: 'works', m: 'about' };
+  const targetMap: Record<string, string> = { a: 'projects', r: 'works', m: 'about' };
   el.addEventListener('click', function (ev) {
     ev.stopPropagation();
     if (!expanded || isAnimating) return;
-    collapseAndNavigate(targetMap[key]);
+    if (key === 'w') {
+      slideWToNotes(); // W 走新的两段式底板转场
+    } else {
+      collapseAndNavigate(targetMap[key]);
+    }
   });
 });
 
