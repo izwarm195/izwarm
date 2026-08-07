@@ -275,7 +275,7 @@ function collapseAndNavigate(target: string): void {
   });
 }
 
-// W → Notes：两段式滑动（先竖直下坠，再更快甩向右下角）+ 磨砂底板延展
+// W → Notes：两段式滑动 + 磨砂底板延展 + 无缝内嵌转场（无硬跳转）
 function slideWToNotes(): void {
   if (isAnimating) return;
   const wEl = document.getElementById('letter-w') as HTMLElement | null;
@@ -284,34 +284,44 @@ function slideWToNotes(): void {
     return;
   }
   isAnimating = true;
+  expanded = false; // 标记退出展开态，防止 resize 干扰
+  landing?.classList.remove('expanded');
 
-  // reduce-motion：直接跳转，不做动效
   if (reduceMotion) {
     window.location.href = '/notes/';
     return;
   }
 
-  const cx = window.innerWidth / 2;
-  const cy = window.innerHeight / 2;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const cx = vw / 2;
+  const cy = vh / 2;
+  const margin = clamp(vw * 0.05, 40, 80); // 底板距页面边缘 5% 但范围 40~80px
 
-  // 其余字母、标签、iz 先淡出，避免干扰
+  // 其余字母、标签、iz 淡出
   ['a', 'r', 'm'].forEach(function (key) {
     const el = document.getElementById('letter-' + key);
-    if (el) gsap.to(el, { opacity: 0, duration: 0.4, ease: 'power2.in', filter: 'blur(4px)' });
+    if (el) gsap.to(el, { opacity: 0, duration: 0.35, ease: 'power2.in', filter: 'blur(4px)' });
   });
   ['label-w', 'label-a', 'label-r', 'label-m'].forEach(function (id) {
     const l = document.getElementById(id);
     if (l) l.classList.remove('show');
   });
-  gsap.to('#letter-iz', { opacity: 0, duration: 0.4, ease: 'power2.in' });
+  gsap.to('#letter-iz', { opacity: 0, duration: 0.35, ease: 'power2.in' });
 
-  // 记录 W 当前位移与尺寸，作为底板“从 W 延展”的起点
+  // W 当前展开态位移（在 logo 展开后 W 的 gsap x/y 值）
   const startWx = Number(gsap.getProperty(wEl, 'x'));
   const startWy = Number(gsap.getProperty(wEl, 'y'));
   const wRect = wEl.getBoundingClientRect();
-  const pad = 8; // 底板比 W 稍宽
+  const pad = 16; // 底板比 W 稍宽
 
-  // 代理对象：wx/wy 驱动 W；l/t 驱动底板左/上边；右/下边恒等于 W 中心
+  // 底板左右各留 margin + W 最终 x = 屏幕右侧 margin 处
+  // 即底板右边缘 = vw - margin，对应 W 中心 = vw - margin → wx = (vw - margin) - cx
+  const W_END_X = vw - margin - cx;
+  // 竖直：第一段下坠到 cy 以下，第二段继续滑到底部 margin 处
+  const W_MID_Y = cy * 0.45;
+  const W_END_Y = vh - margin - cy;
+
   const p = {
     wx: startWx,
     wy: startWy,
@@ -319,14 +329,10 @@ function slideWToNotes(): void {
     t: cy + startWy - wRect.height / 2 - pad,
   };
 
-  // W 终点：默认落在右下区域（如需严格屏幕正中心对称，把它调到接近 0）
-  const W_END_X = window.innerWidth * 0.32;
-  const W_MID_Y = cy * 0.55; // 第一段下坠到的高度
-
   function apply(): void {
     gsap.set(wEl, { x: p.wx, y: p.wy });
-    const r = cx + p.wx; // 右边缘穿过 W 中心
-    const b = cy + p.wy; // 下边缘穿过 W 中心
+    const r = cx + p.wx;
+    const b = cy + p.wy;
     notesPanel!.style.left = p.l + 'px';
     notesPanel!.style.top = p.t + 'px';
     notesPanel!.style.width = Math.max(0, r - p.l) + 'px';
@@ -335,23 +341,28 @@ function slideWToNotes(): void {
   apply();
   notesPanel.classList.add('active');
 
-  const tl = gsap.timeline({
-    onUpdate: apply,
-    onComplete: function () {
-      window.location.href = '/notes/';
-    },
-  });
+  // 静默改 URL，无页面跳转
+  history.pushState({ page: 'notes' }, '', '/notes/');
 
-  // 第一段：竖直下坠 + 底板向上/向下竖直延展成居中立柱（较慢、匀滑）
-  tl.to(p, { wx: 0, wy: W_MID_Y, t: 0, duration: 0.7, ease: 'power2.inOut' });
-  // 第二段：更快地水平甩向右下角 + 底板向左铺开充满大部分屏幕
-  tl.to(p, { wx: W_END_X, l: 0, duration: 0.45, ease: 'power3.in' });
-  // 底板铺满后浮现模块化内容，再跳转
+  const tl = gsap.timeline({ onUpdate: apply });
+
+  // 第一段：竖直下坠 + 底板竖直延展（较慢、匀滑）
+  tl.to(p, { wx: 0, wy: W_MID_Y, t: margin, duration: 0.65, ease: 'power2.inOut' });
+  // 第二段：快速滑向右下角 + 底板水平铺满
+  tl.to(p, { wx: W_END_X, wy: W_END_Y, l: margin, duration: 0.45, ease: 'power3.in' });
+  // 底板完全铺开后浮现内容，停在此处
   tl.add(function () {
     notesPanel!.classList.add('content-in');
+    notesPanel!.style.pointerEvents = 'auto';
+    isAnimating = false;
   });
-  tl.to({}, { duration: 0.45 });
 }
+
+// 工具：clamp
+function clamp(val: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, val));
+}
+
 
 
 landing?.addEventListener('click', function (e) {
@@ -479,4 +490,30 @@ window.addEventListener('resize', function () {
     if (el) gsap.set(el, { x: positions[key].x, y: positions[key].y });
     positionLabel(el, document.getElementById(positions[key].label), key);
   });
+});
+
+// 底板内返回首页
+notesPanel?.addEventListener('click', function (e) {
+  const target = e.target as HTMLElement;
+  const backBtn = target.closest('[data-nav="home"]');
+  if (!backBtn) return;
+  e.preventDefault();
+  e.stopPropagation();
+  // 反转：收起底板、W 回到原位
+  notesPanel.classList.remove('content-in');
+  const wEl = document.getElementById('letter-w');
+  if (wEl) {
+    gsap.to(wEl, {
+      x: 0, y: 0, duration: 0.5, ease: 'power3.inOut',
+      onComplete: function () {
+        notesPanel.classList.remove('active');
+        notesPanel.style.left = '0px';
+        notesPanel.style.top = '0px';
+        notesPanel.style.width = '0px';
+        notesPanel.style.height = '0px';
+        history.pushState(null, '', '/');
+        expandLogo(); // 回到展开态
+      },
+    });
+  }
 });
