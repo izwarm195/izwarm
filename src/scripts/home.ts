@@ -81,6 +81,8 @@ const iconOnEl = document.getElementById('soundIconOn') as HTMLElement | null;
 const iconOffEl = document.getElementById('soundIconOff') as HTMLElement | null;
 const bgmA = document.getElementById('bgmA') as HTMLAudioElement | null;
 const bgmB = document.getElementById('bgmB') as HTMLAudioElement | null;
+const notesPanel = document.getElementById('notesPanel') as HTMLElement | null;
+
 
 let expanded = false;
 let isAnimating = false;
@@ -272,6 +274,85 @@ function collapseAndNavigate(target: string): void {
     },
   });
 }
+
+// W → Notes：两段式滑动（先竖直下坠，再更快甩向右下角）+ 磨砂底板延展
+function slideWToNotes(): void {
+  if (isAnimating) return;
+  const wEl = document.getElementById('letter-w') as HTMLElement | null;
+  if (!wEl || !notesPanel) {
+    window.location.href = '/notes/';
+    return;
+  }
+  isAnimating = true;
+
+  // reduce-motion：直接跳转，不做动效
+  if (reduceMotion) {
+    window.location.href = '/notes/';
+    return;
+  }
+
+  const cx = window.innerWidth / 2;
+  const cy = window.innerHeight / 2;
+
+  // 其余字母、标签、iz 先淡出，避免干扰
+  ['a', 'r', 'm'].forEach(function (key) {
+    const el = document.getElementById('letter-' + key);
+    if (el) gsap.to(el, { opacity: 0, duration: 0.4, ease: 'power2.in', filter: 'blur(4px)' });
+  });
+  ['label-w', 'label-a', 'label-r', 'label-m'].forEach(function (id) {
+    const l = document.getElementById(id);
+    if (l) l.classList.remove('show');
+  });
+  gsap.to('#letter-iz', { opacity: 0, duration: 0.4, ease: 'power2.in' });
+
+  // 记录 W 当前位移与尺寸，作为底板“从 W 延展”的起点
+  const startWx = Number(gsap.getProperty(wEl, 'x'));
+  const startWy = Number(gsap.getProperty(wEl, 'y'));
+  const wRect = wEl.getBoundingClientRect();
+  const pad = 8; // 底板比 W 稍宽
+
+  // 代理对象：wx/wy 驱动 W；l/t 驱动底板左/上边；右/下边恒等于 W 中心
+  const p = {
+    wx: startWx,
+    wy: startWy,
+    l: cx + startWx - wRect.width / 2 - pad,
+    t: cy + startWy - wRect.height / 2 - pad,
+  };
+
+  // W 终点：默认落在右下区域（如需严格屏幕正中心对称，把它调到接近 0）
+  const W_END_X = window.innerWidth * 0.32;
+  const W_MID_Y = cy * 0.55; // 第一段下坠到的高度
+
+  function apply(): void {
+    gsap.set(wEl, { x: p.wx, y: p.wy });
+    const r = cx + p.wx; // 右边缘穿过 W 中心
+    const b = cy + p.wy; // 下边缘穿过 W 中心
+    notesPanel!.style.left = p.l + 'px';
+    notesPanel!.style.top = p.t + 'px';
+    notesPanel!.style.width = Math.max(0, r - p.l) + 'px';
+    notesPanel!.style.height = Math.max(0, b - p.t) + 'px';
+  }
+  apply();
+  notesPanel.classList.add('active');
+
+  const tl = gsap.timeline({
+    onUpdate: apply,
+    onComplete: function () {
+      window.location.href = '/notes/';
+    },
+  });
+
+  // 第一段：竖直下坠 + 底板向上/向下竖直延展成居中立柱（较慢、匀滑）
+  tl.to(p, { wx: 0, wy: W_MID_Y, t: 0, duration: 0.7, ease: 'power2.inOut' });
+  // 第二段：更快地水平甩向右下角 + 底板向左铺开充满大部分屏幕
+  tl.to(p, { wx: W_END_X, l: 0, duration: 0.45, ease: 'power3.in' });
+  // 底板铺满后浮现模块化内容，再跳转
+  tl.add(function () {
+    notesPanel!.classList.add('content-in');
+  });
+  tl.to({}, { duration: 0.45 });
+}
+
 
 landing?.addEventListener('click', function (e) {
   const target = e.target as HTMLElement;

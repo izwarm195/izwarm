@@ -241,3 +241,52 @@
   box-shadow: 0 0 0 0 rgba(255, 255, 255, 1);
   filter: invert(1);
 }
+
+/* Notes 磨砂玻璃底板：灰色、无边框、W 轮廓圆角，置于背景视频之上、其余元素之下 */
+.notes-panel {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  z-index: 1; /* 高于 .bg-video-wrap，低于 logo-stage(z6)，故 W 始终盖在底板上方 */
+  background: rgba(120, 122, 130, 0.26);
+  backdrop-filter: blur(18px) saturate(1.1);
+  -webkit-backdrop-filter: blur(18px) saturate(1.1);
+  border: none;
+  /* 左上、右上、右下圆角；左下直角 —— 对应 W 字体轮廓 */
+  border-radius: 18px 18px 18px 0;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
+  will-change: left, top, width, height;
+}
+
+.notes-panel.active {
+  opacity: 1;
+}
+
+/* 底板内的模块化内容（此部分待定，先放占位骨架） */
+.notes-panel-inner {
+  position: absolute;
+  inset: 0;
+  padding: clamp(24px, 4vw, 64px);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 18px;
+  align-content: start;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.notes-panel.content-in .notes-panel-inner {
+  opacity: 1;
+}
+
+.notes-card {
+  min-height: 96px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
