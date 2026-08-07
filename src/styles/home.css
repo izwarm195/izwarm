@@ -1,0 +1,243 @@
+/* 首页样式 —— 由原站内嵌 CSS 原样迁移，选择器与属性值不变 */
+
+.landing {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* 背景视频层 */
+.bg-video-wrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #06060c; /* 接近黑曜石底色，即使视频未加载也不出现白屏 */
+}
+
+.bg-video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 1s ease, filter 1.2s ease;
+  filter: brightness(0.8) contrast(1.15) saturate(0.9) blur(0px);
+}
+
+.bg-video.loaded {
+  opacity: 1;
+}
+
+[data-theme='light'] .bg-video {
+  filter: brightness(1.25) contrast(1.05) saturate(0.85) invert(0.06) blur(0px);
+}
+
+.landing.expanded .bg-video {
+  filter: brightness(0.7) contrast(1.1) saturate(0.8) blur(6px);
+}
+
+/* 暗角 + 颗粒噪点 */
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.65) 100%);
+  pointer-events: none;
+}
+
+.grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  mix-blend-mode: overlay;
+  animation: grain-shift 1.2s steps(4) infinite;
+}
+
+@keyframes grain-shift {
+  0% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(-2%, 1%);
+  }
+  100% {
+    transform: translate(1%, -1%);
+  }
+}
+
+/* 中心文案 */
+.intro-text {
+  position: absolute;
+  top: 62%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: var(--text-dim);
+  line-height: 1.9;
+  text-transform: lowercase;
+  transition: opacity 0.6s ease;
+  z-index: 5;
+}
+
+.landing.expanded .intro-text {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Logo 层 */
+.logo-stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 6;
+  pointer-events: none;
+}
+
+.logo-letter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: auto;
+  max-height: 50px;
+  height: auto;
+  will-change: transform, opacity, filter;
+  pointer-events: auto;
+  cursor: pointer;
+  user-select: none;
+  /* 唯一的 transform：让元素以自身中心对齐屏幕中心 */
+  transform: translate(-50%, -50%);
+}
+
+/* 大 Logo 保持居中 */
+.logo-full {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-height: 50px;
+  width: auto;
+  height: auto;
+  transition: opacity 0.6s ease;
+  z-index: 7;
+}
+
+/* 初始隐藏拆分组件和 iz */
+#letter-iz,
+#letter-w,
+#letter-a,
+#letter-r,
+#letter-m {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 展开后 iz 显示 */
+.landing.expanded #letter-iz {
+  opacity: 1;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+/* 展开后字母可点击。
+   修复：原版 #letter-* 的 pointer-events:none（ID 选择器优先级更高）
+   会一直覆盖 .logo-letter 的 pointer-events:auto，导致展开后字母无法被点击，
+   点击会落到背景视频上触发“收起”而不是跳转。 */
+.landing.expanded #letter-w,
+.landing.expanded #letter-a,
+.landing.expanded #letter-r,
+.landing.expanded #letter-m {
+  pointer-events: auto;
+}
+
+/* 展开后大 Logo 隐藏 */
+.landing.expanded .logo-full {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.logo-letter.center {
+  cursor: default;
+  pointer-events: none;
+}
+
+.logo-letter:hover {
+  text-shadow: 0 0 26px rgba(255, 255, 255, 0.35), 0 0 4px var(--metal-highlight);
+}
+
+/* 角落说明文字 */
+.corner-label {
+  position: absolute;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.corner-label.show {
+  opacity: 1;
+}
+
+/* 声音控制 */
+.sound-toggle {
+  position: absolute;
+  bottom: 28px;
+  right: 28px;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--edge-line);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+  z-index: 10;
+  opacity: 0.4;
+  transition: opacity 0.3s ease;
+}
+
+.sound-toggle:hover {
+  opacity: 1;
+}
+
+.sound-toggle svg {
+  width: 14px;
+  height: 14px;
+  fill: var(--text-primary);
+}
+
+/* 过渡遮罩层：坍缩 + 反色扩散 */
+.transition-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+}
+
+.transition-mask .core {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--metal-highlight);
+  box-shadow: 0 0 0 0 rgba(255, 255, 255, 1);
+  filter: invert(1);
+}

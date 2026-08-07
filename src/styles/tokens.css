@@ -1,0 +1,21 @@
+/* 主题变量（深色 / 浅色）——与原站 :root 规则一致 */
+:root {
+  --bg-obsidian: #05050a;
+  --bg-obsidian-soft: #0c0c14;
+  --text-primary: #eceef2;
+  --text-dim: #9a9ea8;
+  --metal-highlight: #c8ccd6;
+  --edge-line: rgba(255, 255, 255, 0.08);
+  --grain-opacity: 0.06;
+  --transition-speed: 1.1s;
+}
+
+[data-theme='light'] {
+  --bg-obsidian: #f3f3f5;
+  --bg-obsidian-soft: #e8e9ec;
+  --text-primary: #14151a;
+  --text-dim: #5a5d66;
+  --metal-highlight: #3a3c42;
+  --edge-line: rgba(0, 0, 0, 0.08);
+  --grain-opacity: 0.04;
+}

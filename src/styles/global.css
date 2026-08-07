@@ -1,0 +1,17 @@
+/* 全局基础样式 —— 与原站 html/body 规则一致 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-obsidian);
+  font-family: 'Helvetica Neue', Arial, 'PingFang SC', sans-serif;
+  color: var(--text-primary);
+  transition: background var(--transition-speed) ease;
+}
