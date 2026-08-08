@@ -23,7 +23,8 @@ izwarm/
 │   └── media/            # 本地媒体资源（页面通过 /media/... 访问）
 ├── src/
 │   ├── components/
-│   │   ├── home/         # 预留：首页组件
+│   │   ├── home/
+│   │   │   └── Landing.astro  # 首页 + Notes 底板共用结构
 │   │   └── common/       # 预留：通用组件
 │   ├── config/
 │   │   ├── media.ts      # 媒体资源地址（唯一配置点）
@@ -36,7 +37,9 @@ izwarm/
 │   ├── layouts/
 │   │   └── BaseLayout.astro
 │   ├── pages/
-│   │   └── index.astro   # 首页
+│   │   ├── index.astro   # 首页
+│   │   └── notes/
+│   │       └── index.astro  # Notes（初始即打开底板）
 │   ├── scripts/
 │   │   └── home.ts       # 首页脚本（由原 home.js 迁移）
 │   └── styles/

@@ -285,7 +285,6 @@ function slideWToNotes(): void {
   }
   isAnimating = true;
   expanded = false; // 标记退出展开态，防止 resize 干扰
-  landing?.classList.remove('expanded');
 
   if (reduceMotion) {
     window.location.href = '/notes/';
@@ -346,10 +345,10 @@ function slideWToNotes(): void {
 
   const tl = gsap.timeline({ onUpdate: apply });
 
-  // 第一段：竖直下坠 + 底板竖直延展（较慢、匀滑）
-  tl.to(p, { wx: 0, wy: W_MID_Y, t: margin, duration: 0.65, ease: 'power2.inOut' });
-  // 第二段：快速滑向右下角 + 底板水平铺满
-  tl.to(p, { wx: W_END_X, wy: W_END_Y, l: margin, duration: 0.45, ease: 'power3.in' });
+  // 第一段：竖直下坠 + 底板竖直延展（只改 wy，保持垂直；较慢、匀滑）
+  tl.to(p, { wy: W_MID_Y, t: margin, duration: 0.65, ease: 'power2.inOut' });
+  // 第二段：快速滑向右下角 + 底板水平铺满（inOut：停下时速度衰减）
+  tl.to(p, { wx: W_END_X, wy: W_END_Y, l: margin, duration: 0.45, ease: 'power3.inOut' });
   // 底板完全铺开后浮现内容，停在此处
   tl.add(function () {
     notesPanel!.classList.add('content-in');
@@ -368,6 +367,8 @@ function clamp(val: number, min: number, max: number): number {
 landing?.addEventListener('click', function (e) {
   const target = e.target as HTMLElement;
   if (target.closest('.logo-letter') || target.closest('.sound-toggle')) return;
+  // Notes 底板打开时（内嵌转场或直接访问 /notes/），不响应主页动画
+  if (notesPanel?.classList.contains('active')) return;
   if (expanded) {
     collapseAll();
   } else {

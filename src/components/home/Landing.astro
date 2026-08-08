@@ -1,0 +1,105 @@
+---
+import { media } from '../../config/media';
+import '../../styles/home.css';
+
+interface Props {
+  /** 直接访问 /notes/ 时，初始即打开 Notes 底板（不播放入场动画） */
+  initialPanel?: boolean;
+}
+
+const { initialPanel = false } = Astro.props;
+---
+
+<div class:list={['landing', { 'panel-open': initialPanel }]} id="landing">
+  <div class="bg-video-wrap">
+    <video
+      class="bg-video"
+      id="bgVideo"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+      poster={media.darkPoster}
+    >
+      <source src={media.darkVideo} type="video/mp4" data-theme="dark" />
+    </video>
+    <video
+      class="bg-video"
+      id="bgVideoLight"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+      poster={media.lightPoster}
+      style="display:none;"
+    >
+      <source src={media.lightVideo} type="video/mp4" data-theme="light" />
+    </video>
+  </div>
+
+  <div class="vignette"></div>
+  <div class="grain"></div>
+
+  <div class="intro-text" id="introText">
+    personal notes · projects · selected works<br />
+    archive of thoughts, systems and images
+  </div>
+
+  <div class="logo-stage" id="logoStage">
+    <img class="logo-full" id="logoFull" src={media.logo} alt="izwarm" />
+    <img class="logo-letter center" id="letter-iz" src={media.logoIz} alt="iz" />
+    <img class="logo-letter" id="letter-w" data-target="notes" src={media.logoW} alt="w" />
+    <img class="logo-letter" id="letter-a" data-target="projects" src={media.logoA} alt="a" />
+    <img class="logo-letter" id="letter-r" data-target="works" src={media.logoR} alt="r" />
+    <img class="logo-letter" id="letter-m" data-target="about" src={media.logoM} alt="m" />
+
+    <span class="corner-label" id="label-w">Notes</span>
+    <span class="corner-label" id="label-a">Projects</span>
+    <span class="corner-label" id="label-r">Works</span>
+    <span class="corner-label" id="label-m">About</span>
+  </div>
+
+  <div class="sound-toggle" id="soundToggle" title="开启/关闭背景音乐">
+    <svg id="soundIconOn" viewBox="0 0 24 24" style="display:block;">
+      <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+    </svg>
+    <svg id="soundIconOff" viewBox="0 0 24 24" style="display:none;">
+      <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.42.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.19v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z" />
+    </svg>
+  </div>
+
+  <div
+    class:list={[
+      'notes-panel',
+      { active: initialPanel, 'content-in': initialPanel, 'static-open': initialPanel },
+    ]}
+    id="notesPanel"
+  >
+    <div class="notes-panel-inner" id="notesPanelInner">
+      <a href="/" class="notes-panel-back" data-nav="home">&larr; izwarm</a>
+      <h2 class="notes-panel-title">Notes</h2>
+      <p class="notes-panel-desc">碎片、想法与记录。</p>
+      <div class="notes-panel-grid">
+        <article class="notes-card">
+          <time class="notes-card-date">即将到来</time>
+          <h3 class="notes-card-title">内容待填充</h3>
+          <p class="notes-card-excerpt">Notes 页面骨架已就位，后续在此展示文章列表。</p>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <div class="transition-mask" id="transitionMask"><div class="core"></div></div>
+</div>
+
+<audio id="bgmA" src={media.ambientAudio} preload="auto"></audio>
+<audio id="bgmB" src={media.ambientAudio} preload="auto"></audio>
+
+<audio id="sfxExpand" src={media.expandAudio} preload="auto"></audio>
+<audio id="sfxCollapse" src={media.collapseAudio} preload="auto"></audio>
+
+<script>
+  import '../../scripts/home';
+</script>

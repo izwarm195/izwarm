@@ -116,6 +116,47 @@
 - **验证**：文件齐备后运行本地开发或构建，确认资源以 `/media/...` 加载；
   构建产物中不再包含原 WordPress 媒体地址。
 
+## 12. 修复：Notes 转场时中心文字重新出现
+
+- **修改**：`slideWToNotes` 不再移除 landing 的 `expanded` class
+  （仍保留 `expanded = false` 状态变量，用于阻止 resize 干扰）。
+- **原因**：移除 class 会让 `.landing.expanded .intro-text { opacity: 0 }` 失效，
+  中心文字在底板滑入过程中重新出现。
+- **影响**：转场期间中心文字保持隐藏；其余动画不变。
+- **验证**：浏览器采样转场过程中的 `intro-text` opacity 恒为 0。
+
+## 13. 修复：Notes 底板打开时点击空白处触发主页动画
+
+- **修改**：landing 点击处理器增加判断——`notesPanel` 处于 `active` 时直接忽略点击。
+- **原因**：内嵌转场不跳转页面，底板打开后 landing 的点击监听仍然生效，
+  点击空白处会误触“展开 / 收起”动画。
+- **验证**：底板打开后点击边角空白区域，landing 状态保持不变。
+
+## 14. 修复：刷新 /notes/ 显示割裂的独立占位页
+
+- **修改**：抽出共用组件 `src/components/home/Landing.astro`，
+  首页与 `/notes/` 共用同一页面结构；`/notes/` 直接渲染“底板已打开”的初始状态
+  （`panel-open` / `static-open`），删除旧独立页 `src/pages/notes.astro`。
+- **原因**：内嵌转场用 `pushState` 把 URL 改为 `/notes/`，刷新时旧实现渲染的是
+  另一个占位页，与点击 W 后的体验不一致。
+- **影响**：直接访问或刷新 `/notes/` 显示与点击 W 后相同的底板界面；
+  “← izwarm”返回按钮可回到展开态首页。
+- **验证**：浏览器直接访问并刷新 `/notes/`，确认初始即显示底板、无入场动画。
+
+## 15. 修复：W 滑动方向与停止衰减
+
+- **修改**：
+  - 第一段只修改 `wy`（竖直下坠），不再同时修改 `wx`
+    （原实现从左上角斜向落下，并非垂直移动）；
+  - 第二段 easing 由 `power3.in` 改为 `power3.inOut`，使 W 停下时速度衰减。
+- **原因**：按反馈“点击 W 时 W 应垂直移动”“第二次移动停下时速度应有衰减”。
+- **验证**：采样 W 运动轨迹，第一段 x 坐标保持不变；第二段接近终点时速度递减。
+
+## 16. 其他小整理
+
+- 在 `BaseLayout` 中引用 `public/favicon/favicon.png`，消除 `/favicon.ico` 404。
+- 为底板卡片补充 `notes-card-date / title / excerpt` 排版样式。
+
 ## 验证方式汇总
 
 - TypeScript 检查：`npm run typecheck`
