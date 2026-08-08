@@ -23,6 +23,10 @@ declare global {
 
 type SeamlessAudio = HTMLAudioElement & { _queued?: boolean };
 type PositionMap = Record<string, { x: number; y: number; label: string }>;
+type PanelState = { wx: number; wy: number; l: number; t: number };
+
+const LETTER_KEYS = ['w', 'a', 'r', 'm'] as const;
+const OTHER_KEYS = ['a', 'r', 'm'] as const;
 
 const bgVideo = document.getElementById('bgVideo') as HTMLVideoElement | null;
 const bgVideoLight = document.getElementById('bgVideoLight') as HTMLVideoElement | null;
@@ -88,13 +92,52 @@ let isAnimating = false;
 let panelOpen = false; // Notes 底板是否已铺开（含动画完成 or 直接访问）
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+// ===== 工具函数 =====
+function clamp(val: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, val));
+}
+
+function getViewMetrics(): { vw: number; vh: number; cx: number; cy: number; margin: number } {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  return { vw, vh, cx: vw / 2, cy: vh / 2, margin: clamp(vw * 0.05, 40, 80) };
+}
+
+function navigateTo(target: string): void {
+  window.location.href = '/' + target + '/';
+}
+
+function collapseLetters(dur: number): void {
+  LETTER_KEYS.forEach(function (key) {
+    const el = document.getElementById('letter-' + key);
+    if (!el) return;
+    gsap.to(el, {
+      x: 0,
+      y: 0,
+      opacity: 0,
+      duration: dur,
+      ease: 'power3.inOut',
+      filter: reduceMotion ? 'none' : 'blur(4px)',
+    });
+  });
+  gsap.to('#letter-iz', { opacity: 0, duration: dur * 0.7, ease: 'power2.in' });
+}
+
+function applyPanel(wEl: HTMLElement, notesPanel: HTMLElement, cx: number, cy: number, p: PanelState): void {
+  gsap.set(wEl, { x: p.wx, y: p.wy });
+  const r = cx + p.wx;
+  const b = cy + p.wy;
+  notesPanel.style.left = p.l + 'px';
+  notesPanel.style.top = p.t + 'px';
+  notesPanel.style.width = Math.max(0, r - p.l) + 'px';
+  notesPanel.style.height = Math.max(0, b - p.t) + 'px';
+}
+
 // 直接访问 /notes/：初始化底板和 W 的静态位置
 function panelOpenInit(): void {
   if (!notesPanel) return;
   panelOpen = true;
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-  const margin = clamp(vw * 0.05, 40, 80);
+  const { vw, vh, margin } = getViewMetrics();
 
   notesPanel.style.left = margin + 'px';
   notesPanel.style.top = margin + 'px';
@@ -103,8 +146,8 @@ function panelOpenInit(): void {
 
   const wEl = document.getElementById('letter-w') as HTMLElement | null;
   if (wEl) {
-    const W_END_X = vw - margin - window.innerWidth / 2;
-    const W_END_Y = vh - margin - window.innerHeight / 2;
+    const W_END_X = vw / 2 - margin;
+    const W_END_Y = vh / 2 - margin;
     gsap.set(wEl, { x: W_END_X, y: W_END_Y, opacity: 1 });
     wEl.style.pointerEvents = 'auto';
   }
@@ -131,12 +174,11 @@ function computeLetterPositions(): {
   const gap = 6;
 
   const sizes: Record<string, { w: number; h: number }> = {};
-  const keys = ['w', 'a', 'r', 'm'];
-  for (let i = 0; i < keys.length; i++) {
-    const el = document.getElementById('letter-' + keys[i]);
+  for (let i = 0; i < LETTER_KEYS.length; i++) {
+    const el = document.getElementById('letter-' + LETTER_KEYS[i]);
     if (!el) return null;
     const r = el.getBoundingClientRect();
-    sizes[keys[i]] = { w: r.width, h: r.height };
+    sizes[LETTER_KEYS[i]] = { w: r.width, h: r.height };
   }
 
   const positions: PositionMap = {
@@ -147,7 +189,6 @@ function computeLetterPositions(): {
   };
   return { positions, sizes, izW, izH, gap };
 }
-
 
 function expandLogo(): void {
   if (expanded || isAnimating) return;
@@ -177,10 +218,10 @@ function expandLogo(): void {
 
     window.__izSizes = { izW, izH, gap, sizes, positions };
 
-    const totalKeys = Object.keys(positions).length;
+    const totalKeys = LETTER_KEYS.length;
     let completed = 0;
 
-    Object.keys(positions).forEach(function (key, i) {
+    LETTER_KEYS.forEach(function (key, i) {
       const el = document.getElementById('letter-' + key);
       if (!el) {
         completed++;
@@ -225,22 +266,11 @@ function collapseAll(): void {
   landing?.classList.remove('expanded');
   const dur = reduceMotion ? 0.3 : 0.6;
 
-  ['w', 'a', 'r', 'm'].forEach(function (key) {
-    const el = document.getElementById('letter-' + key);
-    if (!el) return;
-    gsap.to(el, {
-      x: 0,
-      y: 0,
-      opacity: 0,
-      duration: dur,
-      ease: 'power3.inOut',
-      filter: reduceMotion ? 'none' : 'blur(4px)',
-    });
-  });
-  gsap.to('#letter-iz', { opacity: 0, duration: dur * 0.7, ease: 'power2.in' });
-  ['label-w', 'label-a', 'label-r', 'label-m'].forEach(function (id) {
-    const l = document.getElementById(id);
-    if (l) l.classList.remove('show');
+  collapseLetters(dur);
+
+  LETTER_KEYS.forEach(function (key) {
+    const label = document.getElementById('label-' + key);
+    if (label) label.classList.remove('show');
   });
   gsap.to('#logoFull', {
     opacity: 1,
@@ -258,16 +288,16 @@ function positionLabel(letterEl: HTMLElement | null, labelEl: HTMLElement | null
   const r = letterEl.getBoundingClientRect();
   switch (key) {
     case 'w':
-      labelEl.style.cssText = 'left:' + (r.left - 50) + 'px;top:' + r.top + 'px;transform:translate(0%,-100%);text-align:left';
+      labelEl.style.cssText = `left:${r.left - 50}px;top:${r.top}px;transform:translate(0%,-100%);text-align:left`;
       break;
     case 'a':
-      labelEl.style.cssText = 'left:' + (r.right + 80) + 'px;top:' + r.top + 'px;transform:translate(-100%,-100%);text-align:right';
+      labelEl.style.cssText = `left:${r.right + 80}px;top:${r.top}px;transform:translate(-100%,-100%);text-align:right`;
       break;
     case 'r':
-      labelEl.style.cssText = 'left:' + (r.left - 90) + 'px;top:' + r.bottom + 'px;transform:translate(0%,0%);text-align:left';
+      labelEl.style.cssText = `left:${r.left - 90}px;top:${r.bottom}px;transform:translate(0%,0%);text-align:left`;
       break;
     case 'm':
-      labelEl.style.cssText = 'left:' + (r.right + 50) + 'px;top:' + r.bottom + 'px;transform:translate(-100%,0%);text-align:right';
+      labelEl.style.cssText = `left:${r.right + 50}px;top:${r.bottom}px;transform:translate(-100%,0%);text-align:right`;
       break;
   }
 }
@@ -277,19 +307,8 @@ function collapseAndNavigate(target: string): void {
   isAnimating = true;
   const dur = reduceMotion ? 0.3 : 0.6;
 
-  ['w', 'a', 'r', 'm'].forEach(function (key) {
-    const el = document.getElementById('letter-' + key);
-    if (!el) return;
-    gsap.to(el, {
-      x: 0,
-      y: 0,
-      opacity: 0,
-      duration: dur,
-      ease: 'power3.inOut',
-      filter: reduceMotion ? 'none' : 'blur(4px)',
-    });
-  });
-  gsap.to('#letter-iz', { opacity: 0, duration: dur * 0.7, ease: 'power2.in' });
+  collapseLetters(dur);
+
   gsap.to(mask, {
     opacity: 1,
     duration: 0.15,
@@ -297,7 +316,7 @@ function collapseAndNavigate(target: string): void {
     onComplete: function () {
       const core = mask.querySelector('.core') as HTMLElement | null;
       if (!core) {
-        window.location.href = '/' + target + '/';
+        navigateTo(target);
         return;
       }
       core.style.transform = 'scale(1)';
@@ -306,7 +325,7 @@ function collapseAndNavigate(target: string): void {
         duration: reduceMotion ? 0.3 : 0.7,
         ease: 'power4.in',
         onComplete: function () {
-          window.location.href = '/' + target + '/';
+          navigateTo(target);
         },
       });
     },
@@ -318,31 +337,27 @@ function slideWToNotes(): void {
   if (isAnimating || panelOpen) return;
   const wEl = document.getElementById('letter-w') as HTMLElement | null;
   if (!wEl || !notesPanel) {
-    window.location.href = '/notes/';
+    navigateTo('notes');
     return;
   }
   isAnimating = true;
   panelOpen = true; // 进入底板打开流程（含动画中），期间忽略背景点击
 
   if (reduceMotion) {
-    window.location.href = '/notes/';
+    navigateTo('notes');
     return;
   }
 
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-  const cx = vw / 2;
-  const cy = vh / 2;
-  const margin = clamp(vw * 0.05, 40, 80);
+  const { vw, vh, cx, cy, margin } = getViewMetrics();
 
   // 其余字母、标签、iz 淡出
-  ['a', 'r', 'm'].forEach(function (key) {
+  OTHER_KEYS.forEach(function (key) {
     const el = document.getElementById('letter-' + key);
     if (el) gsap.to(el, { opacity: 0, duration: 0.35, ease: 'power2.in', filter: 'blur(4px)' });
   });
-  ['label-w', 'label-a', 'label-r', 'label-m'].forEach(function (id) {
-    const l = document.getElementById(id);
-    if (l) l.classList.remove('show');
+  LETTER_KEYS.forEach(function (key) {
+    const label = document.getElementById('label-' + key);
+    if (label) label.classList.remove('show');
   });
   gsap.to('#letter-iz', { opacity: 0, duration: 0.35, ease: 'power2.in' });
 
@@ -352,31 +367,26 @@ function slideWToNotes(): void {
   const pad = 16;
 
   // 终点：W 在右下 margin 处
-  const W_END_X = vw - margin - cx;
-  const W_END_Y = vh - margin - cy;
+  const W_END_X = vw / 2 - margin;
+  const W_END_Y = vh / 2 - margin;
 
-  const p = {
+  const p: PanelState = {
     wx: startWx,
     wy: startWy,
     l: cx + startWx - wRect.width / 2 - pad,
     t: cy + startWy - wRect.height / 2 - pad,
   };
 
-  function apply(): void {
-    gsap.set(wEl, { x: p.wx, y: p.wy });
-    const r = cx + p.wx;
-    const b = cy + p.wy;
-    notesPanel!.style.left = p.l + 'px';
-    notesPanel!.style.top = p.t + 'px';
-    notesPanel!.style.width = Math.max(0, r - p.l) + 'px';
-    notesPanel!.style.height = Math.max(0, b - p.t) + 'px';
-  }
-  apply();
+  applyPanel(wEl, notesPanel, cx, cy, p);
   notesPanel.classList.add('active');
 
   history.pushState({ page: 'notes' }, '', '/notes/');
 
-  const tl = gsap.timeline({ onUpdate: apply });
+  const tl = gsap.timeline({
+    onUpdate: function () {
+      applyPanel(wEl, notesPanel, cx, cy, p);
+    },
+  });
 
   // 第一段：竖直下坠到底部（wx、l 不变，只改 wy 和 t）
   tl.to(p, { wy: W_END_Y, t: margin, duration: 0.7, ease: 'power2.inOut' });
@@ -389,12 +399,6 @@ function slideWToNotes(): void {
     wEl!.style.pointerEvents = 'auto'; // W 可点击返回
     isAnimating = false;
   });
-}
-
-
-// 工具：clamp
-function clamp(val: number, min: number, max: number): number {
-  return Math.max(min, Math.min(max, val));
 }
 
 // W → Home：原路返回（两段：水平左移 → 竖直上移），并把其他元素恢复为展开态
@@ -412,14 +416,10 @@ function slideWToHome(): void {
   const startWy = pos.w.y;
   isAnimating = true;
 
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-  const cx = vw / 2;
-  const cy = vh / 2;
-  const margin = clamp(vw * 0.05, 40, 80);
+  const { vw, vh, cx, cy, margin } = getViewMetrics();
 
-  const W_END_X = vw - margin - cx;
-  const W_END_Y = vh - margin - cy;
+  const W_END_X = vw / 2 - margin;
+  const W_END_Y = vh / 2 - margin;
   const wRect = wEl.getBoundingClientRect();
   const pad = 16;
   const l0 = cx + startWx - wRect.width / 2 - pad;
@@ -431,7 +431,7 @@ function slideWToHome(): void {
   landing?.classList.add('expanded');
   landing?.classList.remove('panel-open');
 
-  ['a', 'r', 'm'].forEach(function (key) {
+  OTHER_KEYS.forEach(function (key) {
     const el = document.getElementById('letter-' + key);
     if (el) {
       gsap.to(el, {
@@ -446,27 +446,22 @@ function slideWToHome(): void {
   });
   gsap.to('#letter-iz', { opacity: 1, duration: 0.7, ease: 'power2.out' });
 
-  const p = {
+  const p: PanelState = {
     wx: W_END_X,
     wy: W_END_Y,
     l: margin,
     t: margin,
   };
 
-  function apply(): void {
-    gsap.set(wEl, { x: p.wx, y: p.wy });
-    const r = cx + p.wx;
-    const b = cy + p.wy;
-    notesPanel!.style.left = p.l + 'px';
-    notesPanel!.style.top = p.t + 'px';
-    notesPanel!.style.width = Math.max(0, r - p.l) + 'px';
-    notesPanel!.style.height = Math.max(0, b - p.t) + 'px';
-  }
-  apply();
+  applyPanel(wEl, notesPanel, cx, cy, p);
 
   history.pushState(null, '', '/');
 
-  const tl = gsap.timeline({ onUpdate: apply });
+  const tl = gsap.timeline({
+    onUpdate: function () {
+      applyPanel(wEl, notesPanel, cx, cy, p);
+    },
+  });
 
   // 第一段：水平左移回 W 展开位（wx 与底板 l 还原，wy 不变）
   tl.to(p, { wx: startWx, l: l0, duration: 0.5, ease: 'power3.inOut' });
@@ -474,7 +469,7 @@ function slideWToHome(): void {
   tl.to(p, { wy: startWy, t: t0, duration: 0.7, ease: 'power2.inOut' });
   // 收尾：恢复标签、复位底板
   tl.add(function () {
-    ['w', 'a', 'r', 'm'].forEach(function (key) {
+    LETTER_KEYS.forEach(function (key) {
       const letter = document.getElementById('letter-' + key);
       const label = document.getElementById('label-' + key);
       if (letter && label) {
@@ -492,7 +487,6 @@ function slideWToHome(): void {
   });
 }
 
-
 landing?.addEventListener('click', function (e) {
   const target = e.target as HTMLElement;
   if (target.closest('.logo-letter') || target.closest('.sound-toggle')) return;
@@ -504,11 +498,11 @@ landing?.addEventListener('click', function (e) {
   }
 });
 
+const targetMap: Record<string, string> = { a: 'projects', r: 'works', m: 'about' };
 
-['w', 'a', 'r', 'm'].forEach(function (key) {
+LETTER_KEYS.forEach(function (key) {
   const el = document.getElementById('letter-' + key);
   if (!el) return;
-  const targetMap: Record<string, string> = { a: 'projects', r: 'works', m: 'about' };
   el.addEventListener('click', function (ev) {
     ev.stopPropagation();
     // Notes 底板已打开时，点 W 返回 home（原路逆行）
@@ -525,11 +519,10 @@ landing?.addEventListener('click', function (e) {
   });
 });
 
-
 // ===== BGM：双声道无缝交替循环（原逻辑不变） =====
 if (bgmA && bgmB && soundToggle) {
-  let activeBgm: SeamlessAudio = bgmA as SeamlessAudio;
-  let standbyBgm: SeamlessAudio = bgmB as SeamlessAudio;
+  let activeBgm: SeamlessAudio = bgmA;
+  let standbyBgm: SeamlessAudio = bgmB;
   let soundOn = true;
   const crossfadeSec = 5.0;
 
@@ -561,8 +554,8 @@ if (bgmA && bgmB && soundToggle) {
     });
   }
 
-  setupSeamless(bgmA as SeamlessAudio);
-  setupSeamless(bgmB as SeamlessAudio);
+  setupSeamless(bgmA);
+  setupSeamless(bgmB);
 
   function tryPlayBgm(): void {
     if (!soundOn) return;
@@ -589,15 +582,13 @@ if (bgmA && bgmB && soundToggle) {
   soundToggle.addEventListener('click', function (ev) {
     ev.stopPropagation();
     soundOn = !soundOn;
+    if (iconOnEl) iconOnEl.style.display = soundOn ? 'block' : 'none';
+    if (iconOffEl) iconOffEl.style.display = soundOn ? 'none' : 'block';
     if (soundOn) {
       tryPlayBgm();
-      if (iconOnEl) iconOnEl.style.display = 'block';
-      if (iconOffEl) iconOffEl.style.display = 'none';
     } else {
       activeBgm.pause();
       standbyBgm.pause();
-      if (iconOnEl) iconOnEl.style.display = 'none';
-      if (iconOffEl) iconOffEl.style.display = 'block';
     }
   });
 }
@@ -610,21 +601,10 @@ window.izwarmSetTheme = function (theme: 'dark' | 'light') {
 
 window.addEventListener('resize', function () {
   if (panelOpen || !expanded || !window.__izSizes) return;
-  const s = window.__izSizes;
-  const izW = s.izW;
-  const izH = s.izH;
-  const gap = s.gap;
-  const sizes = s.sizes;
-  const positions: PositionMap = {
-    w: { x: -(izW / 2 + sizes.w.w / 2 + gap + 3), y: -(izH / 2 + sizes.w.h / 2 + gap), label: 'label-w' },
-    a: { x: izW / 2 + sizes.a.w / 2 + gap - 30, y: -(izH / 2 + sizes.a.h / 2 + gap), label: 'label-a' },
-    r: { x: -(izW / 2 + sizes.r.w / 2 + gap + 24), y: izH / 2 + sizes.r.h / 2 + gap, label: 'label-r' },
-    m: { x: izW / 2 + sizes.m.w / 2 + gap, y: izH / 2 + sizes.m.h / 2 + gap, label: 'label-m' },
-  };
-  Object.keys(positions).forEach(function (key) {
+  const positions = window.__izSizes.positions;
+  LETTER_KEYS.forEach(function (key) {
     const el = document.getElementById('letter-' + key);
     if (el) gsap.set(el, { x: positions[key].x, y: positions[key].y });
     positionLabel(el, document.getElementById(positions[key].label), key);
   });
 });
-
