@@ -130,6 +130,7 @@
   height: auto;
   transition: opacity 0.6s ease;
   z-index: 7;
+  pointer-events: auto; /* 初始收起态点击 Logo 可展开（logo-stage 为 pointer-events:none） */
 }
 
 /* 初始隐藏拆分组件和 iz */
@@ -341,7 +342,7 @@
 
 /* 直接访问 /notes/：底板初始即铺满屏幕（margin 与 slideWToNotes 终点一致） */
 .notes-panel.static-open {
-  --panel-margin: clamp(40px, 5vw, 80px);
+  --panel-margin: clamp(20px, 2.5vw, 44px);
   left: var(--panel-margin);
   top: var(--panel-margin);
   width: calc(100% - var(--panel-margin) * 2);
@@ -359,4 +360,3 @@
   pointer-events: auto;
   /* 最终位置由 home.ts 中 panelOpenInit() 设置 */
 }
-

@@ -100,7 +100,7 @@ function clamp(val: number, min: number, max: number): number {
 function getViewMetrics(): { vw: number; vh: number; cx: number; cy: number; margin: number } {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
-  return { vw, vh, cx: vw / 2, cy: vh / 2, margin: clamp(vw * 0.05, 40, 80) };
+  return { vw, vh, cx: vw / 2, cy: vh / 2, margin: clamp(vw * 0.025, 20, 44) };
 }
 
 function navigateTo(target: string): void {
@@ -123,10 +123,19 @@ function collapseLetters(dur: number): void {
   gsap.to('#letter-iz', { opacity: 0, duration: dur * 0.7, ease: 'power2.in' });
 }
 
-function applyPanel(wEl: HTMLElement, notesPanel: HTMLElement, cx: number, cy: number, p: PanelState): void {
+function applyPanel(
+  wEl: HTMLElement,
+  notesPanel: HTMLElement,
+  cx: number,
+  cy: number,
+  p: PanelState,
+  wW: number,
+  wH: number
+): void {
   gsap.set(wEl, { x: p.wx, y: p.wy });
-  const r = cx + p.wx;
-  const b = cy + p.wy;
+  // 底板右下边缘始终贴合 W 的右下边缘（包裹 W）
+  const r = cx + p.wx + wW;
+  const b = cy + p.wy + wH;
   notesPanel.style.left = p.l + 'px';
   notesPanel.style.top = p.t + 'px';
   notesPanel.style.width = Math.max(0, r - p.l) + 'px';
@@ -146,8 +155,9 @@ function panelOpenInit(): void {
 
   const wEl = document.getElementById('letter-w') as HTMLElement | null;
   if (wEl) {
-    const W_END_X = vw / 2 - margin;
-    const W_END_Y = vh / 2 - margin;
+    const wRect = wEl.getBoundingClientRect();
+    const W_END_X = vw / 2 - margin - wRect.width;
+    const W_END_Y = vh / 2 - margin - wRect.height;
     gsap.set(wEl, { x: W_END_X, y: W_END_Y, opacity: 1 });
     wEl.style.pointerEvents = 'auto';
   }
@@ -364,11 +374,13 @@ function slideWToNotes(): void {
   const startWx = Number(gsap.getProperty(wEl, 'x'));
   const startWy = Number(gsap.getProperty(wEl, 'y'));
   const wRect = wEl.getBoundingClientRect();
+  const wW = wRect.width;
+  const wH = wRect.height;
   const pad = 16;
 
-  // 终点：W 在右下 margin 处
-  const W_END_X = vw / 2 - margin;
-  const W_END_Y = vh / 2 - margin;
+  // 终点：W 的右下边缘贴合底板右下边缘（底板关于屏幕中心对称）
+  const W_END_X = vw / 2 - margin - wW;
+  const W_END_Y = vh / 2 - margin - wH;
 
   const p: PanelState = {
     wx: startWx,
@@ -377,18 +389,18 @@ function slideWToNotes(): void {
     t: cy + startWy - wRect.height / 2 - pad,
   };
 
-  applyPanel(wEl, notesPanel, cx, cy, p);
+  applyPanel(wEl, notesPanel, cx, cy, p, wW, wH);
   notesPanel.classList.add('active');
 
   history.pushState({ page: 'notes' }, '', '/notes/');
 
   const tl = gsap.timeline({
     onUpdate: function () {
-      applyPanel(wEl, notesPanel, cx, cy, p);
+      applyPanel(wEl, notesPanel, cx, cy, p, wW, wH);
     },
   });
 
-  // 第一段：竖直下坠到底部（wx、l 不变，只改 wy 和 t）
+   // 第一段：竖直下坠到底部（wx、l 不变，只改 wy 和 t）
   tl.to(p, { wy: W_END_Y, t: margin, duration: 0.7, ease: 'power2.inOut' });
   // 第二段：水平右移到右下角（wy 不变，只改 wx 和 l）
   tl.to(p, { wx: W_END_X, l: margin, duration: 0.5, ease: 'power3.inOut' });
@@ -401,7 +413,8 @@ function slideWToNotes(): void {
   });
 }
 
-// W → Home：原路返回（两段：水平左移 → 竖直上移），并把其他元素恢复为展开态
+// W → Home：原路返回（两段：水平左移 → 竖直上移回 W 展开位）。
+// 在 W 第二段开始时，a/r/m 展开并停留在展开位；结束恢复主页展开态。
 function slideWToHome(): void {
   if (isAnimating || !panelOpen) return;
   const wEl = document.getElementById('letter-w') as HTMLElement | null;
@@ -414,37 +427,31 @@ function slideWToHome(): void {
   const pos = data.positions;
   const startWx = pos.w.x;
   const startWy = pos.w.y;
+  // 当前文档是否为 /notes/ 独立页（刷新 / 直接访问场景，返回后需真正跳回首页）
+  const isNotesDocument = notesPanel.classList.contains('static-open');
   isAnimating = true;
+
+  if (reduceMotion) {
+    restoreHomeExpanded(wEl, pos);
+    if (isNotesDocument) window.location.replace('/');
+    return;
+  }
 
   const { vw, vh, cx, cy, margin } = getViewMetrics();
 
-  const W_END_X = vw / 2 - margin;
-  const W_END_Y = vh / 2 - margin;
   const wRect = wEl.getBoundingClientRect();
+  const wW = wRect.width;
+  const wH = wRect.height;
+  // 与前进一致：W 的右下边缘贴合底板右下边缘
+  const W_END_X = vw / 2 - margin - wW;
+  const W_END_Y = vh / 2 - margin - wH;
   const pad = 16;
   const l0 = cx + startWx - wRect.width / 2 - pad;
   const t0 = cy + startWy - wRect.height / 2 - pad;
 
-  // 隐藏面板内容，恢复展开态：landing class、其他字母、iz
+  // 隐藏面板内容
   notesPanel.classList.remove('content-in');
   notesPanel.style.pointerEvents = 'none';
-  landing?.classList.add('expanded');
-  landing?.classList.remove('panel-open');
-
-  OTHER_KEYS.forEach(function (key) {
-    const el = document.getElementById('letter-' + key);
-    if (el) {
-      gsap.to(el, {
-        x: pos[key].x,
-        y: pos[key].y,
-        opacity: 1,
-        filter: 'blur(0px)',
-        duration: 0.7,
-        ease: 'power2.out',
-      });
-    }
-  });
-  gsap.to('#letter-iz', { opacity: 1, duration: 0.7, ease: 'power2.out' });
 
   const p: PanelState = {
     wx: W_END_X,
@@ -453,13 +460,13 @@ function slideWToHome(): void {
     t: margin,
   };
 
-  applyPanel(wEl, notesPanel, cx, cy, p);
+  applyPanel(wEl, notesPanel, cx, cy, p, wW, wH);
 
-  history.pushState(null, '', '/');
+  if (!isNotesDocument) history.pushState(null, '', '/');
 
   const tl = gsap.timeline({
     onUpdate: function () {
-      applyPanel(wEl, notesPanel, cx, cy, p);
+      applyPanel(wEl, notesPanel, cx, cy, p, wW, wH);
     },
   });
 
@@ -467,24 +474,63 @@ function slideWToHome(): void {
   tl.to(p, { wx: startWx, l: l0, duration: 0.5, ease: 'power3.inOut' });
   // 第二段：竖直上移回 W 展开位（wy 与底板 t 还原，wx 不变）
   tl.to(p, { wy: startWy, t: t0, duration: 0.7, ease: 'power2.inOut' });
-  // 收尾：恢复标签、复位底板
+
+  // 与 W 第二段同步（稍晚一点）：a/r/m 展开并停留在展开位
+  const wave = gsap.timeline({ delay: 0.7 });
+  OTHER_KEYS.forEach(function (key, i) {
+    const el = document.getElementById('letter-' + key);
+    if (!el) return;
+    const q = pos[key];
+    wave.fromTo(
+      el,
+      { x: 0, y: 0, opacity: 0, filter: 'blur(4px)' },
+      { x: q.x, y: q.y, opacity: 1, filter: 'blur(0px)', duration: 0.45, ease: 'power3.out' },
+      i * 0.05
+    );
+  });
+
+  // 给 a/r/m 展开留出收尾时间
+  tl.to({}, { duration: 0.15 });
+
+  // 收尾：恢复主页展开态；若是 /notes/ 独立页则真正跳回首页
   tl.add(function () {
-    LETTER_KEYS.forEach(function (key) {
-      const letter = document.getElementById('letter-' + key);
-      const label = document.getElementById('label-' + key);
-      if (letter && label) {
-        label.classList.add('show');
-        positionLabel(letter, label, key);
-      }
-    });
-    panelOpen = false;
+    wave.kill();
+    restoreHomeExpanded(wEl, pos);
+    if (isNotesDocument) window.location.replace('/');
+  });
+}
+
+// 恢复到主页「展开」状态：字母在展开位、标签显示、大 Logo 隐藏、expanded 状态同步
+function restoreHomeExpanded(wEl: HTMLElement, pos: PositionMap): void {
+  landing?.classList.add('expanded');
+  landing?.classList.remove('panel-open');
+  LETTER_KEYS.forEach(function (key) {
+    const el = document.getElementById('letter-' + key);
+    if (!el) return;
+    gsap.set(el, { x: pos[key].x, y: pos[key].y, opacity: 1, filter: 'blur(0px)' });
+  });
+  gsap.set('#letter-iz', { opacity: 1 });
+  gsap.set('#logoFull', { opacity: 0 });
+  wEl.style.pointerEvents = '';
+  LETTER_KEYS.forEach(function (key) {
+    const letter = document.getElementById('letter-' + key);
+    const label = document.getElementById('label-' + key);
+    if (letter && label) {
+      label.classList.add('show');
+      positionLabel(letter, label, key);
+    }
+  });
+  expanded = true; // 与视觉一致：再点击会正常触发 collapseAll（含收起音效）
+  panelOpen = false;
+  if (notesPanel) {
     notesPanel.classList.remove('active', 'content-in');
     notesPanel.style.left = '0px';
     notesPanel.style.top = '0px';
     notesPanel.style.width = '0px';
     notesPanel.style.height = '0px';
-    isAnimating = false;
-  });
+    notesPanel.style.pointerEvents = '';
+  }
+  isAnimating = false;
 }
 
 landing?.addEventListener('click', function (e) {
