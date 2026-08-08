@@ -130,17 +130,19 @@ function applyPanel(
   cy: number,
   p: PanelState,
   wW: number,
-  wH: number
+  wH: number,
+  pad: number
 ): void {
   gsap.set(wEl, { x: p.wx, y: p.wy });
-  // 底板右下边缘始终贴合 W 的右下边缘（包裹 W）
-  const r = cx + p.wx + wW;
-  const b = cy + p.wy + wH;
+  // 底板右下边缘 = W 右下边缘 + pad（保持 W 被 pad 均匀包裹）
+  const r = cx + p.wx + wW / 2 + pad;
+  const b = cy + p.wy + wH / 2 + pad;
   notesPanel.style.left = p.l + 'px';
   notesPanel.style.top = p.t + 'px';
   notesPanel.style.width = Math.max(0, r - p.l) + 'px';
   notesPanel.style.height = Math.max(0, b - p.t) + 'px';
 }
+
 
 // 直接访问 /notes/：初始化底板和 W 的静态位置
 function panelOpenInit(): void {
@@ -376,34 +378,36 @@ function slideWToNotes(): void {
   const wRect = wEl.getBoundingClientRect();
   const wW = wRect.width;
   const wH = wRect.height;
-  const pad = 16;
+    const pad = 16;
 
-  // 终点：W 的右下边缘贴合底板右下边缘（底板关于屏幕中心对称）
-  const W_END_X = vw / 2 - margin - wW;
-  const W_END_Y = vh / 2 - margin - wH;
+  // 终点：底板右下缘 = vw - margin / vh - margin，等价于 W 右下缘 = vw - margin - pad
+  //   即 W 中心 x = vw - margin - pad - wW/2 → wx = vw/2 - margin - pad - wW/2
+  const W_END_X = vw / 2 - margin - pad - wW / 2;
+  const W_END_Y = vh / 2 - margin - pad - wH / 2;
 
   const p: PanelState = {
     wx: startWx,
     wy: startWy,
-    l: cx + startWx - wRect.width / 2 - pad,
-    t: cy + startWy - wRect.height / 2 - pad,
+    l: cx + startWx - wW / 2 - pad,
+    t: cy + startWy - wH / 2 - pad,
   };
 
-  applyPanel(wEl, notesPanel, cx, cy, p, wW, wH);
+  applyPanel(wEl, notesPanel, cx, cy, p, wW, wH, pad);
   notesPanel.classList.add('active');
 
   history.pushState({ page: 'notes' }, '', '/notes/');
 
   const tl = gsap.timeline({
     onUpdate: function () {
-      applyPanel(wEl, notesPanel, cx, cy, p, wW, wH);
+      applyPanel(wEl, notesPanel, cx, cy, p, wW, wH, pad);
     },
   });
 
+
    // 第一段：竖直下坠到底部（wx、l 不变，只改 wy 和 t）
-  tl.to(p, { wy: W_END_Y, t: margin, duration: 0.7, ease: 'power2.inOut' });
+  tl.to(p, { wy: W_END_Y, t: margin, duration: 0.5, ease: 'power2.inOut' });
   // 第二段：水平右移到右下角（wy 不变，只改 wx 和 l）
-  tl.to(p, { wx: W_END_X, l: margin, duration: 0.5, ease: 'power3.inOut' });
+  tl.to(p, { wx: W_END_X, l: margin, duration: 0.7, ease: 'power3.inOut' });
   // 底板铺满后浮现内容
   tl.add(function () {
     notesPanel!.classList.add('content-in');
@@ -443,11 +447,12 @@ function slideWToHome(): void {
   const wW = wRect.width;
   const wH = wRect.height;
   // 与前进一致：W 的右下边缘贴合底板右下边缘
-  const W_END_X = vw / 2 - margin - wW;
-  const W_END_Y = vh / 2 - margin - wH;
   const pad = 16;
-  const l0 = cx + startWx - wRect.width / 2 - pad;
-  const t0 = cy + startWy - wRect.height / 2 - pad;
+  const W_END_X = vw / 2 - margin - pad - wW / 2;
+  const W_END_Y = vh / 2 - margin - pad - wH / 2;
+  const l0 = cx + startWx - wW / 2 - pad;
+  const t0 = cy + startWy - wH / 2 - pad;
+
 
   // 隐藏面板内容
   notesPanel.classList.remove('content-in');
@@ -460,23 +465,35 @@ function slideWToHome(): void {
     t: margin,
   };
 
-  applyPanel(wEl, notesPanel, cx, cy, p, wW, wH);
+  applyPanel(wEl, notesPanel, cx, cy, p, wW, wH, pad);
 
   if (!isNotesDocument) history.pushState(null, '', '/');
 
   const tl = gsap.timeline({
     onUpdate: function () {
-      applyPanel(wEl, notesPanel, cx, cy, p, wW, wH);
+      applyPanel(wEl, notesPanel, cx, cy, p, wW, wH,pad);
     },
   });
 
-  // 第一段：水平左移回 W 展开位（wx 与底板 l 还原，wy 不变）
   tl.to(p, { wx: startWx, l: l0, duration: 0.5, ease: 'power3.inOut' });
-  // 第二段：竖直上移回 W 展开位（wy 与底板 t 还原，wx 不变）
+  // iz 提前淡入：紧接第一段结束前一点点开始（比之前 restoreHomeExpanded 里的瞬时 set 早很多）
+  tl.add(function () {
+    gsap.to('#letter-iz', { opacity: 1, duration: 0.5, ease: 'power2.out' });
+  }, '-=0.15');
   tl.to(p, { wy: startWy, t: t0, duration: 0.7, ease: 'power2.inOut' });
 
+
   // 与 W 第二段同步（稍晚一点）：a/r/m 展开并停留在展开位
-  const wave = gsap.timeline({ delay: 0.7 });
+  const wave = gsap.timeline({
+    delay: 0.5, // 与新的第一段时长同步：W 开始第二段的瞬间，arm 开始 expand
+    onStart: function () {
+      // arm expand 同时播放 expand 音效
+      if (sfxExpand) {
+        sfxExpand.currentTime = 0;
+        sfxExpand.play().catch(function () {});
+      }
+    },
+  });
   OTHER_KEYS.forEach(function (key, i) {
     const el = document.getElementById('letter-' + key);
     if (!el) return;
