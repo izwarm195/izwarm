@@ -314,22 +314,6 @@
   margin: 0;
 }
 
-/* 底板内嵌 Notes 内容 */
-.notes-panel-back {
-  grid-column: 1 / -1;
-  display: inline-block;
-  color: rgba(255,255,255,0.45);
-  text-decoration: none;
-  font-size: 12px;
-  letter-spacing: 0.12em;
-  margin-bottom: 8px;
-  transition: color 0.3s;
-}
-
-.notes-panel-back:hover {
-  color: #fff;
-}
-
 .notes-panel-title {
   grid-column: 1 / -1;
   font-size: clamp(22px, 3vw, 36px);
@@ -355,16 +339,24 @@
   align-content: start;
 }
 
-/* 直接访问 /notes/：底板初始即铺满屏幕（不播放入场动画） */
+/* 直接访问 /notes/：底板初始即铺满屏幕（margin 与 slideWToNotes 终点一致） */
 .notes-panel.static-open {
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
+  --panel-margin: clamp(40px, 5vw, 80px);
+  left: var(--panel-margin);
+  top: var(--panel-margin);
+  width: calc(100% - var(--panel-margin) * 2);
+  height: calc(100% - var(--panel-margin) * 2);
 }
-
 /* 直接访问 /notes/：隐藏中心文字，但不进入字母展开态 */
 .landing.panel-open .intro-text {
   opacity: 0;
   pointer-events: none;
 }
+
+/* 直接访问 /notes/ 时：W 直接处于右下角最终位置，可点击返回 */
+.landing.panel-open #letter-w {
+  opacity: 1;
+  pointer-events: auto;
+  /* 最终位置由 home.ts 中 panelOpenInit() 设置 */
+}
+

@@ -157,6 +157,23 @@
 - 在 `BaseLayout` 中引用 `public/favicon/favicon.png`，消除 `/favicon.ico` 404。
 - 为底板卡片补充 `notes-card-date / title / excerpt` 排版样式。
 
+## 17. W 转场改为两段；返回恢复展开态
+
+- **修改**（`src/scripts/home.ts`）：
+  - 前进 `slideWToNotes`：由三段（竖直→水平→竖直）改为两段——
+    第一段竖直下坠到底部（只改 `wy`），第二段水平右移到右下角（只改 `wx`）；
+  - 返回 `slideWToHome`：改为两段镜像——第一段水平左移回 W 展开位，
+    第二段竖直上移回 W 展开位；同时把其他字母（a/r/m）、iz 与标签
+    一并恢复为展开态，landing 保持/恢复 `expanded` class；
+  - 抽出 `computeLetterPositions()` 统一计算四个字母的展开位，
+    返回不再依赖 `__izSizes` 兜底（直接访问 `/notes/` 时也能正确还原）；
+  - `resize` 时若底板打开（`panelOpen`）则跳过重定位，避免 W 被拉回展开位。
+- **原因**：按反馈，W 前进应为“一次竖直、一次水平”共两次移动；
+  返回后 W 应落在主页点击后的展开态位置，且其他元素同步恢复展开态
+  （原实现结尾调用 `expandLogo()` 因 `expanded` 仍为 true 被跳过，状态未恢复）。
+- **验证**：浏览器采样 W 路径——前进时 y 先变、x 后变；
+  返回时 x 先变、y 后变；返回完成后 W 位于展开位，a/r/m/iz 与标签均为展开态。
+
 ## 验证方式汇总
 
 - TypeScript 检查：`npm run typecheck`

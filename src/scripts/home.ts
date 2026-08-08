@@ -83,10 +83,71 @@ const bgmA = document.getElementById('bgmA') as HTMLAudioElement | null;
 const bgmB = document.getElementById('bgmB') as HTMLAudioElement | null;
 const notesPanel = document.getElementById('notesPanel') as HTMLElement | null;
 
-
 let expanded = false;
 let isAnimating = false;
+let panelOpen = false; // Notes 底板是否已铺开（含动画完成 or 直接访问）
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// 直接访问 /notes/：初始化底板和 W 的静态位置
+function panelOpenInit(): void {
+  if (!notesPanel) return;
+  panelOpen = true;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const margin = clamp(vw * 0.05, 40, 80);
+
+  notesPanel.style.left = margin + 'px';
+  notesPanel.style.top = margin + 'px';
+  notesPanel.style.width = (vw - margin * 2) + 'px';
+  notesPanel.style.height = (vh - margin * 2) + 'px';
+
+  const wEl = document.getElementById('letter-w') as HTMLElement | null;
+  if (wEl) {
+    const W_END_X = vw - margin - window.innerWidth / 2;
+    const W_END_Y = vh - margin - window.innerHeight / 2;
+    gsap.set(wEl, { x: W_END_X, y: W_END_Y, opacity: 1 });
+    wEl.style.pointerEvents = 'auto';
+  }
+}
+
+// 页面加载时检测
+if (notesPanel?.classList.contains('static-open')) {
+  panelOpenInit();
+}
+
+// 计算四个字母的展开位（与 expandLogo 同一套公式；返回 null 表示元素缺失）
+function computeLetterPositions(): {
+  positions: PositionMap;
+  sizes: Record<string, { w: number; h: number }>;
+  izW: number;
+  izH: number;
+  gap: number;
+} | null {
+  const izEl = document.getElementById('letter-iz') as HTMLElement | null;
+  if (!izEl) return null;
+  const izRect = izEl.getBoundingClientRect();
+  const izW = izRect.width;
+  const izH = izRect.height;
+  const gap = 6;
+
+  const sizes: Record<string, { w: number; h: number }> = {};
+  const keys = ['w', 'a', 'r', 'm'];
+  for (let i = 0; i < keys.length; i++) {
+    const el = document.getElementById('letter-' + keys[i]);
+    if (!el) return null;
+    const r = el.getBoundingClientRect();
+    sizes[keys[i]] = { w: r.width, h: r.height };
+  }
+
+  const positions: PositionMap = {
+    w: { x: -(izW / 2 + sizes.w.w / 2 + gap + 3), y: -(izH / 2 + sizes.w.h / 2 + gap), label: 'label-w' },
+    a: { x: izW / 2 + sizes.a.w / 2 + gap - 30, y: -(izH / 2 + sizes.a.h / 2 + gap), label: 'label-a' },
+    r: { x: -(izW / 2 + sizes.r.w / 2 + gap + 24), y: izH / 2 + sizes.r.h / 2 + gap, label: 'label-r' },
+    m: { x: izW / 2 + sizes.m.w / 2 + gap, y: izH / 2 + sizes.m.h / 2 + gap, label: 'label-m' },
+  };
+  return { positions, sizes, izW, izH, gap };
+}
+
 
 function expandLogo(): void {
   if (expanded || isAnimating) return;
@@ -110,32 +171,9 @@ function expandLogo(): void {
   );
 
   setTimeout(function () {
-    const izEl = document.getElementById('letter-iz') as HTMLElement | null;
-    if (!izEl) return;
-    const izRect = izEl.getBoundingClientRect();
-    const izW = izRect.width;
-    const izH = izRect.height;
-    const gap = 6;
-
-    const sizes: Record<string, { w: number; h: number }> = {};
-    let measuringComplete = true;
-    ['w', 'a', 'r', 'm'].forEach(function (key) {
-      const el = document.getElementById('letter-' + key);
-      if (!el) {
-        measuringComplete = false;
-        return;
-      }
-      const r = el.getBoundingClientRect();
-      sizes[key] = { w: r.width, h: r.height };
-    });
-    if (!measuringComplete) return;
-
-    const positions: PositionMap = {
-      w: { x: -(izW / 2 + sizes.w.w / 2 + gap + 3), y: -(izH / 2 + sizes.w.h / 2 + gap), label: 'label-w' },
-      a: { x: izW / 2 + sizes.a.w / 2 + gap - 30, y: -(izH / 2 + sizes.a.h / 2 + gap), label: 'label-a' },
-      r: { x: -(izW / 2 + sizes.r.w / 2 + gap + 24), y: izH / 2 + sizes.r.h / 2 + gap, label: 'label-r' },
-      m: { x: izW / 2 + sizes.m.w / 2 + gap, y: izH / 2 + sizes.m.h / 2 + gap, label: 'label-m' },
-    };
+    const data = computeLetterPositions();
+    if (!data) return;
+    const { positions, sizes, izW, izH, gap } = data;
 
     window.__izSizes = { izW, izH, gap, sizes, positions };
 
@@ -275,16 +313,16 @@ function collapseAndNavigate(target: string): void {
   });
 }
 
-// W → Notes：两段式滑动 + 磨砂底板延展 + 无缝内嵌转场（无硬跳转）
+// W → Notes：三段式滑动（竖直下坠 → 水平右移 → 竖直下移）+ 磨砂底板延展
 function slideWToNotes(): void {
-  if (isAnimating) return;
+  if (isAnimating || panelOpen) return;
   const wEl = document.getElementById('letter-w') as HTMLElement | null;
   if (!wEl || !notesPanel) {
     window.location.href = '/notes/';
     return;
   }
   isAnimating = true;
-  expanded = false; // 标记退出展开态，防止 resize 干扰
+  panelOpen = true; // 进入底板打开流程（含动画中），期间忽略背景点击
 
   if (reduceMotion) {
     window.location.href = '/notes/';
@@ -295,7 +333,7 @@ function slideWToNotes(): void {
   const vh = window.innerHeight;
   const cx = vw / 2;
   const cy = vh / 2;
-  const margin = clamp(vw * 0.05, 40, 80); // 底板距页面边缘 5% 但范围 40~80px
+  const margin = clamp(vw * 0.05, 40, 80);
 
   // 其余字母、标签、iz 淡出
   ['a', 'r', 'm'].forEach(function (key) {
@@ -308,17 +346,13 @@ function slideWToNotes(): void {
   });
   gsap.to('#letter-iz', { opacity: 0, duration: 0.35, ease: 'power2.in' });
 
-  // W 当前展开态位移（在 logo 展开后 W 的 gsap x/y 值）
   const startWx = Number(gsap.getProperty(wEl, 'x'));
   const startWy = Number(gsap.getProperty(wEl, 'y'));
   const wRect = wEl.getBoundingClientRect();
-  const pad = 16; // 底板比 W 稍宽
+  const pad = 16;
 
-  // 底板左右各留 margin + W 最终 x = 屏幕右侧 margin 处
-  // 即底板右边缘 = vw - margin，对应 W 中心 = vw - margin → wx = (vw - margin) - cx
+  // 终点：W 在右下 margin 处
   const W_END_X = vw - margin - cx;
-  // 竖直：第一段下坠到 cy 以下，第二段继续滑到底部 margin 处
-  const W_MID_Y = cy * 0.45;
   const W_END_Y = vh - margin - cy;
 
   const p = {
@@ -340,35 +374,129 @@ function slideWToNotes(): void {
   apply();
   notesPanel.classList.add('active');
 
-  // 静默改 URL，无页面跳转
   history.pushState({ page: 'notes' }, '', '/notes/');
 
   const tl = gsap.timeline({ onUpdate: apply });
 
-  // 第一段：竖直下坠 + 底板竖直延展（只改 wy，保持垂直；较慢、匀滑）
-  tl.to(p, { wy: W_MID_Y, t: margin, duration: 0.65, ease: 'power2.inOut' });
-  // 第二段：快速滑向右下角 + 底板水平铺满（inOut：停下时速度衰减）
-  tl.to(p, { wx: W_END_X, wy: W_END_Y, l: margin, duration: 0.45, ease: 'power3.inOut' });
-  // 底板完全铺开后浮现内容，停在此处
+  // 第一段：竖直下坠到底部（wx、l 不变，只改 wy 和 t）
+  tl.to(p, { wy: W_END_Y, t: margin, duration: 0.7, ease: 'power2.inOut' });
+  // 第二段：水平右移到右下角（wy 不变，只改 wx 和 l）
+  tl.to(p, { wx: W_END_X, l: margin, duration: 0.5, ease: 'power3.inOut' });
+  // 底板铺满后浮现内容
   tl.add(function () {
     notesPanel!.classList.add('content-in');
     notesPanel!.style.pointerEvents = 'auto';
+    wEl!.style.pointerEvents = 'auto'; // W 可点击返回
     isAnimating = false;
   });
 }
+
 
 // 工具：clamp
 function clamp(val: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, val));
 }
 
+// W → Home：原路返回（两段：水平左移 → 竖直上移），并把其他元素恢复为展开态
+function slideWToHome(): void {
+  if (isAnimating || !panelOpen) return;
+  const wEl = document.getElementById('letter-w') as HTMLElement | null;
+  if (!wEl || !notesPanel) return;
+  const data = computeLetterPositions();
+  if (!data) {
+    window.location.href = '/';
+    return;
+  }
+  const pos = data.positions;
+  const startWx = pos.w.x;
+  const startWy = pos.w.y;
+  isAnimating = true;
+
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const cx = vw / 2;
+  const cy = vh / 2;
+  const margin = clamp(vw * 0.05, 40, 80);
+
+  const W_END_X = vw - margin - cx;
+  const W_END_Y = vh - margin - cy;
+  const wRect = wEl.getBoundingClientRect();
+  const pad = 16;
+  const l0 = cx + startWx - wRect.width / 2 - pad;
+  const t0 = cy + startWy - wRect.height / 2 - pad;
+
+  // 隐藏面板内容，恢复展开态：landing class、其他字母、iz
+  notesPanel.classList.remove('content-in');
+  notesPanel.style.pointerEvents = 'none';
+  landing?.classList.add('expanded');
+  landing?.classList.remove('panel-open');
+
+  ['a', 'r', 'm'].forEach(function (key) {
+    const el = document.getElementById('letter-' + key);
+    if (el) {
+      gsap.to(el, {
+        x: pos[key].x,
+        y: pos[key].y,
+        opacity: 1,
+        filter: 'blur(0px)',
+        duration: 0.7,
+        ease: 'power2.out',
+      });
+    }
+  });
+  gsap.to('#letter-iz', { opacity: 1, duration: 0.7, ease: 'power2.out' });
+
+  const p = {
+    wx: W_END_X,
+    wy: W_END_Y,
+    l: margin,
+    t: margin,
+  };
+
+  function apply(): void {
+    gsap.set(wEl, { x: p.wx, y: p.wy });
+    const r = cx + p.wx;
+    const b = cy + p.wy;
+    notesPanel!.style.left = p.l + 'px';
+    notesPanel!.style.top = p.t + 'px';
+    notesPanel!.style.width = Math.max(0, r - p.l) + 'px';
+    notesPanel!.style.height = Math.max(0, b - p.t) + 'px';
+  }
+  apply();
+
+  history.pushState(null, '', '/');
+
+  const tl = gsap.timeline({ onUpdate: apply });
+
+  // 第一段：水平左移回 W 展开位（wx 与底板 l 还原，wy 不变）
+  tl.to(p, { wx: startWx, l: l0, duration: 0.5, ease: 'power3.inOut' });
+  // 第二段：竖直上移回 W 展开位（wy 与底板 t 还原，wx 不变）
+  tl.to(p, { wy: startWy, t: t0, duration: 0.7, ease: 'power2.inOut' });
+  // 收尾：恢复标签、复位底板
+  tl.add(function () {
+    ['w', 'a', 'r', 'm'].forEach(function (key) {
+      const letter = document.getElementById('letter-' + key);
+      const label = document.getElementById('label-' + key);
+      if (letter && label) {
+        label.classList.add('show');
+        positionLabel(letter, label, key);
+      }
+    });
+    panelOpen = false;
+    notesPanel.classList.remove('active', 'content-in');
+    notesPanel.style.left = '0px';
+    notesPanel.style.top = '0px';
+    notesPanel.style.width = '0px';
+    notesPanel.style.height = '0px';
+    isAnimating = false;
+  });
+}
 
 
 landing?.addEventListener('click', function (e) {
   const target = e.target as HTMLElement;
   if (target.closest('.logo-letter') || target.closest('.sound-toggle')) return;
-  // Notes 底板打开时（内嵌转场或直接访问 /notes/），不响应主页动画
-  if (notesPanel?.classList.contains('active')) return;
+  if (panelOpen) return; // 底板打开时不响应背景点击
   if (expanded) {
     collapseAll();
   } else {
@@ -376,20 +504,27 @@ landing?.addEventListener('click', function (e) {
   }
 });
 
+
 ['w', 'a', 'r', 'm'].forEach(function (key) {
   const el = document.getElementById('letter-' + key);
   if (!el) return;
   const targetMap: Record<string, string> = { a: 'projects', r: 'works', m: 'about' };
   el.addEventListener('click', function (ev) {
     ev.stopPropagation();
+    // Notes 底板已打开时，点 W 返回 home（原路逆行）
+    if (key === 'w' && panelOpen) {
+      slideWToHome();
+      return;
+    }
     if (!expanded || isAnimating) return;
     if (key === 'w') {
-      slideWToNotes(); // W 走新的两段式底板转场
+      slideWToNotes();
     } else {
       collapseAndNavigate(targetMap[key]);
     }
   });
 });
+
 
 // ===== BGM：双声道无缝交替循环（原逻辑不变） =====
 if (bgmA && bgmB && soundToggle) {
@@ -474,7 +609,7 @@ window.izwarmSetTheme = function (theme: 'dark' | 'light') {
 };
 
 window.addEventListener('resize', function () {
-  if (!expanded || !window.__izSizes) return;
+  if (panelOpen || !expanded || !window.__izSizes) return;
   const s = window.__izSizes;
   const izW = s.izW;
   const izH = s.izH;
@@ -493,28 +628,3 @@ window.addEventListener('resize', function () {
   });
 });
 
-// 底板内返回首页
-notesPanel?.addEventListener('click', function (e) {
-  const target = e.target as HTMLElement;
-  const backBtn = target.closest('[data-nav="home"]');
-  if (!backBtn) return;
-  e.preventDefault();
-  e.stopPropagation();
-  // 反转：收起底板、W 回到原位
-  notesPanel.classList.remove('content-in');
-  const wEl = document.getElementById('letter-w');
-  if (wEl) {
-    gsap.to(wEl, {
-      x: 0, y: 0, duration: 0.5, ease: 'power3.inOut',
-      onComplete: function () {
-        notesPanel.classList.remove('active');
-        notesPanel.style.left = '0px';
-        notesPanel.style.top = '0px';
-        notesPanel.style.width = '0px';
-        notesPanel.style.height = '0px';
-        history.pushState(null, '', '/');
-        expandLogo(); // 回到展开态
-      },
-    });
-  }
-});
