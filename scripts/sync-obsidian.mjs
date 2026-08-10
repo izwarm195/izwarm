@@ -18,6 +18,7 @@ const ROOTS = ['CPP', 'English', 'Machine & Deep Learning', 'Signals/Signals & S
 const SKIP_DIRS = new Set(['.obsidian', '.trash', 'Templates', 'Daily', 'Journal', 'Canvas', 'Private', 'Attachments', '_QuickAdd']);
 const VAULT = process.argv[2] || process.env.OBSIDIAN_VAULT || 'D:\\搞学术\\大二暑\\Obsidian';
 const OUT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../src/content/notes');
+const MANIFEST = path.resolve(path.dirname(OUT), '../config/created-dates.json');
 // 子路径部署（GitHub Pages 的 /izwarm/）时，站内链接带上 base 前缀；本地为空
 const SITE_BASE = (process.env.ASTRO_BASE ?? '').replace(/\/$/, '');
 
@@ -127,6 +128,15 @@ async function main() {
   await fs.rm(OUT, { recursive: true, force: true });
   await fs.mkdir(OUT, { recursive: true });
 
+  // 读取创建时间清单（本地同步时刷新；CI 直接使用，保证无日期笔记有真实创建时间）
+  let createdDates = {};
+  try {
+    createdDates = JSON.parse(await fs.readFile(MANIFEST, 'utf8'));
+  } catch {
+    createdDates = {};
+  }
+  const manifestData = {};
+
   // 第一遍：解析全部候选笔记（先建立 slug 索引，供双链转换）
   const candidates = [];
   for (const root of ROOTS) {
@@ -140,22 +150,29 @@ async function main() {
         summary.errors.push(`${file.rel}: frontmatter 解析失败`);
         continue;
       }
+      const relPosix = file.rel.split(path.sep).join('/');
+      try {
+        const st = await fs.stat(file.full);
+        if (st.birthtime) manifestData[relPosix] = st.birthtime.toISOString().slice(0, 10);
+      } catch {
+        /* 忽略 stat 失败 */
+      }
       if (data.publish === false || data.status === 'draft') {
         summary.skipped++;
         continue;
       }
-
       const basename = path.basename(file.rel);
       const title = deriveTitle(basename, data);
       const category = file.rel.split(path.sep)[0];
       const vaultRelDir = path.dirname(file.rel);
       const dirBelow = vaultRelDir === category ? '' : vaultRelDir.slice(category.length + 1);
       const slug = deriveSlug(category, dirBelow, title);
-      const fmDate = parseDateStr(data.Date || data.Da);
+      const fmDate = parseDateStr(data.Date || data.Da || data.created || data.created_at);
       const nameDate = parseDateStr(basename);
       const date =
         nameDate ||
         fmDate ||
+        createdDates[relPosix] ||
         gitDate(VAULT, file.rel, true) ||
         (await fs.stat(file.full)).birthtime.toISOString().slice(0, 10);
       const updated = parseDateStr(data.updated_at) || gitDate(VAULT, file.rel, false) || date;
@@ -165,6 +182,12 @@ async function main() {
       ].filter(Boolean);
       candidates.push({ file, data, content, basename, title, category, dirBelow, slug, date, updated, tags });
     }
+  }
+
+  // 本地同步时刷新创建时间清单（CI 环境跳过，避免用检出时间覆盖）
+  if (!process.env.CI) {
+    await fs.mkdir(path.dirname(MANIFEST), { recursive: true });
+    await fs.writeFile(MANIFEST, JSON.stringify(manifestData, null, 2) + '\n', 'utf8');
   }
 
   // 已发布笔记索引：标题 / 文件名 → slug，未公开或不存在时保持纯文本

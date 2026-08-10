@@ -396,6 +396,21 @@
   SS-QNA / Text Book（随记直接挂在 Signals & Systems 下）。
 - **验证**：`npm run typecheck`、`npm run build` 通过；产物中全部子系列按钮已渲染。
 
+## 33. 创建时间清单、系列树原地展开、CI 内链前缀
+
+- **创建时间**：新增 `src/config/created-dates.json` 清单——本地运行
+  `npm run sync:notes` 时用文件创建时间（birthtime）刷新并随仓库提交；
+  CI 读取清单，无日期笔记（初始批量导入的 28 篇）不再堆到初始提交日 08-03。
+  日期推导链：文件名日期 → frontmatter（`created` / `Date` / `Da` / `created_at`）
+  → 清单 → git 首次提交 → 文件创建时间。
+- **系列树**：移除“整窗平移至悬停位置”的锚定逻辑，改为原地手风琴展开——
+  悬停/键盘聚焦激活当前分支并收起同级，鼠标移开后整体收起；窗口随内容
+  自然增减并保持居中，不再跳动。
+- **CI 内链前缀**：同步步骤补充 `ASTRO_BASE=/izwarm/`，生成内容中的站内链接
+  带上 base 前缀，修复部署站点文章内链（如 Signals & System 总目录）失效。
+- **验证**：`npm run typecheck`、`npm run build` 通过；本地归档日期分散、
+  总目录 17 个章节链接全部正确。
+
 ## 验证方式汇总
 
 - TypeScript 检查：`npm run typecheck`

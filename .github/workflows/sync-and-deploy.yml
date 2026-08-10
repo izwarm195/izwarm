@@ -44,6 +44,8 @@ jobs:
 
       - name: Sync notes from vault
         run: node scripts/sync-obsidian.mjs obsidian-vault
+        env:
+          ASTRO_BASE: /izwarm/ # 生成内容中的站内链接需带 base 前缀
 
       - name: Build site
         env:

@@ -224,6 +224,9 @@ npm run sync:notes          # 使用脚本内默认的本地库路径
 npm run sync:notes <path>   # 或指定 Obsidian 库路径
 ```
 
+本地同步会同时刷新 `src/config/created-dates.json`（无日期笔记的真实创建时间
+清单），请随改动一起提交；CI 会读取它，确保初始批量导入的笔记不堆在同一个日期。
+
 ## 变更记录
 
 见 [CHANGES.md](./CHANGES.md)。

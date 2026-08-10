@@ -212,14 +212,11 @@ body::-webkit-scrollbar {
   width: 100%;
 }
 .series-window {
-  position: relative;
   border: 1px solid var(--edge-line);
   background: var(--bg-obsidian-soft);
   padding: 8px;
   width: 100%;
   max-width: 540px;
-  will-change: transform;
-  transition: transform 0.45s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 .series-window > .series-node + .series-node {
   border-top: 1px solid var(--edge-line);

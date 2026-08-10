@@ -35,19 +35,8 @@ document.addEventListener('mouseout', (e) => {
   if ((e.target as HTMLElement).closest('.notes-rail')) closeMenu();
 });
 
-// ---------- 系列树：浮动手风琴窗口 ----------
+// ---------- 系列树：原地手风琴展开（整窗不移动，悬停/聚焦激活分支、收起同级） ----------
 const seriesWindow = document.getElementById('seriesWindow');
-let seriesAnchor: { winTop: number; node: HTMLElement; offset: number } | null = null;
-
-function nodeLayoutTop(node: HTMLElement, root: HTMLElement): number {
-  let el: HTMLElement | null = node;
-  let top = 0;
-  while (el && el !== root) {
-    top += el.offsetTop;
-    el = el.offsetParent as HTMLElement | null;
-  }
-  return top;
-}
 
 function setNodeActive(node: HTMLElement): void {
   const level = node.parentElement;
@@ -70,51 +59,19 @@ function deactivateAll(): void {
   });
 }
 
-/** 记录悬停节点当前视口位置，展开时保持其不动 */
-function anchorWindow(node: HTMLElement): void {
-  if (!seriesWindow) return;
-  seriesWindow.style.transform = '';
-  const winTop = seriesWindow.getBoundingClientRect().top;
-  seriesAnchor = { winTop, node, offset: node.getBoundingClientRect().top - winTop };
-}
-
-function applyAnchor(): void {
-  if (!seriesAnchor || !seriesWindow) return;
-  const { winTop, node, offset } = seriesAnchor;
-  const target = winTop + offset;
-  const dy = target - winTop - nodeLayoutTop(node, seriesWindow);
-  seriesWindow.style.transform = `translateY(${dy}px)`;
-}
-
-function resetSeriesWindow(): void {
-  seriesAnchor = null;
-  if (seriesWindow) {
-    seriesWindow.style.transform = '';
-    deactivateAll();
-  }
-}
-
 if (seriesWindow) {
   document.addEventListener('mouseover', (e) => {
     const node = (e.target as HTMLElement).closest<HTMLElement>('.series-node');
-    if (!node) return;
-    setNodeActive(node);
-    if (seriesAnchor?.node !== node) anchorWindow(node);
+    if (node) setNodeActive(node);
   });
   seriesWindow.addEventListener('focusin', (e) => {
     const node = (e.target as HTMLElement).closest<HTMLElement>('.series-node');
-    if (!node) return;
-    setNodeActive(node);
-    anchorWindow(node);
+    if (node) setNodeActive(node);
   });
-  seriesWindow.addEventListener('mouseleave', resetSeriesWindow);
+  seriesWindow.addEventListener('mouseleave', deactivateAll);
   seriesWindow.addEventListener('focusout', (e) => {
-    if (!seriesWindow.contains(e.relatedTarget as Node | null)) resetSeriesWindow();
+    if (!seriesWindow.contains(e.relatedTarget as Node | null)) deactivateAll();
   });
-  if ('ResizeObserver' in window) {
-    const ro = new ResizeObserver(() => requestAnimationFrame(applyAnchor));
-    ro.observe(seriesWindow);
-  }
 }
 
 // ---------- 大纲：点击平滑滚动（并避免默认锚点跳转回顶） ----------
