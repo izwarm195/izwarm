@@ -15,7 +15,7 @@ const tree = buildSeriesTree(notes);
   {tree.length === 0 ? (
     <p class="notes-empty">暂无系列。</p>
   ) : (
-    <div class="w-shape series-root">
+    <div class="w-shape series-window" id="seriesWindow">
       {tree.map((node) => <SeriesNode node={node} />)}
     </div>
   )}

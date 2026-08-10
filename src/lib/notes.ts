@@ -100,7 +100,15 @@ export function getArchiveData(notes: Note[]): ArchiveYear[] {
       year,
       months: [...months.entries()]
         .sort((a, b) => b[0].localeCompare(a[0]))
-        .map(([month, list]) => ({ month, notes: sortNotes(list) })),
+        .map(([month, list]) => ({
+          month,
+          // 归档：同一月内从新到旧（同日期按标题稳定排序）
+          notes: [...list].sort(
+            (a, b) =>
+              b.data.publishDate.valueOf() - a.data.publishDate.valueOf() ||
+              a.data.title.localeCompare(b.data.title, 'zh-Hans-CN')
+          ),
+        })),
     }));
 }
 

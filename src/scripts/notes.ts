@@ -35,39 +35,100 @@ document.addEventListener('mouseout', (e) => {
   if ((e.target as HTMLElement).closest('.notes-rail')) closeMenu();
 });
 
-// ---------- 系列树（事件委托，内容替换后依然生效） ----------
-const coarse = window.matchMedia('(pointer: coarse)').matches;
+// ---------- 系列树：浮动手风琴窗口 ----------
+const seriesWindow = document.getElementById('seriesWindow');
+let seriesAnchor: { winTop: number; node: HTMLElement; offset: number } | null = null;
 
-function syncSeriesAria(node: Element | null): void {
-  if (!(node instanceof HTMLElement)) return;
+function nodeLayoutTop(node: HTMLElement, root: HTMLElement): number {
+  let el: HTMLElement | null = node;
+  let top = 0;
+  while (el && el !== root) {
+    top += el.offsetTop;
+    el = el.offsetParent as HTMLElement | null;
+  }
+  return top;
+}
+
+function setNodeActive(node: HTMLElement): void {
+  const level = node.parentElement;
+  if (level) {
+    level.querySelectorAll(':scope > .series-node.active').forEach((sibling) => {
+      if (sibling !== node) sibling.classList.remove('active');
+    });
+  }
+  node.classList.add('active');
   const btn = node.querySelector<HTMLButtonElement>('.series-node-btn');
-  if (!btn) return;
-  const open = node.classList.contains('open') || node.matches(':hover') || node.matches(':focus-within');
-  btn.setAttribute('aria-expanded', String(open));
+  if (btn) btn.setAttribute('aria-expanded', 'true');
 }
 
-if (coarse) {
-  document.addEventListener('click', (e) => {
-    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('.series-node-btn');
-    const node = btn?.closest<HTMLElement>('.series-node');
-    if (!btn || !node) return;
-    node.classList.toggle('open');
-    syncSeriesAria(node);
+function deactivateAll(): void {
+  if (!seriesWindow) return;
+  seriesWindow.querySelectorAll('.series-node.active').forEach((node) => {
+    node.classList.remove('active');
+    const btn = node.querySelector<HTMLButtonElement>('.series-node-btn');
+    if (btn) btn.setAttribute('aria-expanded', 'false');
   });
-} else {
-  document.addEventListener('mouseover', (e) =>
-    syncSeriesAria((e.target as HTMLElement).closest('.series-node'))
-  );
-  document.addEventListener('mouseout', (e) =>
-    syncSeriesAria((e.target as HTMLElement).closest('.series-node'))
-  );
-  document.addEventListener('focusin', (e) =>
-    syncSeriesAria((e.target as HTMLElement).closest('.series-node'))
-  );
-  document.addEventListener('focusout', (e) =>
-    syncSeriesAria((e.target as HTMLElement).closest('.series-node'))
-  );
 }
+
+/** 记录悬停节点当前视口位置，展开时保持其不动 */
+function anchorWindow(node: HTMLElement): void {
+  if (!seriesWindow) return;
+  seriesWindow.style.transform = '';
+  const winTop = seriesWindow.getBoundingClientRect().top;
+  seriesAnchor = { winTop, node, offset: node.getBoundingClientRect().top - winTop };
+}
+
+function applyAnchor(): void {
+  if (!seriesAnchor || !seriesWindow) return;
+  const { winTop, node, offset } = seriesAnchor;
+  const target = winTop + offset;
+  const dy = target - winTop - nodeLayoutTop(node, seriesWindow);
+  seriesWindow.style.transform = `translateY(${dy}px)`;
+}
+
+function resetSeriesWindow(): void {
+  seriesAnchor = null;
+  if (seriesWindow) {
+    seriesWindow.style.transform = '';
+    deactivateAll();
+  }
+}
+
+if (seriesWindow) {
+  document.addEventListener('mouseover', (e) => {
+    const node = (e.target as HTMLElement).closest<HTMLElement>('.series-node');
+    if (!node) return;
+    setNodeActive(node);
+    if (seriesAnchor?.node !== node) anchorWindow(node);
+  });
+  seriesWindow.addEventListener('focusin', (e) => {
+    const node = (e.target as HTMLElement).closest<HTMLElement>('.series-node');
+    if (!node) return;
+    setNodeActive(node);
+    anchorWindow(node);
+  });
+  seriesWindow.addEventListener('mouseleave', resetSeriesWindow);
+  seriesWindow.addEventListener('focusout', (e) => {
+    if (!seriesWindow.contains(e.relatedTarget as Node | null)) resetSeriesWindow();
+  });
+  if ('ResizeObserver' in window) {
+    const ro = new ResizeObserver(() => requestAnimationFrame(applyAnchor));
+    ro.observe(seriesWindow);
+  }
+}
+
+// ---------- 大纲：点击平滑滚动（并避免默认锚点跳转回顶） ----------
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+document.addEventListener('click', (e) => {
+  const link = (e.target as HTMLElement).closest<HTMLAnchorElement>('.notes-toc a');
+  if (!link) return;
+  const id = link.getAttribute('href')?.slice(1) ?? '';
+  const target = document.getElementById(id);
+  if (!target) return;
+  e.preventDefault();
+  target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+});
 
 // ---------- 大纲滚动高亮 ----------
 let tocObserver: IntersectionObserver | null = null;

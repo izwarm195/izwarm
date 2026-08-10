@@ -37,6 +37,7 @@ jobs:
           repository: ${{ secrets.OBSIDIAN_REPO }}
           token: ${{ secrets.OBSIDIAN_TOKEN }}
           path: obsidian-vault
+          fetch-depth: 0 # 完整历史：同步脚本用 git 首次提交日期推导笔记创建时间
 
       - name: Install dependencies
         run: npm ci

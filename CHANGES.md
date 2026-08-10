@@ -371,6 +371,19 @@
 - 启用步骤（Secrets、Pages 配置、Obsidian 侧触发工作流）写入 README。
 - **验证**：本地默认构建（无 base）与 `ASTRO_BASE=/izwarm/` 构建均通过。
 
+## 31. 归档时间/排序、大纲跳转、系列树浮动手风琴
+
+- **归档日期**：CI 拉取 Obsidian 私有库时改为 `fetch-depth: 0`（完整历史）——
+  此前浅克隆导致 `git log` 拿不到首次提交日期，无日期笔记全部回退到构建日
+  （堆在 8-10）；修复后按 git 首次提交（创建时间代理）推导。
+- **归档顺序**：同一月内从新到旧（顶部最新）；同系列列表保持从旧到新。
+- **大纲跳转**：点击改用 JS 平滑滚动（`scrollIntoView({ behavior: 'smooth' })`），
+  修复"先跳转再回到顶部"，并尊重 `prefers-reduced-motion`。
+- **系列树**：改为浮动手风琴窗口——悬停/键盘聚焦激活当前分支并收起同级，
+  展开/收起带高度动画；悬停节点通过 `translateY` 锚定保持不动，
+  鼠标移开后整窗平滑回到中栏中央；移动端悬停/聚焦同样生效。
+- **验证**：`npm run typecheck`、`npm run build` 通过（87 页）。
+
 ## 验证方式汇总
 
 - TypeScript 检查：`npm run typecheck`

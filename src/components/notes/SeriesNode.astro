@@ -20,10 +20,12 @@ const hasNotes = node.notes.length > 0;
   )}
   {hasChildren ? (
     <div class="series-node-children">
-      {node.children.map((child) => <SeriesNode node={child} />)}
-      {hasNotes && node.notes.map((note) => (
-        <a class="series-note" href={noteUrl(note)}>{note.data.title}</a>
-      ))}
+      <div class="series-children-inner">
+        {node.children.map((child) => <SeriesNode node={child} />)}
+        {hasNotes && node.notes.map((note) => (
+          <a class="series-note" href={noteUrl(note)}>{note.data.title}</a>
+        ))}
+      </div>
     </div>
   ) : (
     hasNotes &&
