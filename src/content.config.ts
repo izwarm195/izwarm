@@ -1,6 +1,7 @@
 /**
- * 内容集合配置：为后续 Notes / Projects / Works 页面预留的
- * 最小集合定义（当前目录为空，仅消除 Astro 自动生成集合的弃用警告）。
+ * 内容集合配置。
+ * notes 的 schema 与 docs/content-frontmatter.md 的公开 Frontmatter 规范一致，
+ * 由同步脚本从 Obsidian 白名单目录生成。
  */
 import { defineCollection, z } from 'astro:content';
 
@@ -8,7 +9,13 @@ const notes = defineCollection({
   type: 'content',
   schema: z.object({
     title: z.string(),
-    date: z.coerce.date().optional(),
+    description: z.string().optional(),
+    date: z.coerce.date(),
+    updated: z.coerce.date().optional(),
+    category: z.string(),
+    section: z.string().optional(),
+    tags: z.array(z.string()).default([]),
+    status: z.enum(['published', 'archived', 'draft']).default('published'),
   }),
 });
 

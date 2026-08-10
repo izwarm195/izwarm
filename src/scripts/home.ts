@@ -146,6 +146,11 @@ function applyPanel(
 
 // 直接访问 /notes/：初始化底板和 W 的静态位置
 function panelOpenInit(): void {
+  
+   // 隐藏大 Logo，防止刷新时短暂可见
+  const logoFull = document.getElementById('logoFull');
+  if (logoFull) gsap.set(logoFull, { opacity: 0 });
+ 
   if (!notesPanel) return;
   panelOpen = true;
   const { vw, vh, margin } = getViewMetrics();
@@ -158,11 +163,14 @@ function panelOpenInit(): void {
   const wEl = document.getElementById('letter-w') as HTMLElement | null;
   if (wEl) {
     const wRect = wEl.getBoundingClientRect();
-    const W_END_X = vw / 2 - margin - wRect.width;
-    const W_END_Y = vh / 2 - margin - wRect.height;
+    const pad = 16;
+    // 底板右下缘 = vw/vh - margin，W 右下缘 = 底板右下缘 - pad
+    const W_END_X = vw / 2 - margin - pad - wRect.width / 2;
+    const W_END_Y = vh / 2 - margin - pad - wRect.height / 2;
     gsap.set(wEl, { x: W_END_X, y: W_END_Y, opacity: 1 });
     wEl.style.pointerEvents = 'auto';
   }
+
 }
 
 // 页面加载时检测
@@ -365,7 +373,10 @@ function slideWToNotes(): void {
   // 其余字母、标签、iz 淡出
   OTHER_KEYS.forEach(function (key) {
     const el = document.getElementById('letter-' + key);
-    if (el) gsap.to(el, { opacity: 0, duration: 0.35, ease: 'power2.in', filter: 'blur(4px)' });
+    if (el) {
+      el.style.pointerEvents = 'none'; // 隐藏后不可点击，避免误触跳转
+      gsap.to(el, { opacity: 0, duration: 0.35, ease: 'power2.in', filter: 'blur(4px)' });
+    }
   });
   LETTER_KEYS.forEach(function (key) {
     const label = document.getElementById('label-' + key);
@@ -431,13 +442,10 @@ function slideWToHome(): void {
   const pos = data.positions;
   const startWx = pos.w.x;
   const startWy = pos.w.y;
-  // 当前文档是否为 /notes/ 独立页（刷新 / 直接访问场景，返回后需真正跳回首页）
-  const isNotesDocument = notesPanel.classList.contains('static-open');
   isAnimating = true;
 
   if (reduceMotion) {
-    restoreHomeExpanded(wEl, pos);
-    if (isNotesDocument) window.location.replace('/');
+    restoreHomeExpanded(pos);
     return;
   }
 
@@ -467,7 +475,8 @@ function slideWToHome(): void {
 
   applyPanel(wEl, notesPanel, cx, cy, p, wW, wH, pad);
 
-  if (!isNotesDocument) history.pushState(null, '', '/');
+  // 原地返回：URL 改回首页；刷新时浏览器会按 / 重新请求，加载真正的首页
+  history.pushState(null, '', '/');
 
   const tl = gsap.timeline({
     onUpdate: function () {
@@ -512,23 +521,22 @@ function slideWToHome(): void {
   // 收尾：恢复主页展开态；若是 /notes/ 独立页则真正跳回首页
   tl.add(function () {
     wave.kill();
-    restoreHomeExpanded(wEl, pos);
-    if (isNotesDocument) window.location.replace('/');
+    restoreHomeExpanded(pos);
   });
 }
 
 // 恢复到主页「展开」状态：字母在展开位、标签显示、大 Logo 隐藏、expanded 状态同步
-function restoreHomeExpanded(wEl: HTMLElement, pos: PositionMap): void {
+function restoreHomeExpanded(pos: PositionMap): void {
   landing?.classList.add('expanded');
   landing?.classList.remove('panel-open');
   LETTER_KEYS.forEach(function (key) {
     const el = document.getElementById('letter-' + key);
     if (!el) return;
+    el.style.pointerEvents = ''; // 恢复点击（由 .landing.expanded 规则控制）
     gsap.set(el, { x: pos[key].x, y: pos[key].y, opacity: 1, filter: 'blur(0px)' });
   });
   gsap.set('#letter-iz', { opacity: 1 });
   gsap.set('#logoFull', { opacity: 0 });
-  wEl.style.pointerEvents = '';
   LETTER_KEYS.forEach(function (key) {
     const letter = document.getElementById('letter-' + key);
     const label = document.getElementById('label-' + key);

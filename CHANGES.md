@@ -222,6 +222,58 @@
 - **验证**：浏览器检查——返回时 a/r/m 在 W 第二段中后段才展开；
   前进与返回终态下 W 的右下角与底板右下角重合，底板关于屏幕中心对称。
 
+## 21. 修复 /notes/ 刷新闪现与返回闪跳
+
+- **修改**（`src/scripts/home.ts`、`src/styles/home.css`）：
+  - 删除 `.landing.panel-open #letter-w` 的可见规则（改为保持隐藏），
+    W 由 `panelOpenInit()` 在右下角位置再显示，消除刷新时 W 在屏幕中心闪现；
+  - 返回时不再 `location.replace('/')` 硬跳转（原实现会导致“已恢复展开态 →
+    闪回初始态 → 再展开”的闪跳）；改为原地播放返回动画并 `history.pushState`
+    把 URL 改为 `/`。刷新时浏览器会按 `/` 重新请求，服务器返回真正的首页，
+    URL 与内容保持一致，行为与普通网页一致。
+- **原因**：按反馈，/notes/ 首次刷新时 W 在中心闪一下；
+  刷新后按 W 返回会出现“展开 → 闪回初始 → 再展开”的闪跳。
+- **验证**：浏览器检查——/notes/ 刷新无 W 中心闪现；按 W 返回动画结束后
+  停留在展开态且不再闪跳；此时刷新 `/` 显示正常首页。
+
+## 22. 确定公开内容 Frontmatter 规范
+
+- **新增** `docs/content-frontmatter.md`：发布白名单（CPP / English /
+  Machine & Deep Learning / Signals 内 Markdown 默认公开）、单篇退出
+  （`publish: false` / `status: draft`）、PDF 默认不公开、网站侧规范化字段
+  与推导规则、真实示例。
+- **修改** `src/content.config.ts`：notes 集合 schema 更新为规范字段
+  （title / slug / description / date / updated / category / section / tags / status）。
+- **说明**：当前未接入同步脚本；后续实现 `scripts/sync-obsidian.mjs`
+  并接入 GitHub Actions 后，由脚本生成符合本规范的公开内容。
+
+## 23. 内容同步脚本 + Notes 列表渲染
+
+- **新增** `scripts/sync-obsidian.mjs`（`npm run sync:notes`）：
+  - 遍历白名单目录（CPP / English / Machine & Deep Learning /
+    Signals/Signals & Systems），按 `docs/content-frontmatter.md` 规范生成
+    67 篇公开笔记到 `src/content/notes/`；
+  - 处理：Dataview 块剥离、双链转纯文本、Callout 转标注引用、`==高亮==` 转加粗；
+    title/date/slug/category/section/tags 自动推导；`--selftest` 内置自检。
+- **修改** `src/pages/index.astro`、`src/pages/notes/index.astro`、
+  `src/components/home/Landing.astro`：Notes 底板从内容集合渲染真实卡片
+  （日期 / 标题 / 摘要 / 分类），按日期倒序，空集合显示空状态；
+  面板内容区支持纵向滚动。
+- **修改** `src/content.config.ts`：`slug` 从 schema 移除——它是 Astro
+  内容集合的保留字段，会从校验数据中剥离；改为由 Astro 消费为
+  `entry.slug`（frontmatter 仍写入 `slug`，页面用 `entry.slug` 生成链接）。
+- **说明**：文章详情页与 `/notes/<slug>/` 路由、双链转站内链接、
+  PDF/图片附件同步尚未实现。
+
+## 24. 修复：Notes 打开后隐形字母仍可点击跳转
+
+- **修改**（`src/scripts/home.ts`）：`slideWToNotes` 淡出 a/r/m 时同步
+  `pointer-events: none`；`restoreHomeExpanded` 恢复展开态时清除内联
+  pointer-events（交还 CSS 的 `.landing.expanded #letter-*` 控制）。
+- **原因**：主页展开态下打开 Notes 底板时，a/r/m 仅被淡出但保持可点击，
+  点击原字母位置会误触跳转（projects / works / about）。
+- **验证**：Notes 打开后点击 a/r/m 原位置不再跳转；W 返回后字母恢复可点击。
+
 ## 验证方式汇总
 
 - TypeScript 检查：`npm run typecheck`

@@ -1,8 +1,13 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Landing from '../components/home/Landing.astro';
+import { getCollection } from 'astro:content';
+
+const notes = (await getCollection('notes'))
+  .filter((n) => n.data.status === 'published')
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
 <BaseLayout>
-  <Landing />
+  <Landing notes={notes} />
 </BaseLayout>

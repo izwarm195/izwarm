@@ -124,6 +124,16 @@ npm run preview
 `src/content/{notes,projects,works}`、`public/favicon`、`public/media`。
 后续可在 `src/pages` 下新增 Notes / Projects / Works / About 页面。
 
+Obsidian 私有库 → 网站的内容发布规则（白名单目录、公开 Frontmatter、
+slug 与字段推导）见 [docs/content-frontmatter.md](./docs/content-frontmatter.md)。
+
+同步公开笔记到 `src/content/notes/`：
+
+```bash
+npm run sync:notes          # 使用脚本内默认的本地库路径
+npm run sync:notes <path>   # 或指定 Obsidian 库路径
+```
+
 ## 变更记录
 
 见 [CHANGES.md](./CHANGES.md)。

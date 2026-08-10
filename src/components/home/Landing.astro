@@ -1,13 +1,16 @@
 ---
 import { media } from '../../config/media';
 import '../../styles/home.css';
+import type { CollectionEntry } from 'astro:content';
 
 interface Props {
   /** 直接访问 /notes/ 时，初始即打开 Notes 底板（不播放入场动画） */
   initialPanel?: boolean;
+  /** 公开笔记列表（由页面从 content collection 传入） */
+  notes?: CollectionEntry<'notes'>[];
 }
 
-const { initialPanel = false } = Astro.props;
+const { initialPanel = false, notes = [] } = Astro.props;
 ---
 
 <div class:list={['landing', { 'panel-open': initialPanel }]} id="landing">
@@ -81,11 +84,25 @@ const { initialPanel = false } = Astro.props;
       <h2 class="notes-panel-title">Notes</h2>
       <p class="notes-panel-desc">碎片、想法与记录。</p>
       <div class="notes-panel-grid">
-        <article class="notes-card">
-          <time class="notes-card-date">即将到来</time>
-          <h3 class="notes-card-title">内容待填充</h3>
-          <p class="notes-card-excerpt">Notes 页面骨架已就位，后续在此展示文章列表。</p>
-        </article>
+        {notes.length === 0 ? (
+          <article class="notes-card">
+            <time class="notes-card-date">—</time>
+            <h3 class="notes-card-title">暂无公开笔记</h3>
+            <p class="notes-card-excerpt">内容准备中。</p>
+          </article>
+        ) : (
+          notes.map((note) => (
+            <article class="notes-card">
+              <time class="notes-card-date">{note.data.date.toISOString().slice(0, 10)}</time>
+              <h3 class="notes-card-title">{note.data.title}</h3>
+              <p class="notes-card-excerpt">{note.data.description}</p>
+              <span class="notes-card-category">
+                {note.data.category}
+                {note.data.section ? ` / ${note.data.section}` : ''}
+              </span>
+            </article>
+          ))
+        )}
       </div>
     </div>
   </div>

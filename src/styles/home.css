@@ -167,6 +167,12 @@
   pointer-events: none;
 }
 
+/* 直接访问 /notes/ 时，大 Logo 也须隐藏 */
+.landing.panel-open .logo-full {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .logo-letter.center {
   cursor: default;
   pointer-events: none;
@@ -279,6 +285,7 @@
   align-content: start;
   opacity: 0;
   transition: opacity 0.5s ease;
+  overflow-y: auto;
 }
 
 .notes-panel.content-in .notes-panel-inner {
@@ -313,6 +320,15 @@
   color: rgba(255, 255, 255, 0.55);
   line-height: 1.6;
   margin: 0;
+}
+
+.notes-card-category {
+  display: block;
+  margin-top: 12px;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
 }
 
 .notes-panel-title {
@@ -354,9 +370,9 @@
   pointer-events: none;
 }
 
-/* 直接访问 /notes/ 时：W 直接处于右下角最终位置，可点击返回 */
+/* 直接访问 /notes/ 时：W 保持隐藏，由 panelOpenInit() 在右下角位置再显示，
+   避免 W 先按初始位置（屏幕中心）闪现 */
 .landing.panel-open #letter-w {
-  opacity: 1;
-  pointer-events: auto;
-  /* 最终位置由 home.ts 中 panelOpenInit() 设置 */
+  opacity: 0;
+  pointer-events: none;
 }

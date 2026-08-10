@@ -7,13 +7,15 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "sync:notes": "node scripts/sync-obsidian.mjs"
   },
   "dependencies": {
     "astro": "^5.0.0",
     "gsap": "3.12.5"
   },
   "devDependencies": {
+    "gray-matter": "^4.0.3",
     "typescript": "^5.8.0"
   }
 }
