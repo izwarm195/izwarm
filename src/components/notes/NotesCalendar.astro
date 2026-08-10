@@ -1,5 +1,5 @@
 ---
-import { getCalendarData, getYears } from '../../lib/notes';
+import { getCalendarData, getYears, url } from '../../lib/notes';
 import type { Note } from '../../lib/notes';
 
 interface Props {
@@ -37,7 +37,7 @@ const base = Astro.url.pathname;
         <a
           class="notes-cal-day"
           data-count={Math.min(day.count, 4)}
-          href={`/notes/archive/#${day.date}`}
+          href={`${url('/notes/archive/')}#${day.date}`}
           title={`${day.date} · ${day.count} 篇`}
           aria-label={`${day.date}，${day.count} 篇文章`}
         ></a>

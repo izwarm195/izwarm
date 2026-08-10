@@ -8,11 +8,13 @@
  * 只需修改本文件，页面与脚本无需改动。
  */
 
-export const MEDIA_BASE = '/media';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+export const MEDIA_BASE = base + '/media';
 
 export const media = {
-  avatar: '/avatar.svg',
-  profile: '/media/profile.png',
+  avatar: base + '/avatar.svg',
+  profile: `${MEDIA_BASE}/profile.png`,
   logo: `${MEDIA_BASE}/logo.png`,
   logoIz: `${MEDIA_BASE}/iz.png`,
   logoW: `${MEDIA_BASE}/w.png`,

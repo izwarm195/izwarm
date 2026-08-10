@@ -11,7 +11,13 @@ export interface TocItem {
   text: string;
 }
 
-export const noteUrl = (note: Note): string => `/notes/${note.slug}/`;
+/** 站点 base（子路径部署时由 ASTRO_BASE 提供，如 /izwarm/；本地为空） */
+export const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+/** 为站内绝对路径补上 base 前缀 */
+export const url = (path: string): string => baseUrl + (path.startsWith('/') ? path : '/' + path);
+
+export const noteUrl = (note: Note): string => url(`/notes/${note.slug}/`);
 
 /** 获取已发布文章（draft 默认排除；开发环境可用 includeDraft 查看并自行标记） */
 export async function getPublishedNotes(includeDraft = false): Promise<Note[]> {

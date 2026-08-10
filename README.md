@@ -100,6 +100,50 @@ npm run preview
 执行 `npm run build` 后，将 `dist/` 部署到任意静态托管服务
 （Netlify、Vercel、Cloudflare Pages、Nginx 等）即可。
 站点地址如需调整，修改 `astro.config.mjs` 中的 `site` 字段。
+部署到子路径（如 GitHub Pages 的 `/izwarm/`）时设置环境变量
+`ASTRO_BASE=/izwarm/` 再构建，站内链接与媒体路径会自动带上前缀；
+本地开发无需设置。
+
+### 自动发布（GitHub Actions）
+
+仓库已内置 `.github/workflows/sync-and-deploy.yml`：
+Obsidian 私有仓库 push（`repository_dispatch`）、每 3 小时定时、
+手动触发、网站 `main` push 都会触发：拉取私有 Obsidian 库 →
+`npm ci` → `node scripts/sync-obsidian.mjs <库路径>` → `npm run build`
+（`ASTRO_BASE=/izwarm/`）→ 部署到 GitHub Pages。
+
+启用步骤：
+
+1. 仓库 Settings → Pages → Source 选择 **GitHub Actions**；
+2. Settings → Secrets and variables → Actions 添加：
+   - `OBSIDIAN_REPO`：私有 Obsidian 仓库，如 `izwarm195/obsidian`
+   - `OBSIDIAN_TOKEN`：Personal Access Token（`repo` 权限，
+     可读取私有库；如需 Obsidian 侧触发也用同一 token）
+3. 在 Obsidian 私有仓库添加 `.github/workflows/notify-website.yml`
+   （内容见下），并配置 `WEBSITE_TOKEN` secret（可用同一个 PAT）：
+
+   ```yaml
+   name: Notify website
+   on:
+     push:
+       branches: [main]
+   jobs:
+     notify:
+       runs-on: ubuntu-latest
+       steps:
+         - uses: actions/github-script@v7
+           with:
+             github-token: ${{ secrets.WEBSITE_TOKEN }}
+             script: |
+               await github.rest.repos.createDispatchEvent({
+                 owner: 'izwarm195',
+                 repo: 'izwarm',
+                 event_type: 'obsidian-update',
+               })
+   ```
+
+配置完成前首次运行会因缺少 Secret 失败，属预期；配置后手动
+`workflow_dispatch` 跑一次验证即可。
 
 ## 媒体资源说明
 

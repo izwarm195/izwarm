@@ -1,5 +1,5 @@
 ---
-import { formatDate, getArchiveData, noteUrl } from '../../lib/notes';
+import { formatDate, getArchiveData, noteUrl, url } from '../../lib/notes';
 import type { Note } from '../../lib/notes';
 
 interface Props {
@@ -46,7 +46,7 @@ function groupByDate(list: Note[]): { date: string; notes: Note[] }[] {
                       <span>{note.data.series.join(' / ')}</span>
                     )}
                     {note.data.tags.map((tag) => (
-                      <a href={`/notes/tags/${encodeURIComponent(tag)}/`}>#{tag}</a>
+                      <a href={url(`/notes/tags/${encodeURIComponent(tag)}/`)}>#{tag}</a>
                     ))}
                   </div>
                 </div>

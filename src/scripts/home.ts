@@ -27,6 +27,7 @@ type PanelState = { wx: number; wy: number; l: number; t: number; r: number; b: 
 
 const RAIL_GAP = 20; // 与 CSS --rail-gap 一致：W 距底板右/上边缘的间距
 const PANEL_RING = 10; // 初始小底板比 W 大出的一圈
+const siteBase = import.meta.env.BASE_URL.replace(/\/$/, ''); // 子路径部署（ASTRO_BASE）时前缀
 
 function setRailVars(wW: number, wH: number): void {
   const shell = document.querySelector<HTMLElement>('.notes-shell');
@@ -121,7 +122,7 @@ function getViewMetrics(): { vw: number; vh: number; cx: number; cy: number; mar
 }
 
 function navigateTo(target: string): void {
-  window.location.href = '/' + target + '/';
+  window.location.href = siteBase + '/' + target + '/';
 }
 
 function collapseLetters(dur: number): void {
@@ -410,7 +411,7 @@ function slideWToNotes(): void {
   tl.to(p, { wx: endWx, l: margin, r: vw - margin, duration: 0.7, ease: 'power3.inOut' });
   // 底板铺满后原位打开 Notes 工作台（URL 同步为 /notes/，内部跳转无缝进行）
   tl.add(function () {
-    history.pushState({ page: 'notes' }, '', '/notes/');
+    history.pushState({ page: 'notes' }, '', siteBase + '/notes/');
     isAnimating = false;
   });
 }
@@ -422,7 +423,7 @@ function slideWToHome(): void {
   if (!wEl || !notesPanel) return;
   const data = computeLetterPositions();
   if (!data) {
-    window.location.href = '/';
+    window.location.href = siteBase + '/';
     return;
   }
   const pos = data.positions;
@@ -458,7 +459,7 @@ function slideWToHome(): void {
 
   applyPanel(wEl, notesPanel, p);
 
-  history.pushState(null, '', '/');
+  history.pushState(null, '', siteBase + '/');
 
   const tl = gsap.timeline({
     onUpdate: function () {

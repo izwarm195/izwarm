@@ -1,4 +1,6 @@
 ---
+import { url } from '../../lib/notes';
+
 interface Props {
   active: 'home' | 'article' | 'archive' | 'tags';
 }
@@ -6,9 +8,9 @@ interface Props {
 const { active } = Astro.props;
 
 const items = [
-  { label: 'Home', href: '/notes/', key: 'home' },
-  { label: 'Tags', href: '/notes/tags/', key: 'tags' },
-  { label: 'Archive', href: '/notes/archive/', key: 'archive' },
+  { label: 'Home', href: url('/notes/'), key: 'home' },
+  { label: 'Tags', href: url('/notes/tags/'), key: 'tags' },
+  { label: 'Archive', href: url('/notes/archive/'), key: 'archive' },
 ];
 ---
 

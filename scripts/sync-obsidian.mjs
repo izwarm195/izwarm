@@ -18,6 +18,8 @@ const ROOTS = ['CPP', 'English', 'Machine & Deep Learning', 'Signals/Signals & S
 const SKIP_DIRS = new Set(['.obsidian', '.trash', 'Templates', 'Daily', 'Journal', 'Canvas', 'Private', 'Attachments', '_QuickAdd']);
 const VAULT = process.argv[2] || process.env.OBSIDIAN_VAULT || 'D:\\搞学术\\大二暑\\Obsidian';
 const OUT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../src/content/notes');
+// 子路径部署（GitHub Pages 的 /izwarm/）时，站内链接带上 base 前缀；本地为空
+const SITE_BASE = (process.env.ASTRO_BASE ?? '').replace(/\/$/, '');
 
 // ---------- 纯函数（可单测） ----------
 const PREFIX_DATE = /^(?:CS|CE|WD|WS)\s+(\d{2})-(\d{2})-(\d{2})[\s:：]*(.*)$/;
@@ -108,7 +110,7 @@ function convertBody(body, slugIndex) {
 }
 
 function noteUrlOf(slug) {
-  return '/notes/' + slug + '/';
+  return SITE_BASE + '/notes/' + slug + '/';
 }
 
 function toYaml(o) {

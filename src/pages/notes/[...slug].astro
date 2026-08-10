@@ -4,7 +4,7 @@ import Landing from '../../components/home/Landing.astro';
 import ArticleSidebar from '../../components/notes/ArticleSidebar.astro';
 import 'katex/dist/katex.min.css';
 import { getCollection } from 'astro:content';
-import { countWords, formatDate, getPublishedNotes, getSiblingNotes } from '../../lib/notes';
+import { countWords, formatDate, getPublishedNotes, getSiblingNotes, url } from '../../lib/notes';
 import type { Note } from '../../lib/notes';
 
 export async function getStaticPaths() {
@@ -28,7 +28,7 @@ const words = countWords(note.body ?? '');
       <ArticleSidebar note={note} siblings={siblings} toc={toc} />
     </Fragment>
     <article slot="notes-main" class="article">
-      {note.data.cover && <img class="article-cover" src={note.data.cover} alt="" />}
+      {note.data.cover && <img class="article-cover" src={url(note.data.cover)} alt="" />}
       <h1>{note.data.title}</h1>
       <div class="article-meta">
         <time datetime={formatDate(note.data.publishDate)}>发布于 {formatDate(note.data.publishDate)}</time>
@@ -37,7 +37,7 @@ const words = countWords(note.body ?? '');
         )}
         {note.data.series.length > 0 && <span>{note.data.series.join(' / ')}</span>}
         {note.data.tags.map((tag) => (
-          <a href={`/notes/tags/${encodeURIComponent(tag)}/`}>#{tag}</a>
+          <a href={url(`/notes/tags/${encodeURIComponent(tag)}/`)}>#{tag}</a>
         ))}
         <span>{words} 字数</span>
       </div>

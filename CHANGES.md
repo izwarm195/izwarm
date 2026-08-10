@@ -359,6 +359,18 @@
 - **验证**：`npm run typecheck`、`npm run build` 通过（87 页）；
   产物中 KaTeX 样式与站内链接均已确认。
 
+## 30. 子路径部署适配（base 感知）+ GitHub Actions 自动发布
+
+- `astro.config.mjs` 支持 `ASTRO_BASE` 环境变量；`src/lib/notes.ts` 新增
+  `url()` 助手、`src/config/media.ts` 与各组件/脚本的站内链接、媒体路径、
+  favicon、无缝导航匹配、`home.ts` 的 pushState/跳转均改为 base 感知；
+  同步脚本读取 `ASTRO_BASE` 为生成内容中的站内链接加前缀。
+- 新增 `.github/workflows/sync-and-deploy.yml`：Obsidian 私有库
+  push（`repository_dispatch`）/ 定时（3 小时）/ 手动 / `main` push →
+  拉取私有库 → 同步 → 构建（`ASTRO_BASE=/izwarm/`）→ GitHub Pages 部署。
+- 启用步骤（Secrets、Pages 配置、Obsidian 侧触发工作流）写入 README。
+- **验证**：本地默认构建（无 base）与 `ASTRO_BASE=/izwarm/` 构建均通过。
+
 ## 验证方式汇总
 
 - TypeScript 检查：`npm run typecheck`

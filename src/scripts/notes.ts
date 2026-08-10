@@ -7,6 +7,7 @@
  */
 
 const shellEl = document.getElementById('notesShell');
+const notesBase = import.meta.env.BASE_URL.replace(/\/$/, '') + '/notes';
 
 // ---------- 原 W：悬停展开右栏导航（进入菜单有 260ms 缓冲，避免移入时收起） ----------
 const letterW = document.getElementById('letter-w');
@@ -130,14 +131,14 @@ if (shellEl && 'fetch' in window) {
     const link = (e.target as HTMLElement).closest<HTMLAnchorElement>('a');
     if (!link) return;
     const href = link.getAttribute('href') ?? '';
-    if (!(href === '/notes' || href.startsWith('/notes/'))) return;
+    if (!(href === notesBase || href.startsWith(notesBase + '/'))) return;
     if (link.target === '_blank' || link.hasAttribute('download')) return;
     e.preventDefault();
     void loadState(href, true);
   });
   window.addEventListener('popstate', () => {
     const path = location.pathname;
-    if (path === '/notes/' || path === '/notes' || path.startsWith('/notes/')) {
+    if (path === notesBase || path === notesBase + '/' || path.startsWith(notesBase + '/')) {
       void loadState(location.pathname + location.search, false);
     } else {
       // 离开 Notes 回首页：整页加载，保证首页状态干净
