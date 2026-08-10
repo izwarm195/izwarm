@@ -2,6 +2,7 @@
 
 :root {
   --panel-margin: clamp(20px, 2.5vw, 44px);
+  --rail-gap: 20px; /* W 与底板右/上边缘的间距，同时是 BGM 的上/右内边距 */
 }
 
 .landing {
@@ -199,8 +200,9 @@
 /* 声音控制 */
 .sound-toggle {
   position: absolute;
-  top: 30px;
-  right: calc(var(--panel-margin) + 12px); /* 向左下微调，仍贴近右栏 */
+  /* 上边距 = 右边距 = rail-gap，右边缘与 W 右边缘对齐 */
+  top: calc(var(--panel-margin) + var(--rail-gap));
+  right: calc(var(--panel-margin) + var(--rail-gap));
   bottom: auto;
   width: 34px;
   height: 34px;

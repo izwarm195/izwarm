@@ -23,7 +23,18 @@ declare global {
 
 type SeamlessAudio = HTMLAudioElement & { _queued?: boolean };
 type PositionMap = Record<string, { x: number; y: number; label: string }>;
-type PanelState = { wx: number; wy: number; l: number; t: number };
+type PanelState = { wx: number; wy: number; l: number; t: number; r: number; b: number };
+
+const RAIL_GAP = 20; // 与 CSS --rail-gap 一致：W 距底板右/上边缘的间距
+const PANEL_RING = 10; // 初始小底板比 W 大出的一圈
+
+function setRailVars(wW: number, wH: number): void {
+  const shell = document.querySelector<HTMLElement>('.notes-shell');
+  if (shell) {
+    shell.style.setProperty('--w-size', wW + 'px');
+    shell.style.setProperty('--w-size-h', wH + 'px');
+  }
+}
 
 const LETTER_KEYS = ['w', 'a', 'r', 'm'] as const;
 const OTHER_KEYS = ['a', 'r', 'm'] as const;
@@ -129,24 +140,12 @@ function collapseLetters(dur: number): void {
   gsap.to('#letter-iz', { opacity: 0, duration: dur * 0.7, ease: 'power2.in' });
 }
 
-function applyPanel(
-  wEl: HTMLElement,
-  notesPanel: HTMLElement,
-  cx: number,
-  cy: number,
-  p: PanelState,
-  wW: number,
-  wH: number,
-  pad: number
-): void {
+function applyPanel(wEl: HTMLElement, notesPanel: HTMLElement, p: PanelState): void {
   gsap.set(wEl, { x: p.wx, y: p.wy });
-  // 底板右下边缘 = W 右下边缘 + pad（保持 W 被 pad 均匀包裹）
-  const r = cx + p.wx + wW / 2 + pad;
-  const b = cy + p.wy + wH / 2 + pad;
   notesPanel.style.left = p.l + 'px';
   notesPanel.style.top = p.t + 'px';
-  notesPanel.style.width = Math.max(0, r - p.l) + 'px';
-  notesPanel.style.height = Math.max(0, b - p.t) + 'px';
+  notesPanel.style.width = Math.max(0, p.r - p.l) + 'px';
+  notesPanel.style.height = Math.max(0, p.b - p.t) + 'px';
 }
 
 
@@ -187,13 +186,15 @@ function panelOpenInit(): void {
   if (!notesPanel) return;
   const wEl = document.getElementById('letter-w') as HTMLElement | null;
   if (!wEl) return;
-  const { vw, vh, margin } = getViewMetrics();
+  const { vw, margin } = getViewMetrics();
   const wRect = wEl.getBoundingClientRect();
-  // pad = W 半宽：W 右/下边缘贴住底板角落，同时与 82px 右栏（= W 宽度）居中
-  const pad = wRect.width / 2;
+  const wW = wRect.width;
+  const wH = wRect.height;
+  setRailVars(wW, wH);
+  // W 在右栏内水平 + 垂直居中，右边缘距底板右缘 rail-gap
   gsap.set(wEl, {
-    x: vw / 2 - margin - pad - wRect.width / 2,
-    y: vh / 2 - margin - pad - wRect.height / 2,
+    x: vw / 2 - margin - RAIL_GAP - wW / 2,
+    y: 0,
     opacity: 1,
   });
   wEl.style.pointerEvents = 'auto';
@@ -378,35 +379,35 @@ function slideWToNotes(): void {
   const wRect = wEl.getBoundingClientRect();
   const wW = wRect.width;
   const wH = wRect.height;
-  // pad = W 半宽：W 右/下边缘贴住底板角落，同时与 82px 右栏（= W 宽度）居中
-  const pad = wW / 2;
+  setRailVars(wW, wH);
 
-  // 终点：底板右下缘 = vw - margin / vh - margin，等价于 W 右下缘 = vw - margin - pad
-  //   即 W 中心 x = vw - margin - pad - wW/2 → wx = vw/2 - margin - pad - wW/2
-  const W_END_X = vw / 2 - margin - pad - wW / 2;
-  const W_END_Y = vh / 2 - margin - pad - wH / 2;
+  // 终点：W 在右栏内水平 + 垂直居中，右边缘距底板右缘 rail-gap
+  const endWx = vw / 2 - margin - RAIL_GAP - wW / 2;
+  const endWy = 0;
 
+  // 起点：小底板 = W 外扩 PANEL_RING 一圈
   const p: PanelState = {
     wx: startWx,
     wy: startWy,
-    l: cx + startWx - wW / 2 - pad,
-    t: cy + startWy - wH / 2 - pad,
+    l: cx + startWx - wW / 2 - PANEL_RING,
+    t: cy + startWy - wH / 2 - PANEL_RING,
+    r: cx + startWx + wW / 2 + PANEL_RING,
+    b: cy + startWy + wH / 2 + PANEL_RING,
   };
 
-  applyPanel(wEl, notesPanel, cx, cy, p, wW, wH, pad);
+  applyPanel(wEl, notesPanel, p);
   notesPanel.classList.add('active');
 
   const tl = gsap.timeline({
     onUpdate: function () {
-      applyPanel(wEl, notesPanel, cx, cy, p, wW, wH, pad);
+      applyPanel(wEl, notesPanel, p);
     },
   });
 
-
-   // 第一段：竖直下坠到底部（wx、l 不变，只改 wy 和 t）
-  tl.to(p, { wy: W_END_Y, t: margin, duration: 0.5, ease: 'power2.inOut' });
-  // 第二段：水平右移到右下角（wy 不变，只改 wx 和 l）
-  tl.to(p, { wx: W_END_X, l: margin, duration: 0.7, ease: 'power3.inOut' });
+  // 第一段：竖直展开（W 垂直归位，底板上/下缘铺到 margin / vh-margin）
+  tl.to(p, { wy: endWy, t: margin, b: vh - margin, duration: 0.5, ease: 'power2.inOut' });
+  // 第二段：水平展开（W 水平归位到右栏，底板左/右缘铺到 margin / vw-margin）
+  tl.to(p, { wx: endWx, l: margin, r: vw - margin, duration: 0.7, ease: 'power3.inOut' });
   // 底板铺满后原位打开 Notes 工作台（URL 同步为 /notes/，内部跳转无缝进行）
   tl.add(function () {
     history.pushState({ page: 'notes' }, '', '/notes/');
@@ -438,40 +439,53 @@ function slideWToHome(): void {
   const wRect = wEl.getBoundingClientRect();
   const wW = wRect.width;
   const wH = wRect.height;
-  // pad = W 半宽：W 右/下边缘贴住底板角落，同时与 82px 右栏（= W 宽度）居中
-  const pad = wW / 2;
-  const W_END_X = vw / 2 - margin - pad - wW / 2;
-  const W_END_Y = vh / 2 - margin - pad - wH / 2;
-  const l0 = cx + startWx - wW / 2 - pad;
-  const t0 = cy + startWy - wH / 2 - pad;
+  setRailVars(wW, wH);
+
+  // 起点：W 在右栏内水平 + 垂直居中
+  const endWx = vw / 2 - margin - RAIL_GAP - wW / 2;
+  const endWy = 0;
 
   notesPanel.style.pointerEvents = 'none';
 
   const p: PanelState = {
-    wx: W_END_X,
-    wy: W_END_Y,
+    wx: endWx,
+    wy: endWy,
     l: margin,
     t: margin,
+    r: vw - margin,
+    b: vh - margin,
   };
 
-  applyPanel(wEl, notesPanel, cx, cy, p, wW, wH, pad);
+  applyPanel(wEl, notesPanel, p);
 
   history.pushState(null, '', '/');
 
   const tl = gsap.timeline({
     onUpdate: function () {
-      applyPanel(wEl, notesPanel, cx, cy, p, wW, wH, pad);
+      applyPanel(wEl, notesPanel, p);
     },
   });
 
-  // 第一段：水平左移回 W 展开位
-  tl.to(p, { wx: startWx, l: l0, duration: 0.5, ease: 'power3.inOut' });
+  // 第一段：水平收回（W 回展开位横向，底板左右收拢到 W 外扩 PANEL_RING）
+  tl.to(p, {
+    wx: startWx,
+    l: cx + startWx - wW / 2 - PANEL_RING,
+    r: cx + startWx + wW / 2 + PANEL_RING,
+    duration: 0.5,
+    ease: 'power3.inOut',
+  });
   // iz 提前淡入
   tl.add(function () {
     gsap.to('#letter-iz', { opacity: 1, duration: 0.5, ease: 'power2.out' });
   }, '-=0.15');
-  // 第二段：竖直上移回 W 展开位
-  tl.to(p, { wy: startWy, t: t0, duration: 0.7, ease: 'power2.inOut' });
+  // 第二段：竖直收回
+  tl.to(p, {
+    wy: startWy,
+    t: cy + startWy - wH / 2 - PANEL_RING,
+    b: cy + startWy + wH / 2 + PANEL_RING,
+    duration: 0.7,
+    ease: 'power2.inOut',
+  });
 
   // 与 W 第二段同步：a/r/m 展开并停留
   const wave = gsap.timeline({
@@ -649,7 +663,24 @@ window.izwarmSetTheme = function (theme: 'dark' | 'light') {
 };
 
 window.addEventListener('resize', function () {
-  if (panelOpen || !expanded || !window.__izSizes) return;
+  if (panelOpen) {
+    // 底板打开时：重算 W 在右栏内的居中位，并让底板重新铺满
+    const { vw, vh, margin } = getViewMetrics();
+    if (notesPanel) {
+      notesPanel.style.left = margin + 'px';
+      notesPanel.style.top = margin + 'px';
+      notesPanel.style.width = vw - margin * 2 + 'px';
+      notesPanel.style.height = vh - margin * 2 + 'px';
+    }
+    const wEl = document.getElementById('letter-w') as HTMLElement | null;
+    if (wEl) {
+      const wRect = wEl.getBoundingClientRect();
+      setRailVars(wRect.width, wRect.height);
+      gsap.set(wEl, { x: vw / 2 - margin - RAIL_GAP - wRect.width / 2, y: 0 });
+    }
+    return;
+  }
+  if (!expanded || !window.__izSizes) return;
   const positions = window.__izSizes.positions;
   LETTER_KEYS.forEach(function (key) {
     const el = document.getElementById('letter-' + key);
