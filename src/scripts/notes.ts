@@ -138,7 +138,7 @@ if (shellEl && 'fetch' in window) {
   window.addEventListener('popstate', () => {
     const path = location.pathname;
     if (path === '/notes/' || path === '/notes' || path.startsWith('/notes/')) {
-      void loadState(path, false);
+      void loadState(location.pathname + location.search, false);
     } else {
       // 离开 Notes 回首页：整页加载，保证首页状态干净
       location.reload();

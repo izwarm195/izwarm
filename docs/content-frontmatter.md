@@ -102,7 +102,8 @@ cover: /media/video-cover-dark.png
 
 - 遍历白名单目录，跳过非 Markdown 与排除项；
 - 解析 YAML Frontmatter，按第 1 节规则判定是否发布；
-- 转换 Obsidian 语法：`[[双链]]` → 站内链接（当前为纯文本，后续接 slug 映射）、
+- 转换 Obsidian 语法：`[[双链]]` → 站内链接（已发布笔记转 `/notes/<slug>/`，
+  未公开或不存在时保持纯文本，避免生成 404 链接）、
   `![[图片]]` → 图片引用、`> [!note]` Callout → 带类型容器、`==高亮==` → 强调；
   剥离 `dataviewjs` 块；
 - LaTeX（`$...$` / `$$...$$`）保留（当前以纯文本渲染，后续可接 KaTeX）；

@@ -343,6 +343,22 @@
 - **验证**：`npm run typecheck` 通过；构建与三条路径（直接访问 /notes/、
   主页点 W 进入、再点 W 返回）的落位验证待本地执行。
 
+## 29. KaTeX 公式、双链转站内链接、日历年份切换
+
+- **KaTeX**：新增 `remark-math` / `rehype-katex` / `katex` 依赖并在
+  `astro.config.mjs` 接入，文章页引入 KaTeX 样式；公式（`$...$` / `$$...$$`）
+  正常渲染，超宽公式在 `katex-display` 内横向滚动，不撑破布局。
+- **双链转换**：`scripts/sync-obsidian.mjs` 改为两遍处理——先建立
+  「标题 / 文件名 → slug」索引，再把 `[[笔记]]` / `[[笔记|别名]]` 转为站内链接
+  （`/notes/<slug>/`）；未公开或不存在的目标保持纯文本，避免 404；
+  自检新增对应断言。
+- **日历年份切换**：`src/lib/notes.ts` 新增 `getYears()`；
+  `NotesCalendar` 读取 `?year=` 查询参数渲染对应年份，内容跨年度时显示年份
+  切换链接；无缝导航的 `popstate` 现在保留 `search`，后退可恢复年份。
+- **说明**：3 篇示例文章已被下一次 `npm run sync:notes` 替换（README 已注明）。
+- **验证**：`npm run typecheck`、`npm run build` 通过（87 页）；
+  产物中 KaTeX 样式与站内链接均已确认。
+
 ## 验证方式汇总
 
 - TypeScript 检查：`npm run typecheck`

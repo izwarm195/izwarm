@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Landing from '../../components/home/Landing.astro';
 import ArticleSidebar from '../../components/notes/ArticleSidebar.astro';
+import 'katex/dist/katex.min.css';
 import { getCollection } from 'astro:content';
 import { countWords, formatDate, getPublishedNotes, getSiblingNotes } from '../../lib/notes';
 import type { Note } from '../../lib/notes';

@@ -92,14 +92,23 @@ function firstParagraph(body) {
   return '';
 }
 
-function convertBody(body) {
+function convertBody(body, slugIndex) {
+  const linkify = (target, label) => {
+    const key = target.trim();
+    const slug = slugIndex.get(key) ?? slugIndex.get(key.replace(/\.md$/i, ''));
+    return slug ? `[${label.trim()}](${noteUrlOf(slug)})` : label.trim();
+  };
   return body
     .replace(/```dataviewjs[\s\S]*?```/g, '')
     .replace(/!\[\[([^\]|]+)(?:\|[^\]]+)?\]\]/g, '$1')
-    .replace(/\[\[([^\]|]+)\|([^\]]+)\]\]/g, '$2')
-    .replace(/\[\[([^\]]+)\]\]/g, '$1')
+    .replace(/\[\[([^\]|]+)\|([^\]]+)\]\]/g, (_, target, label) => linkify(target, label))
+    .replace(/\[\[([^\]]+)\]\]/g, (_, target) => linkify(target, target))
     .replace(/^>\s*\[!(\w+)\](.*)$/gm, (_, t, r) => `> **[${t}]**${r}`)
     .replace(/==([^=]+)==/g, '**$1**');
+}
+
+function noteUrlOf(slug) {
+  return '/notes/' + slug + '/';
 }
 
 function toYaml(o) {
@@ -116,6 +125,8 @@ async function main() {
   await fs.rm(OUT, { recursive: true, force: true });
   await fs.mkdir(OUT, { recursive: true });
 
+  // 第一遍：解析全部候选笔记（先建立 slug 索引，供双链转换）
+  const candidates = [];
   for (const root of ROOTS) {
     const rootDir = path.join(VAULT, root);
     const files = await walk(rootDir, root);
@@ -138,7 +149,6 @@ async function main() {
       const vaultRelDir = path.dirname(file.rel);
       const dirBelow = vaultRelDir === category ? '' : vaultRelDir.slice(category.length + 1);
       const slug = deriveSlug(category, dirBelow, title);
-      const section = dirBelow ? dirBelow.split(path.sep).join('/') : undefined;
       const fmDate = parseDateStr(data.Date || data.Da);
       const nameDate = parseDateStr(basename);
       const date =
@@ -151,23 +161,35 @@ async function main() {
         ...(Array.isArray(data.tags) ? data.tags.map((t) => String(t).replace(/^#/, '')) : []),
         CATEGORY_TAG[category],
       ].filter(Boolean);
-      const uniqueTags = [...new Set(tags)];
-      const body = convertBody(content).replace(/^\s+/, '');
+      candidates.push({ file, data, content, basename, title, category, dirBelow, slug, date, updated, tags });
+    }
+  }
+
+  // 已发布笔记索引：标题 / 文件名 → slug，未公开或不存在时保持纯文本
+  const slugIndex = new Map();
+  for (const n of candidates) {
+    const key = n.basename.replace(/\.md$/i, '');
+    if (!slugIndex.has(n.title)) slugIndex.set(n.title, n.slug);
+    if (!slugIndex.has(key)) slugIndex.set(key, n.slug);
+  }
+
+  // 第二遍：转换双链并写出
+  for (const n of candidates) {
+      const body = convertBody(n.content, slugIndex).replace(/^\s+/, '');
       const fm = {
-        title,
-        slug,
-        description: data.description || firstParagraph(body) || undefined,
-        publishDate: date,
-        updatedDate: updated,
-        tags: uniqueTags,
-        series: dirBelow ? [category, ...dirBelow.split(path.sep)] : [category],
+        title: n.title,
+        slug: n.slug,
+        description: n.data.description || firstParagraph(body) || undefined,
+        publishDate: n.date,
+        updatedDate: n.updated,
+        tags: [...new Set(n.tags)],
+        series: n.dirBelow ? [n.category, ...n.dirBelow.split(path.sep)] : [n.category],
       };
 
-      const outFile = path.join(OUT, ...slug.split('/')) + '.md';
+      const outFile = path.join(OUT, ...n.slug.split('/')) + '.md';
       await fs.mkdir(path.dirname(outFile), { recursive: true });
       await fs.writeFile(outFile, `---\n${toYaml(fm)}\n---\n\n${body}\n`, 'utf8');
       summary.published++;
-    }
   }
 
   console.log(`published: ${summary.published}, skipped: ${summary.skipped}`);
@@ -187,6 +209,12 @@ function selftest() {
   assert(parseDateStr('26-07-09') === '2026-07-09', 'date');
   assert(parseDateStr('YY-08-09T19:00:32') === null, 'broken template date ignored');
   assert(deriveSlug('CPP', 'Summaries', 'const-correctness') === 'cpp/summaries/const-correctness', 'slug path');
+  const idx = new Map([['const-correctness', 'cpp/summaries/const-correctness']]);
+  assert(
+    convertBody('[[const-correctness]]', idx) === '[const-correctness](/notes/cpp/summaries/const-correctness/)',
+    'wikilink to published slug'
+  );
+  assert(convertBody('[[不存在的笔记|别名]]', idx) === '别名', 'unpublished link stays text');
   console.log('selftest ok');
 }
 

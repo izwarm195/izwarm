@@ -192,6 +192,11 @@ export function getLatestYear(notes: Note[]): number {
   return year;
 }
 
+/** 有文章的所有年份（降序） */
+export function getYears(notes: Note[]): number[] {
+  return [...new Set(notes.map((note) => note.data.publishDate.getUTCFullYear()))].sort((a, b) => b - a);
+}
+
 /** 统一日期格式化（UTC，避免时区偏移），返回 YYYY-MM-DD */
 export function formatDate(d: Date): string {
   return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;

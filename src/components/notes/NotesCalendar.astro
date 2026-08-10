@@ -1,5 +1,5 @@
 ---
-import { getCalendarData, getLatestYear } from '../../lib/notes';
+import { getCalendarData, getYears } from '../../lib/notes';
 import type { Note } from '../../lib/notes';
 
 interface Props {
@@ -7,12 +7,30 @@ interface Props {
 }
 
 const { notes } = Astro.props;
-const year = getLatestYear(notes);
+const years = getYears(notes);
+const requested = Number(Astro.url.searchParams.get('year'));
+const year = years.includes(requested) ? requested : (years[0] ?? new Date().getUTCFullYear());
 const calendar = getCalendarData(notes, year);
+const base = Astro.url.pathname;
 ---
 
 <section class="notes-calendar" aria-label={`${year} 年文章日历`}>
-  <h2 class="notes-section-label">{year} 年</h2>
+  <div class="notes-calendar-head">
+    <h2 class="notes-section-label">{year} 年</h2>
+    {years.length > 1 && (
+      <div class="notes-calendar-years" aria-label="选择年份">
+        {years.map((y) => (
+          <a
+            class={y === year ? 'active' : undefined}
+            href={`${base}?year=${y}`}
+            aria-current={y === year ? 'true' : undefined}
+          >
+            {y}
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
   <div class="notes-calendar-grid">
     {calendar.days.map((day) =>
       day.count > 0 ? (
