@@ -15,7 +15,7 @@ body::-webkit-scrollbar {
 
 .notes-shell {
   --notes-left: clamp(250px, 20vw, 330px);
-  --notes-rail: clamp(100px, 9vw, 128px); /* 与 W 居中对齐：W 中心 = 底板右缘 - rail/2 */
+  --notes-rail: 82px; /* 与 W 字母宽度一致，W 在其内居中且右/下边缘贴住角落 */
   display: grid;
   grid-template-columns: var(--notes-left) minmax(0, 1fr) var(--notes-rail);
   height: 100%;

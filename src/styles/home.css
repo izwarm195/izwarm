@@ -199,8 +199,8 @@
 /* 声音控制 */
 .sound-toggle {
   position: absolute;
-  top: 24px;
-  right: var(--panel-margin); /* 与 W 右边缘对齐（底板右缘） */
+  top: 30px;
+  right: calc(var(--panel-margin) + 12px); /* 向左下微调，仍贴近右栏 */
   bottom: auto;
   width: 34px;
   height: 34px;

@@ -189,8 +189,8 @@ function panelOpenInit(): void {
   if (!wEl) return;
   const { vw, vh, margin } = getViewMetrics();
   const wRect = wEl.getBoundingClientRect();
-  // 与右栏宽度匹配（--notes-rail / 2），保证 W 在右栏内居中
-  const pad = Math.min(64, Math.max(50, vw * 0.045));
+  // pad = W 半宽：W 右/下边缘贴住底板角落，同时与 82px 右栏（= W 宽度）居中
+  const pad = wRect.width / 2;
   gsap.set(wEl, {
     x: vw / 2 - margin - pad - wRect.width / 2,
     y: vh / 2 - margin - pad - wRect.height / 2,
@@ -378,8 +378,8 @@ function slideWToNotes(): void {
   const wRect = wEl.getBoundingClientRect();
   const wW = wRect.width;
   const wH = wRect.height;
-  // 与右栏宽度匹配（--notes-rail / 2），保证 W 在右栏内居中
-  const pad = Math.min(64, Math.max(50, vw * 0.045));
+  // pad = W 半宽：W 右/下边缘贴住底板角落，同时与 82px 右栏（= W 宽度）居中
+  const pad = wW / 2;
 
   // 终点：底板右下缘 = vw - margin / vh - margin，等价于 W 右下缘 = vw - margin - pad
   //   即 W 中心 x = vw - margin - pad - wW/2 → wx = vw/2 - margin - pad - wW/2
@@ -438,8 +438,8 @@ function slideWToHome(): void {
   const wRect = wEl.getBoundingClientRect();
   const wW = wRect.width;
   const wH = wRect.height;
-  // 与右栏宽度匹配（--notes-rail / 2），保证 W 在右栏内居中
-  const pad = Math.min(64, Math.max(50, vw * 0.045));
+  // pad = W 半宽：W 右/下边缘贴住底板角落，同时与 82px 右栏（= W 宽度）居中
+  const pad = wW / 2;
   const W_END_X = vw / 2 - margin - pad - wW / 2;
   const W_END_Y = vh / 2 - margin - pad - wH / 2;
   const l0 = cx + startWx - wW / 2 - pad;
