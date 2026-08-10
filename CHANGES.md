@@ -384,6 +384,18 @@
   鼠标移开后整窗平滑回到中栏中央；移动端悬停/聚焦同样生效。
 - **验证**：`npm run typecheck`、`npm run build` 通过（87 页）。
 
+## 32. 系列树：叶子子系列显示为可展开节点
+
+- **修改** `SeriesNode.astro`：每个系列节点（无论是否有更深子级）都渲染为
+  可展开按钮，其下再列出笔记。此前“叶子系列”（如 CPP 的 Examples / Tips /
+  Summaries、English 的 Words Daily、ML 的 Python、Signals & Systems 的
+  SS-QNA / Text Book）只有笔记没有子级，被直接平铺到上层，导致子系列标签缺失。
+- **效果**：CPP → Examples / Tips / Summaries（各自可展开笔记列表）、
+  English → Words Daily / Words Summary → 数学英语词汇、
+  Machine & Deep Learning → Python、Signals → Signals & Systems →
+  SS-QNA / Text Book（随记直接挂在 Signals & Systems 下）。
+- **验证**：`npm run typecheck`、`npm run build` 通过；产物中全部子系列按钮已渲染。
+
 ## 验证方式汇总
 
 - TypeScript 检查：`npm run typecheck`
