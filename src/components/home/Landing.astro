@@ -1,19 +1,20 @@
 ---
 import { media } from '../../config/media';
+import NotesShell from '../notes/NotesShell.astro';
 import '../../styles/home.css';
-import type { CollectionEntry } from 'astro:content';
+import '../../styles/notes.css';
 
 interface Props {
-  /** 直接访问 /notes/ 时，初始即打开 Notes 底板（不播放入场动画） */
-  initialPanel?: boolean;
-  /** 公开笔记列表（由页面从 content collection 传入） */
-  notes?: CollectionEntry<'notes'>[];
+  /** 直接访问 Notes 路由时，初始即打开底板 */
+  open?: boolean;
+  /** Notes 当前状态（用于右栏高亮） */
+  active?: 'home' | 'article' | 'archive' | 'tags';
 }
 
-const { initialPanel = false, notes = [] } = Astro.props;
+const { open = false, active = 'home' } = Astro.props;
 ---
 
-<div class:list={['landing', { 'panel-open': initialPanel }]} id="landing">
+<div class:list={['landing', { 'panel-open': open }]} id="landing">
   <div class="bg-video-wrap">
     <video
       class="bg-video"
@@ -73,38 +74,12 @@ const { initialPanel = false, notes = [] } = Astro.props;
     </svg>
   </div>
 
-  <div
-    class:list={[
-      'notes-panel',
-      { active: initialPanel, 'content-in': initialPanel, 'static-open': initialPanel },
-    ]}
-    id="notesPanel"
-  >
-    <div class="notes-panel-inner" id="notesPanelInner">
-      <h2 class="notes-panel-title">Notes</h2>
-      <p class="notes-panel-desc">碎片、想法与记录。</p>
-      <div class="notes-panel-grid">
-        {notes.length === 0 ? (
-          <article class="notes-card">
-            <time class="notes-card-date">—</time>
-            <h3 class="notes-card-title">暂无公开笔记</h3>
-            <p class="notes-card-excerpt">内容准备中。</p>
-          </article>
-        ) : (
-          notes.map((note) => (
-            <article class="notes-card">
-              <time class="notes-card-date">{note.data.date.toISOString().slice(0, 10)}</time>
-              <h3 class="notes-card-title">{note.data.title}</h3>
-              <p class="notes-card-excerpt">{note.data.description}</p>
-              <span class="notes-card-category">
-                {note.data.category}
-                {note.data.section ? ` / ${note.data.section}` : ''}
-              </span>
-            </article>
-          ))
-        )}
-      </div>
-    </div>
+  <!-- 磨砂玻璃底板：承载 Notes 工作台（三栏），W → Notes 转场与工作台共用一个底板 -->
+  <div class:list={['notes-panel', { active: open }]} id="notesPanel">
+    <NotesShell active={active}>
+      <Fragment slot="left"><slot name="notes-left" /></Fragment>
+      <slot name="notes-main" />
+    </NotesShell>
   </div>
 
   <div class="transition-mask" id="transitionMask"><div class="core"></div></div>

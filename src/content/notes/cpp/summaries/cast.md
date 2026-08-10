@@ -2,12 +2,10 @@
 title: "cast"
 slug: "cpp/summaries/cast"
 description: "适用于数值类型转换、 void 转回对象指针、继承体系中的已知转换等。"
-date: "2026-07-13"
-updated: "2026-07-13"
-category: "CPP"
-section: "Summaries"
+publishDate: "2026-07-13"
+updatedDate: "2026-07-13"
 tags: ["cpp","summaries"]
-status: "published"
+series: ["CPP","Summaries"]
 ---
 
 ## C++ 推荐的四种命名转换

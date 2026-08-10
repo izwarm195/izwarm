@@ -2,12 +2,10 @@
 title: "cstdlib"
 slug: "cpp/summaries/cstdlib"
 description: "<cstdlib 中的内容 和 <stdlib.h 几乎完全相同，区别在于前者把符号包装进了 std:: 命名空间（不过大多数实现也同时在全局命名空间中提供它们）。新代码里应该优先用 <cstdlib 加 std:: 前缀。"
-date: "2026-07-10"
-updated: "2026-07-10"
-category: "CPP"
-section: "Summaries"
+publishDate: "2026-07-10"
+updatedDate: "2026-07-10"
 tags: ["cpp","summaries"]
-status: "published"
+series: ["CPP","Summaries"]
 ---
 
 ### `<cstdlib>` 是 C 标准库 `<stdlib.h>` 的 C++ 版本，提供了大量通用的工具函数——从内存管理、类型转换到随机数、排序和环境交互。它和 C++ 标准库的其他部分（如 `<iostream>`）一样被广泛使用。

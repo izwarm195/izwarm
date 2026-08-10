@@ -1,0 +1,19 @@
+---
+import NotesRail from './NotesRail.astro';
+
+interface Props {
+  active: 'home' | 'article' | 'archive' | 'tags';
+}
+
+const { active } = Astro.props;
+---
+
+<div class="notes-shell" id="notesShell">
+  <aside class="notes-col notes-left"><slot name="left" /></aside>
+  <main class="notes-col notes-main"><slot /></main>
+  <NotesRail active={active} />
+</div>
+
+<script>
+  import '../../scripts/notes';
+</script>

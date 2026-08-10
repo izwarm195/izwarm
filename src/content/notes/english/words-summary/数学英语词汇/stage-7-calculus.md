@@ -2,12 +2,10 @@
 title: "Stage 7 - Calculus"
 slug: "english/words-summary/数学英语词汇/stage-7-calculus"
 description: "1. limit 极限"
-date: "2026-08-03"
-updated: "2026-08-03"
-category: "English"
-section: "Words Summary/数学英语词汇"
+publishDate: "2026-08-03"
+updatedDate: "2026-08-03"
 tags: ["english","vocabulary","math"]
-status: "published"
+series: ["English","Words Summary","数学英语词汇"]
 ---
 
 # Stage 7: Calculus

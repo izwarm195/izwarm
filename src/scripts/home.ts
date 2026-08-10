@@ -92,6 +92,12 @@ let isAnimating = false;
 let panelOpen = false; // Notes 底板是否已铺开（含动画完成 or 直接访问）
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+// 直接访问 Notes 路由：底板初始已打开，屏蔽背景点击，避免触发主页动画
+if (notesPanel?.classList.contains('active')) {
+  panelOpen = true;
+  panelOpenInit();
+}
+
 // ===== 工具函数 =====
 function clamp(val: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, val));
@@ -144,40 +150,6 @@ function applyPanel(
 }
 
 
-// 直接访问 /notes/：初始化底板和 W 的静态位置
-function panelOpenInit(): void {
-  
-   // 隐藏大 Logo，防止刷新时短暂可见
-  const logoFull = document.getElementById('logoFull');
-  if (logoFull) gsap.set(logoFull, { opacity: 0 });
- 
-  if (!notesPanel) return;
-  panelOpen = true;
-  const { vw, vh, margin } = getViewMetrics();
-
-  notesPanel.style.left = margin + 'px';
-  notesPanel.style.top = margin + 'px';
-  notesPanel.style.width = (vw - margin * 2) + 'px';
-  notesPanel.style.height = (vh - margin * 2) + 'px';
-
-  const wEl = document.getElementById('letter-w') as HTMLElement | null;
-  if (wEl) {
-    const wRect = wEl.getBoundingClientRect();
-    const pad = 16;
-    // 底板右下缘 = vw/vh - margin，W 右下缘 = 底板右下缘 - pad
-    const W_END_X = vw / 2 - margin - pad - wRect.width / 2;
-    const W_END_Y = vh / 2 - margin - pad - wRect.height / 2;
-    gsap.set(wEl, { x: W_END_X, y: W_END_Y, opacity: 1 });
-    wEl.style.pointerEvents = 'auto';
-  }
-
-}
-
-// 页面加载时检测
-if (notesPanel?.classList.contains('static-open')) {
-  panelOpenInit();
-}
-
 // 计算四个字母的展开位（与 expandLogo 同一套公式；返回 null 表示元素缺失）
 function computeLetterPositions(): {
   positions: PositionMap;
@@ -208,6 +180,23 @@ function computeLetterPositions(): {
     m: { x: izW / 2 + sizes.m.w / 2 + gap, y: izH / 2 + sizes.m.h / 2 + gap, label: 'label-m' },
   };
   return { positions, sizes, izW, izH, gap };
+}
+
+// 直接访问 Notes 路由：把字母 W 定位到右下角（与滑动转场终点一致），保留为交互锚点
+function panelOpenInit(): void {
+  if (!notesPanel) return;
+  const wEl = document.getElementById('letter-w') as HTMLElement | null;
+  if (!wEl) return;
+  const { vw, vh, margin } = getViewMetrics();
+  const wRect = wEl.getBoundingClientRect();
+  // 与右栏宽度匹配（--notes-rail / 2），保证 W 在右栏内居中
+  const pad = Math.min(64, Math.max(50, vw * 0.045));
+  gsap.set(wEl, {
+    x: vw / 2 - margin - pad - wRect.width / 2,
+    y: vh / 2 - margin - pad - wRect.height / 2,
+    opacity: 1,
+  });
+  wEl.style.pointerEvents = 'auto';
 }
 
 function expandLogo(): void {
@@ -389,7 +378,8 @@ function slideWToNotes(): void {
   const wRect = wEl.getBoundingClientRect();
   const wW = wRect.width;
   const wH = wRect.height;
-    const pad = 16;
+  // 与右栏宽度匹配（--notes-rail / 2），保证 W 在右栏内居中
+  const pad = Math.min(64, Math.max(50, vw * 0.045));
 
   // 终点：底板右下缘 = vw - margin / vh - margin，等价于 W 右下缘 = vw - margin - pad
   //   即 W 中心 x = vw - margin - pad - wW/2 → wx = vw/2 - margin - pad - wW/2
@@ -406,8 +396,6 @@ function slideWToNotes(): void {
   applyPanel(wEl, notesPanel, cx, cy, p, wW, wH, pad);
   notesPanel.classList.add('active');
 
-  history.pushState({ page: 'notes' }, '', '/notes/');
-
   const tl = gsap.timeline({
     onUpdate: function () {
       applyPanel(wEl, notesPanel, cx, cy, p, wW, wH, pad);
@@ -419,17 +407,14 @@ function slideWToNotes(): void {
   tl.to(p, { wy: W_END_Y, t: margin, duration: 0.5, ease: 'power2.inOut' });
   // 第二段：水平右移到右下角（wy 不变，只改 wx 和 l）
   tl.to(p, { wx: W_END_X, l: margin, duration: 0.7, ease: 'power3.inOut' });
-  // 底板铺满后浮现内容
+  // 底板铺满后原位打开 Notes 工作台（URL 同步为 /notes/，内部跳转无缝进行）
   tl.add(function () {
-    notesPanel!.classList.add('content-in');
-    notesPanel!.style.pointerEvents = 'auto';
-    wEl!.style.pointerEvents = 'auto'; // W 可点击返回
+    history.pushState({ page: 'notes' }, '', '/notes/');
     isAnimating = false;
   });
 }
 
-// W → Home：原路返回（两段：水平左移 → 竖直上移回 W 展开位）。
-// 在 W 第二段开始时，a/r/m 展开并停留在展开位；结束恢复主页展开态。
+// W → 首页：原路返回动画（水平左移 → 竖直上移回展开位），字母波浪展开，恢复主页展开态
 function slideWToHome(): void {
   if (isAnimating || !panelOpen) return;
   const wEl = document.getElementById('letter-w') as HTMLElement | null;
@@ -450,20 +435,16 @@ function slideWToHome(): void {
   }
 
   const { vw, vh, cx, cy, margin } = getViewMetrics();
-
   const wRect = wEl.getBoundingClientRect();
   const wW = wRect.width;
   const wH = wRect.height;
-  // 与前进一致：W 的右下边缘贴合底板右下边缘
-  const pad = 16;
+  // 与右栏宽度匹配（--notes-rail / 2），保证 W 在右栏内居中
+  const pad = Math.min(64, Math.max(50, vw * 0.045));
   const W_END_X = vw / 2 - margin - pad - wW / 2;
   const W_END_Y = vh / 2 - margin - pad - wH / 2;
   const l0 = cx + startWx - wW / 2 - pad;
   const t0 = cy + startWy - wH / 2 - pad;
 
-
-  // 隐藏面板内容
-  notesPanel.classList.remove('content-in');
   notesPanel.style.pointerEvents = 'none';
 
   const p: PanelState = {
@@ -475,28 +456,27 @@ function slideWToHome(): void {
 
   applyPanel(wEl, notesPanel, cx, cy, p, wW, wH, pad);
 
-  // 原地返回：URL 改回首页；刷新时浏览器会按 / 重新请求，加载真正的首页
   history.pushState(null, '', '/');
 
   const tl = gsap.timeline({
     onUpdate: function () {
-      applyPanel(wEl, notesPanel, cx, cy, p, wW, wH,pad);
+      applyPanel(wEl, notesPanel, cx, cy, p, wW, wH, pad);
     },
   });
 
+  // 第一段：水平左移回 W 展开位
   tl.to(p, { wx: startWx, l: l0, duration: 0.5, ease: 'power3.inOut' });
-  // iz 提前淡入：紧接第一段结束前一点点开始（比之前 restoreHomeExpanded 里的瞬时 set 早很多）
+  // iz 提前淡入
   tl.add(function () {
     gsap.to('#letter-iz', { opacity: 1, duration: 0.5, ease: 'power2.out' });
   }, '-=0.15');
+  // 第二段：竖直上移回 W 展开位
   tl.to(p, { wy: startWy, t: t0, duration: 0.7, ease: 'power2.inOut' });
 
-
-  // 与 W 第二段同步（稍晚一点）：a/r/m 展开并停留在展开位
+  // 与 W 第二段同步：a/r/m 展开并停留
   const wave = gsap.timeline({
-    delay: 0.5, // 与新的第一段时长同步：W 开始第二段的瞬间，arm 开始 expand
+    delay: 0.5,
     onStart: function () {
-      // arm expand 同时播放 expand 音效
       if (sfxExpand) {
         sfxExpand.currentTime = 0;
         sfxExpand.play().catch(function () {});
@@ -515,10 +495,8 @@ function slideWToHome(): void {
     );
   });
 
-  // 给 a/r/m 展开留出收尾时间
   tl.to({}, { duration: 0.15 });
 
-  // 收尾：恢复主页展开态；若是 /notes/ 独立页则真正跳回首页
   tl.add(function () {
     wave.kill();
     restoreHomeExpanded(pos);
@@ -532,7 +510,7 @@ function restoreHomeExpanded(pos: PositionMap): void {
   LETTER_KEYS.forEach(function (key) {
     const el = document.getElementById('letter-' + key);
     if (!el) return;
-    el.style.pointerEvents = ''; // 恢复点击（由 .landing.expanded 规则控制）
+    el.style.pointerEvents = '';
     gsap.set(el, { x: pos[key].x, y: pos[key].y, opacity: 1, filter: 'blur(0px)' });
   });
   gsap.set('#letter-iz', { opacity: 1 });
@@ -545,10 +523,10 @@ function restoreHomeExpanded(pos: PositionMap): void {
       positionLabel(letter, label, key);
     }
   });
-  expanded = true; // 与视觉一致：再点击会正常触发 collapseAll（含收起音效）
+  expanded = true;
   panelOpen = false;
   if (notesPanel) {
-    notesPanel.classList.remove('active', 'content-in');
+    notesPanel.classList.remove('active');
     notesPanel.style.left = '0px';
     notesPanel.style.top = '0px';
     notesPanel.style.width = '0px';
@@ -576,7 +554,7 @@ LETTER_KEYS.forEach(function (key) {
   if (!el) return;
   el.addEventListener('click', function (ev) {
     ev.stopPropagation();
-    // Notes 底板已打开时，点 W 返回 home（原路逆行）
+    // 底板打开时，点击原 W 返回首页
     if (key === 'w' && panelOpen) {
       slideWToHome();
       return;

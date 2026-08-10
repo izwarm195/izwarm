@@ -2,12 +2,10 @@
 title: "Python"
 slug: "machine-and-deep-learning/python/python"
 description: "Numpy"
-date: "2026-07-26"
-updated: "2026-07-26"
-category: "Machine & Deep Learning"
-section: "Python"
+publishDate: "2026-07-26"
+updatedDate: "2026-07-26"
 tags: ["machine-learning","python","moc"]
-status: "published"
+series: ["Machine & Deep Learning","Python"]
 ---
 
 Numpy

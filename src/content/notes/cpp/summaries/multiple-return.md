@@ -2,12 +2,10 @@
 title: "Multiple Return"
 slug: "cpp/summaries/multiple-return"
 description: "C++ 函数默认只能返回一个值，但实际开发中经常需要返回多个数据。Cherno 以一个真实的 OpenGL 着色器解析函数为例——需要同时返回 顶点着色器源码 和 片段着色器源码 （两个字符串）——逐一讲解了五种应对策略，并给出了自己的偏好。"
-date: "2026-07-21"
-updated: "2026-07-21"
-category: "CPP"
-section: "Summaries"
+publishDate: "2026-07-21"
+updatedDate: "2026-07-21"
 tags: ["cpp","summaries"]
-status: "published"
+series: ["CPP","Summaries"]
 ---
 
 ---

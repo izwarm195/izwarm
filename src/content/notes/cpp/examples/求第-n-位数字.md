@@ -2,12 +2,10 @@
 title: "求第 n 位数字"
 slug: "cpp/examples/求第-n-位数字"
 description: "输入一个正整数 n，输出从 1 开始依次写下所有正整数后，第 n 位上的数字。例如：写下：12345678910111213..."
-date: "2026-07-12"
-updated: "2026-07-12"
-category: "CPP"
-section: "Examples"
+publishDate: "2026-07-12"
+updatedDate: "2026-07-12"
 tags: ["cpp","examples"]
-status: "published"
+series: ["CPP","Examples"]
 ---
 
 # 问题描述

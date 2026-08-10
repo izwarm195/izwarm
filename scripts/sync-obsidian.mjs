@@ -157,12 +157,10 @@ async function main() {
         title,
         slug,
         description: data.description || firstParagraph(body) || undefined,
-        date,
-        updated,
-        category,
-        section,
+        publishDate: date,
+        updatedDate: updated,
         tags: uniqueTags,
-        status: data.status === 'archived' ? 'archived' : 'published',
+        series: dirBelow ? [category, ...dirBelow.split(path.sep)] : [category],
       };
 
       const outFile = path.join(OUT, ...slug.split('/')) + '.md';

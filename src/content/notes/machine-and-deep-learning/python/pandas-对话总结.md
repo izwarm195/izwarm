@@ -2,12 +2,10 @@
 title: "Pandas 对话总结"
 slug: "machine-and-deep-learning/python/pandas-对话总结"
 description: "标签（Label） ：索引上的显式命名（整数、字符串等），用 .loc 选择，切片 左闭右闭 。"
-date: "2026-08-05"
-updated: "2026-08-05"
-category: "Machine & Deep Learning"
-section: "Python"
+publishDate: "2026-08-05"
+updatedDate: "2026-08-05"
 tags: ["python","Pandas","machine-learning"]
-status: "published"
+series: ["Machine & Deep Learning","Python"]
 ---
 
 # Pandas 数据处理基础 — 对话知识点总结

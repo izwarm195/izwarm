@@ -2,12 +2,10 @@
 title: "Stage 8 - Linear Algebra"
 slug: "english/words-summary/数学英语词汇/stage-8-linear-algebra"
 description: "1. coefficient matrix 系数矩阵"
-date: "2026-08-03"
-updated: "2026-08-03"
-category: "English"
-section: "Words Summary/数学英语词汇"
+publishDate: "2026-08-03"
+updatedDate: "2026-08-03"
 tags: ["english","vocabulary","math"]
-status: "published"
+series: ["English","Words Summary","数学英语词汇"]
 ---
 
 # Stage 8: Linear Algebra

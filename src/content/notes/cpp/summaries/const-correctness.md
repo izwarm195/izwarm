@@ -2,12 +2,10 @@
 title: "const-correctness"
 slug: "cpp/summaries/const-correctness"
 description: "一句话： 任何不该被修改的东西，都应该声明为 const ，让编译器来帮你检查。 它不是某个单独的语法规则，而是一条贯穿变量、参数、返回值、成员函数的系统性约定。"
-date: "2026-07-09"
-updated: "2026-07-09"
-category: "CPP"
-section: "Summaries"
+publishDate: "2026-07-09"
+updatedDate: "2026-07-09"
 tags: ["cpp","summaries"]
-status: "published"
+series: ["CPP","Summaries"]
 ---
 
 ---

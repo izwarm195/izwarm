@@ -2,12 +2,10 @@
 title: "Summaries"
 slug: "cpp/summaries/summaries"
 description: "CS 26 07 09 const correctness"
-date: "2026-07-10"
-updated: "2026-07-10"
-category: "CPP"
-section: "Summaries"
+publishDate: "2026-07-10"
+updatedDate: "2026-07-10"
 tags: ["cpp","summaries","moc"]
-status: "published"
+series: ["CPP","Summaries"]
 ---
 
 CS 26-07-09 const-correctness

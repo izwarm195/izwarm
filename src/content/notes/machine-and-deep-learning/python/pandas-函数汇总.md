@@ -2,12 +2,10 @@
 title: "Pandas 函数汇总"
 slug: "machine-and-deep-learning/python/pandas-函数汇总"
 description: "函数 释义"
-date: "2026-08-05"
-updated: "2026-08-05"
-category: "Machine & Deep Learning"
-section: "Python"
+publishDate: "2026-08-05"
+updatedDate: "2026-08-05"
 tags: ["python","Pandas","machine-learning"]
-status: "published"
+series: ["Machine & Deep Learning","Python"]
 ---
 
 # Pandas 函数速查表 — 基于网页第 92 章与对话内容

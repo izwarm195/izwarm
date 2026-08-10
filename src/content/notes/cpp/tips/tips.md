@@ -2,12 +2,10 @@
 title: "Tips"
 slug: "cpp/tips/tips"
 description: "(逗号表达式)"
-date: "2026-07-11"
-updated: "2026-07-11"
-category: "CPP"
-section: "Tips"
+publishDate: "2026-07-11"
+updatedDate: "2026-07-11"
 tags: ["cpp","tips","moc"]
-status: "published"
+series: ["CPP","Tips"]
 ---
 
 # Quotes

@@ -1,0 +1,60 @@
+---
+import { formatDate, getArchiveData, noteUrl } from '../../lib/notes';
+import type { Note } from '../../lib/notes';
+
+interface Props {
+  notes: Note[];
+}
+
+const { notes } = Astro.props;
+const archive = getArchiveData(notes);
+
+function groupByDate(list: Note[]): { date: string; notes: Note[] }[] {
+  const groups: { date: string; notes: Note[] }[] = [];
+  for (const note of list) {
+    const date = formatDate(note.data.publishDate);
+    const last = groups[groups.length - 1];
+    if (last && last.date === date) last.notes.push(note);
+    else groups.push({ date, notes: [note] });
+  }
+  return groups;
+}
+---
+
+{archive.length === 0 ? (
+  <p class="notes-empty">暂无文章。</p>
+) : (
+  archive.map((year) => (
+    <section class="archive-year">
+      <h2>
+        {year.year}
+        <span class="archive-count">
+          {year.months.reduce((sum, month) => sum + month.notes.length, 0)} 篇
+        </span>
+      </h2>
+      {year.months.map((month) => (
+        <div class="archive-month">
+          <h3>{month.month}</h3>
+          {groupByDate(month.notes).map((group) => (
+            <div class="archive-date-group" id={group.date}>
+              <time>{group.date}</time>
+              {group.notes.map((note) => (
+                <div class="archive-item">
+                  <a class="archive-title" href={noteUrl(note)}>{note.data.title}</a>
+                  <div class="archive-meta">
+                    {note.data.series.length > 0 && (
+                      <span>{note.data.series.join(' / ')}</span>
+                    )}
+                    {note.data.tags.map((tag) => (
+                      <a href={`/notes/tags/${encodeURIComponent(tag)}/`}>#{tag}</a>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      ))}
+    </section>
+  ))
+)}

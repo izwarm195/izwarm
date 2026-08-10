@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Landing from '../../components/home/Landing.astro';
+import NotesSidebar from '../../components/notes/NotesSidebar.astro';
+import { getPublishedNotes, getTagsIndex } from '../../lib/notes';
+
+const notes = await getPublishedNotes();
+const tags = getTagsIndex(notes);
+---
+
+<BaseLayout title="标签 · izwarm">
+  <Landing open active="tags">
+    <Fragment slot="notes-left"><NotesSidebar notes={notes} /></Fragment>
+    <section slot="notes-main" aria-label="全部标签">
+      <h1 class="notes-page-title">标签</h1>
+      {tags.length === 0 ? (
+        <p class="notes-empty">暂无标签。</p>
+      ) : (
+        <div class="tags-cloud">
+          {tags.map((item) => (
+            <a class="w-shape" href={`/notes/tags/${encodeURIComponent(item.tag)}/`}>
+              {item.tag}
+              <span class="count">{item.notes.length}</span>
+            </a>
+          ))}
+        </div>
+      )}
+    </section>
+  </Landing>
+</BaseLayout>

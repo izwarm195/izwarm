@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Landing from '../../components/home/Landing.astro';
+import NotesSidebar from '../../components/notes/NotesSidebar.astro';
+import ArchiveList from '../../components/notes/ArchiveList.astro';
+import { getPublishedNotes } from '../../lib/notes';
+
+const notes = await getPublishedNotes();
+---
+
+<BaseLayout title="归档 · izwarm">
+  <Landing open active="archive">
+    <Fragment slot="notes-left"><NotesSidebar notes={notes} /></Fragment>
+    <section slot="notes-main" aria-label="文章归档">
+      <h1 class="notes-page-title">归档</h1>
+      <ArchiveList notes={notes} />
+    </section>
+  </Landing>
+</BaseLayout>

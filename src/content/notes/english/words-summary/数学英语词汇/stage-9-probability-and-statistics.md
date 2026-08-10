@@ -2,12 +2,10 @@
 title: "Stage 9 - Probability & Statistics"
 slug: "english/words-summary/数学英语词汇/stage-9-probability-and-statistics"
 description: "1. population 总体"
-date: "2026-08-03"
-updated: "2026-08-03"
-category: "English"
-section: "Words Summary/数学英语词汇"
+publishDate: "2026-08-03"
+updatedDate: "2026-08-03"
 tags: ["english","vocabulary","math"]
-status: "published"
+series: ["English","Words Summary","数学英语词汇"]
 ---
 
 # Stage 9: Probability & Statistics

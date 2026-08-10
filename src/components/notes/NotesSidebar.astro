@@ -1,0 +1,18 @@
+---
+import ProfileCard from './ProfileCard.astro';
+import NotesStats from './NotesStats.astro';
+import NotesCalendar from './NotesCalendar.astro';
+import type { Note } from '../../lib/notes';
+
+interface Props {
+  notes: Note[];
+}
+
+const { notes } = Astro.props;
+---
+
+<div class="notes-sidebar">
+  <ProfileCard />
+  <NotesStats notes={notes} />
+  <NotesCalendar notes={notes} />
+</div>

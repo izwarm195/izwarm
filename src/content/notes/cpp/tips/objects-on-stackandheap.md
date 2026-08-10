@@ -2,12 +2,10 @@
 title: "Objects on Stack&Heap"
 slug: "cpp/tips/objects-on-stackandheap"
 description: "The Cherno 在这期视频中讲解了 C++ 中实例化对象的两种方式，核心区别在于 对象的内存从哪来 。"
-date: "2026-07-16"
-updated: "2026-07-16"
-category: "CPP"
-section: "Tips"
+publishDate: "2026-07-16"
+updatedDate: "2026-07-16"
 tags: ["cpp","tips"]
-status: "published"
+series: ["CPP","Tips"]
 ---
 
 ### **C++ 创建对象的两种方式：栈 vs 堆**

@@ -2,11 +2,10 @@
 title: "English"
 slug: "english/english"
 description: "WD 26 08 03"
-date: "2026-08-03"
-updated: "2026-08-03"
-category: "English"
+publishDate: "2026-08-03"
+updatedDate: "2026-08-03"
 tags: ["english","moc"]
-status: "published"
+series: ["English"]
 ---
 
 # Words

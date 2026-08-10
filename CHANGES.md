@@ -274,6 +274,59 @@
   点击原字母位置会误触跳转（projects / works / about）。
 - **验证**：Notes 打开后点击 a/r/m 原位置不再跳转；W 返回后字母恢复可点击。
 
+## 25. Notes 工作台重构（三栏知识库）
+
+- **内容模型升级**：notes 集合改为 `title / description? / publishDate /
+  updatedDate? / tags / series / order? / draft? / cover?`；同步脚本同步升级，
+  按目录推导 `series` 多级路径，重新生成 67 篇真实笔记；新增 3 篇示例文章
+  （三级系列、order、封面、中文标签）用于验证。
+- **新增** `src/lib/notes.ts`：集中式数据工具——发布文章、系列树、同系列、
+  归档、标签索引、统计、日历、中英文混合字数、稳定排序。
+- **新增** Notes 工作台：`NotesShell`（左/中/右三栏）、`NotesRail`
+  （W 形导航，hover / focus-within / 移动端底部固定栏）、`NotesSidebar`
+  （简介 + 统计 + 日历）、`SeriesExplorer` / `SeriesNode`（递归系列树，
+  支持任意深度与中文）、`ArticleSidebar`（自动大纲 + 同系列）、`ArchiveList`。
+- **新增路由**：`/notes/` Home、`/notes/[...slug]/` Article、
+  `/notes/archive/`、`/notes/tags/`、`/notes/tags/[tag]/`，全部真实 URL 驱动，
+  可刷新直达。
+- **新增** `src/styles/notes.css`（隐藏滚动条、reduced-motion、响应式、
+  `w-shape` 统一非对称圆角）与 `src/scripts/notes.ts`（粗指针点击展开系列、
+  大纲滚动高亮）。
+- **首页转场调整**：保留 W 滑动 + 磨砂底板动画，动画播完后进入 `/notes/`
+  工作台；删除旧内嵌 Notes 面板（卡片、返回逻辑、`panelOpenInit`、
+  `slideWToHome` 等死代码）；`Landing.astro` 仅保留空玻璃底板作为转场表面。
+- **其他**：`BaseLayout` 支持 `bodyClass`；新增 `public/avatar.svg` 占位头像
+  （README 说明替换位置）；外部链接统一 `rel="noopener noreferrer"`。
+- **取舍**：系列树桌面展开依赖 hover/focus（CSS），移动端用点击切换；
+  日历为按年热力图（最新年份），日期单元格跳转归档对应日期；LaTeX 暂以
+  纯文本渲染，后续可接 KaTeX；示例文章会被下一次 `npm run sync:notes` 替换。
+- **验证**：`npm run typecheck`、`npm run build` 通过（94 页，含中文标签路由）。
+
+## 26. Notes 工作台迁回底板（无缝内嵌）
+
+- **架构调整**：Notes 三栏工作台不再作为独立整页，而是整体放进首页的
+  磨砂“底板”（`Landing.astro` 的 `#notesPanel`）内；`/notes/` 及子路由
+  渲染同一页面（底板初始打开），用于直接访问与刷新恢复。
+- **无缝导航**：`src/scripts/notes.ts` 拦截 Notes 内部链接，`fetch` 目标页并
+  原位替换底板内 `#notesShell` 内容（淡入淡出过渡），`history.pushState`
+  同步 URL；`popstate` 恢复对应状态；离开 Notes 回 `/` 时整页加载保证首页干净。
+- **首页转场**：点击 W 播放原有滑动转场后，底板原位打开并显示 Home 状态，
+  URL 同步为 `/notes/`，不再跳转整页。
+- **其他**：`NotesShell` 补上 `id="notesShell"`（无缝导航的替换锚点）；
+  `.notes-panel.active` 提供直接访问时的底板铺满尺寸；面板 z-index 调整为 8
+  （高于字母层、低于声音按钮）；移动端底板内整体滚动、底部固定导航。
+- **验证**：`npm run typecheck`、`npm run build` 通过（94 页）。
+
+## 27. 细节调整：W 居中、菜单收起动画、头像、BGM 按钮位置
+
+- 右栏加宽为 `clamp(100px, 9vw, 128px)`，W 终点改用 `pad = rail/2`
+  （`clamp(50px, 4.5vw, 64px)`），使 W 在右栏内水平居中且底板保持对称；
+- 右栏菜单收起增加过渡（transform 滑出 + 透明度淡出，visibility 延迟隐藏），
+  不再瞬间消失；
+- 头像改用 `public/media/profile.png`（需自行放入该文件）、放大到 96px，
+  与昵称居中排列；
+- BGM 按钮移至右上角，右边缘与 W 右边缘（底板右缘）对齐。
+
 ## 验证方式汇总
 
 - TypeScript 检查：`npm run typecheck`

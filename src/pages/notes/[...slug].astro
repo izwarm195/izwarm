@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Landing from '../../components/home/Landing.astro';
+import ArticleSidebar from '../../components/notes/ArticleSidebar.astro';
+import { getCollection } from 'astro:content';
+import { countWords, formatDate, getPublishedNotes, getSiblingNotes } from '../../lib/notes';
+import type { Note } from '../../lib/notes';
+
+export async function getStaticPaths() {
+  const notes = await getCollection('notes');
+  return notes
+    .filter((note) => !note.data.draft)
+    .map((note) => ({ params: { slug: note.slug }, props: { note } }));
+}
+
+const { note } = Astro.props as { note: Note };
+const { Content, headings } = await note.render();
+const notes = await getPublishedNotes();
+const siblings = getSiblingNotes(notes, note);
+const toc = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 4);
+const words = countWords(note.body ?? '');
+---
+
+<BaseLayout title={`${note.data.title} · izwarm`}>
+  <Landing open active="article">
+    <Fragment slot="notes-left">
+      <ArticleSidebar note={note} siblings={siblings} toc={toc} />
+    </Fragment>
+    <article slot="notes-main" class="article">
+      {note.data.cover && <img class="article-cover" src={note.data.cover} alt="" />}
+      <h1>{note.data.title}</h1>
+      <div class="article-meta">
+        <time datetime={formatDate(note.data.publishDate)}>发布于 {formatDate(note.data.publishDate)}</time>
+        {note.data.updatedDate && (
+          <time datetime={formatDate(note.data.updatedDate)}>更新于 {formatDate(note.data.updatedDate)}</time>
+        )}
+        {note.data.series.length > 0 && <span>{note.data.series.join(' / ')}</span>}
+        {note.data.tags.map((tag) => (
+          <a href={`/notes/tags/${encodeURIComponent(tag)}/`}>#{tag}</a>
+        ))}
+        <span>{words} 字数</span>
+      </div>
+      <div class="article-body">
+        <Content />
+      </div>
+    </article>
+  </Landing>
+</BaseLayout>

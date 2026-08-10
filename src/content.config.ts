@@ -10,12 +10,15 @@ const notes = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string().optional(),
-    date: z.coerce.date(),
-    updated: z.coerce.date().optional(),
-    category: z.string(),
-    section: z.string().optional(),
+    publishDate: z.coerce.date(),
+    updatedDate: z.coerce.date().optional(),
     tags: z.array(z.string()).default([]),
-    status: z.enum(['published', 'archived', 'draft']).default('published'),
+    /** 多级系列路径，如 ["English", "Words Summary", "数学英语词汇"] */
+    series: z.array(z.string()).default([]),
+    /** 同系列内排序（可选的稳定排序权重） */
+    order: z.number().optional(),
+    draft: z.boolean().default(false),
+    cover: z.string().optional(),
   }),
 });
 

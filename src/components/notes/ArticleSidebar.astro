@@ -1,0 +1,50 @@
+---
+import { noteUrl } from '../../lib/notes';
+import type { Note, TocItem } from '../../lib/notes';
+
+interface Props {
+  note: Note;
+  siblings: Note[];
+  toc: TocItem[];
+}
+
+const { note, siblings, toc } = Astro.props;
+---
+
+<div class="notes-article-side">
+  <section class="notes-toc-wrap" aria-label="文章大纲">
+    <h2 class="notes-section-label">大纲</h2>
+    {toc.length === 0 ? (
+      <p class="notes-empty">本文没有可用的标题。</p>
+    ) : (
+      <ol class="notes-toc">
+        {toc.map((heading) => (
+          <li>
+            <a data-depth={heading.depth} href={`#${heading.slug}`}>{heading.text}</a>
+          </li>
+        ))}
+      </ol>
+    )}
+  </section>
+
+  <section class="notes-siblings-wrap" aria-label="同系列文章">
+    <h2 class="notes-section-label">同系列</h2>
+    {siblings.length === 0 ? (
+      <p class="notes-empty">暂无同系列文章。</p>
+    ) : (
+      <ul class="notes-siblings">
+        {siblings.map((sibling) => (
+          <li>
+            <a
+              class={sibling.slug === note.slug ? 'active' : undefined}
+              href={noteUrl(sibling)}
+              aria-current={sibling.slug === note.slug ? 'true' : undefined}
+            >
+              {sibling.data.title}
+            </a>
+          </li>
+        ))}
+      </ul>
+    )}
+  </section>
+</div>

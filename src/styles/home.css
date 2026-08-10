@@ -1,5 +1,9 @@
 /* 首页样式 —— 由原站内嵌 CSS 原样迁移，选择器与属性值不变 */
 
+:root {
+  --panel-margin: clamp(20px, 2.5vw, 44px);
+}
+
 .landing {
   position: fixed;
   inset: 0;
@@ -167,12 +171,6 @@
   pointer-events: none;
 }
 
-/* 直接访问 /notes/ 时，大 Logo 也须隐藏 */
-.landing.panel-open .logo-full {
-  opacity: 0;
-  pointer-events: none;
-}
-
 .logo-letter.center {
   cursor: default;
   pointer-events: none;
@@ -201,8 +199,9 @@
 /* 声音控制 */
 .sound-toggle {
   position: absolute;
-  bottom: 28px;
-  right: 28px;
+  top: 24px;
+  right: var(--panel-margin); /* 与 W 右边缘对齐（底板右缘） */
+  bottom: auto;
   width: 34px;
   height: 34px;
   border: 1px solid var(--edge-line);
@@ -256,7 +255,7 @@
   top: 0;
   width: 0;
   height: 0;
-  z-index: 1; /* 高于 .bg-video-wrap，低于 logo-stage(z6)，故 W 始终盖在底板上方 */
+  z-index: 1; /* 低于 logo-stage(z6)，原 W 始终盖在底板上方 */
   background: rgba(120, 122, 130, 0.26);
   backdrop-filter: blur(18px) saturate(1.1);
   -webkit-backdrop-filter: blur(18px) saturate(1.1);
@@ -272,107 +271,20 @@
 
 .notes-panel.active {
   opacity: 1;
-}
-
-/* 底板内的模块化内容（此部分待定，先放占位骨架） */
-.notes-panel-inner {
-  position: absolute;
-  inset: 0;
-  padding: clamp(24px, 4vw, 56px);
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 14px;
-  align-content: start;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  overflow-y: auto;
-}
-
-.notes-panel.content-in .notes-panel-inner {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.notes-card {
-  min-height: 96px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-/* 底板卡片内容排版 */
-.notes-card-date {
-  font-size: 10px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.45);
-}
-
-.notes-card-title {
-  font-size: 16px;
-  font-weight: 400;
-  color: #fff;
-  margin: 10px 0 6px 0;
-}
-
-.notes-card-excerpt {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.55);
-  line-height: 1.6;
-  margin: 0;
-}
-
-.notes-card-category {
-  display: block;
-  margin-top: 12px;
-  font-size: 10px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.35);
-}
-
-.notes-panel-title {
-  grid-column: 1 / -1;
-  font-size: clamp(22px, 3vw, 36px);
-  font-weight: 300;
-  letter-spacing: 0.06em;
-  color: #fff;
-  margin: 0;
-}
-
-.notes-panel-desc {
-  grid-column: 1 / -1;
-  font-size: 12px;
-  color: rgba(255,255,255,0.35);
-  letter-spacing: 0.1em;
-  margin: 6px 0 20px 0;
-}
-
-.notes-panel-grid {
-  grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 14px;
-  align-content: start;
-}
-
-/* 直接访问 /notes/：底板初始即铺满屏幕（margin 与 slideWToNotes 终点一致） */
-.notes-panel.static-open {
-  --panel-margin: clamp(20px, 2.5vw, 44px);
+  pointer-events: auto; /* 打开后可交互（内容链接、系列树等） */
+  /* 直接访问 Notes 路由时底板直接铺满（滑动转场由 JS 逐帧覆盖这些值） */
   left: var(--panel-margin);
   top: var(--panel-margin);
   width: calc(100% - var(--panel-margin) * 2);
   height: calc(100% - var(--panel-margin) * 2);
 }
-/* 直接访问 /notes/：隐藏中心文字，但不进入字母展开态 */
+
+/* 直接访问 Notes 路由：隐藏中心文字与大 Logo（底板为半透明玻璃） */
 .landing.panel-open .intro-text {
   opacity: 0;
   pointer-events: none;
 }
-
-/* 直接访问 /notes/ 时：W 保持隐藏，由 panelOpenInit() 在右下角位置再显示，
-   避免 W 先按初始位置（屏幕中心）闪现 */
-.landing.panel-open #letter-w {
+.landing.panel-open .logo-full {
   opacity: 0;
   pointer-events: none;
 }

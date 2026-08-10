@@ -1,0 +1,29 @@
+---
+interface Props {
+  active: 'home' | 'article' | 'archive' | 'tags';
+}
+
+const { active } = Astro.props;
+
+const items = [
+  { label: 'Home', href: '/notes/', key: 'home' },
+  { label: 'Tags', href: '/notes/tags/', key: 'tags' },
+  { label: 'Archive', href: '/notes/archive/', key: 'archive' },
+];
+---
+
+<nav class="notes-rail" aria-label="Notes 导航">
+  <ul class="notes-rail-menu">
+    {items.map((item) => (
+      <li>
+        <a
+          class="w-shape notes-rail-link"
+          href={item.href}
+          aria-current={active === item.key ? 'page' : undefined}
+        >
+          {item.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>

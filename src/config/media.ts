@@ -11,6 +11,8 @@
 export const MEDIA_BASE = '/media';
 
 export const media = {
+  avatar: '/avatar.svg',
+  profile: '/media/profile.png',
   logo: `${MEDIA_BASE}/logo.png`,
   logoIz: `${MEDIA_BASE}/iz.png`,
   logoW: `${MEDIA_BASE}/w.png`,

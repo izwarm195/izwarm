@@ -1,12 +1,10 @@
 ---
 title: "SS-QNA-05"
 slug: "signals/signals-and-systems/ss-qna/ss-qna-05"
-date: "2026-08-06"
-updated: "2026-08-06"
-category: "Signals"
-section: "Signals & Systems/SS-QNA"
+publishDate: "2026-08-06"
+updatedDate: "2026-08-06"
 tags: ["SS-QNA","template","signals"]
-status: "published"
+series: ["Signals","Signals & Systems","SS-QNA"]
 ---
 
 > **[question]**

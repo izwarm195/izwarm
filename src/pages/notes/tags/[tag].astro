@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Landing from '../../../components/home/Landing.astro';
+import NotesSidebar from '../../../components/notes/NotesSidebar.astro';
+import ArchiveList from '../../../components/notes/ArchiveList.astro';
+import { getPublishedNotes } from '../../../lib/notes';
+
+export async function getStaticPaths() {
+  const notes = await getPublishedNotes();
+  const tags = [...new Set(notes.flatMap((note) => note.data.tags))];
+  return tags.map((tag) => ({ params: { tag }, props: { tag } }));
+}
+
+const { tag } = Astro.props;
+const notes = await getPublishedNotes();
+const tagged = notes.filter((note) => note.data.tags.includes(tag));
+---
+
+<BaseLayout title={`#${tag} · izwarm`}>
+  <Landing open active="tags">
+    <Fragment slot="notes-left"><NotesSidebar notes={notes} /></Fragment>
+    <section slot="notes-main" aria-label={`标签 ${tag}`}>
+      <h1 class="notes-page-title">#{tag}</h1>
+      <ArchiveList notes={tagged} />
+    </section>
+  </Landing>
+</BaseLayout>

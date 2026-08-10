@@ -2,12 +2,10 @@
 title: "Signals & System 总目录"
 slug: "signals/signals-and-systems/text-book/signals-and-system-总目录"
 description: "第一章 信号与系统概论"
-date: "2026-08-02"
-updated: "2026-08-02"
-category: "Signals"
-section: "Signals & Systems/Text Book"
+publishDate: "2026-08-02"
+updatedDate: "2026-08-02"
 tags: ["signals","signals-systems","textbook"]
-status: "published"
+series: ["Signals","Signals & Systems","Text Book"]
 ---
 
 # Signals & System

@@ -24,7 +24,8 @@ izwarm/
 ├── src/
 │   ├── components/
 │   │   ├── home/
-│   │   │   └── Landing.astro  # 首页 + Notes 底板共用结构
+│   │   │   └── Landing.astro  # 首页（含 W → Notes 转场）
+│   │   └── notes/             # Notes 工作台组件（三栏骨架、右栏、系列树等）
 │   │   └── common/       # 预留：通用组件
 │   ├── config/
 │   │   ├── media.ts      # 媒体资源地址（唯一配置点）
@@ -34,18 +35,21 @@ izwarm/
 │   │   ├── projects/     # 预留：Projects 内容
 │   │   └── works/        # 预留：Works 内容
 │   ├── content.config.ts # 内容集合配置
+│   ├── lib/
+│   │   └── notes.ts      # Notes 数据工具（系列树/归档/标签/统计/日历/字数）
 │   ├── layouts/
 │   │   └── BaseLayout.astro
 │   ├── pages/
 │   │   ├── index.astro   # 首页
-│   │   └── notes/
-│   │       └── index.astro  # Notes（初始即打开底板）
+│   │   └── notes/        # Notes 工作台路由（见下文）
 │   ├── scripts/
-│   │   └── home.ts       # 首页脚本（由原 home.js 迁移）
+│   │   ├── home.ts       # 首页脚本（由原 home.js 迁移）
+│   │   └── notes.ts      # Notes 交互（系列树展开、大纲高亮）
 │   └── styles/
 │       ├── tokens.css    # 主题变量
 │       ├── global.css    # 全局样式
-│       └── home.css      # 首页样式
+│       ├── home.css      # 首页样式
+│       └── notes.css     # Notes 工作台样式
 ├── astro.config.mjs
 ├── package.json
 ├── tsconfig.json
@@ -117,6 +121,47 @@ npm run preview
 
 若某些文件缺失，页面按原设计降级（深色底 / 封面 / 无音效），脚本不会报错。
 文件放齐后运行 `npm run dev` 或 `npm run build` 即可从本地加载。
+
+## Notes 工作台
+
+Notes 工作台整体承载在首页的磨砂“底板”内：首页点击字母 W 播放原有滑动转场，
+底板原位打开即显示 Notes 工作台；`/notes/` 等路由用于直接访问与刷新恢复，
+渲染的是同一页面（底板初始打开）。Notes 内部的状态切换（Home / 文章 / 归档 /
+标签）通过 `fetch` 原位替换底板内容 + `pushState` 同步 URL 无缝进行，
+不整页跳转；浏览器前进 / 后退与直接刷新均可正确恢复。
+
+- `/notes/`：Home —— 左栏简介 / 自动统计 / 文章日历，中栏递归系列树
+- `/notes/[...slug]/`：Article —— 左栏自动大纲 + 同系列列表，中栏正文
+- `/notes/archive/`：Archive —— 按年 / 月分组的文章归档
+- `/notes/tags/`：Tags —— 全部标签
+- `/notes/tags/[tag]/`：单标签文章列表
+
+桌面为左 / 中 / 右三栏，右栏是 W 形导航（Home / Tags / Archive，悬停、键盘
+focus 或移动端底部固定栏展开）；手机为单栏 + 底部导航（底板内滚动）。
+所有统计、归档、标签、日历均由 `src/lib/notes.ts` 从内容集合自动派生。
+
+### 内容模型
+
+`src/content.config.ts` 的 notes 集合字段：`title`、`description?`、
+`publishDate`、`updatedDate?`、`tags`、`series`（多级路径数组）、
+`order?`、`draft?`、`cover?`。`slug` 由 Astro 保留为 entry slug。
+
+**系列数统计口径**：目录树中所有层级的系列节点数量（每个唯一前缀计一次）。
+**字数统计口径**：中英文混合——CJK 逐字计数，拉丁词按词计数（见 `countWords`）。
+
+### 草稿规则
+
+- `draft: true` 的文章生产构建（`npm run build`）不展示；
+- 开发环境可用 `getPublishedNotes(true)` 预览（当前页面默认不展示草稿）；
+- 同步脚本跳过 `status: draft` 与 `publish: false` 的笔记。
+
+### 示例内容与头像
+
+- `src/content/notes/example-series/` 下有 3 篇带 `order`、封面、中文标签的示例文章，
+  用于验证三级系列、大纲、标签与归档；运行 `npm run sync:notes` 会以白名单目录
+  的真实内容重新生成整个 `src/content/notes/`（示例会被替换）。
+- 头像读取 `public/media/profile.png`（`src/config/media.ts` 的 `profile` 字段），
+  请将头像文件以该文件名放入 `public/media/`。
 
 ## 后续扩展
 

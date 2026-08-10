@@ -2,12 +2,10 @@
 title: "Numpy 函数汇总"
 slug: "machine-and-deep-learning/python/numpy-函数汇总"
 description: "以下是网页中 NumPy 函数的完整分类整理，每个函数后附带简短注释。"
-date: "2026-07-01"
-updated: "2026-07-01"
-category: "Machine & Deep Learning"
-section: "Python"
+publishDate: "2026-07-01"
+updatedDate: "2026-07-01"
 tags: ["machine-learning","python"]
-status: "published"
+series: ["Machine & Deep Learning","Python"]
 ---
 
 以下是网页中 NumPy 函数的完整分类整理，每个函数后附带简短注释。

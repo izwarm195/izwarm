@@ -2,12 +2,10 @@
 title: "cmath pow()"
 slug: "cpp/summaries/cmath-pow"
 description: "..."
-date: "2026-07-11"
-updated: "2026-07-11"
-category: "CPP"
-section: "Summaries"
+publishDate: "2026-07-11"
+updatedDate: "2026-07-11"
 tags: ["cpp","summaries"]
-status: "published"
+series: ["CPP","Summaries"]
 ---
 
 ```cpp

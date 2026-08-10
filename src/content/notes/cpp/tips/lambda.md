@@ -2,12 +2,10 @@
 title: "Lambda"
 slug: "cpp/tips/lambda"
 description: "C++11 提供了对匿名函数的支持,称为 Lambda 函数(也叫 Lambda 表达式)。"
-date: "2026-07-16"
-updated: "2026-07-16"
-category: "CPP"
-section: "Tips"
+publishDate: "2026-07-16"
+updatedDate: "2026-07-16"
 tags: ["cpp","tips"]
-status: "published"
+series: ["CPP","Tips"]
 ---
 
 ## Lambda 函数与表达式

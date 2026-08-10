@@ -2,12 +2,10 @@
 title: "Examples"
 slug: "cpp/examples/examples"
 description: "CE 26 07 09：禁止在int乘int时不开long long"
-date: "2026-07-10"
-updated: "2026-07-10"
-category: "CPP"
-section: "Examples"
+publishDate: "2026-07-10"
+updatedDate: "2026-07-10"
 tags: ["cpp","examples","moc"]
-status: "published"
+series: ["CPP","Examples"]
 ---
 
 CE 26-07-09：禁止在int乘int时不开long long

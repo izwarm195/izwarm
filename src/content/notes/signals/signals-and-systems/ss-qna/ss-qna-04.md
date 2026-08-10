@@ -1,12 +1,10 @@
 ---
 title: "SS-QNA-04"
 slug: "signals/signals-and-systems/ss-qna/ss-qna-04"
-date: "2026-08-05"
-updated: "2026-08-05"
-category: "Signals"
-section: "Signals & Systems/SS-QNA"
+publishDate: "2026-08-05"
+updatedDate: "2026-08-05"
 tags: ["SS-QNA","template","signals"]
-status: "published"
+series: ["Signals","Signals & Systems","SS-QNA"]
 ---
 
 > **[question]** 3.3.3 到底要表达什么？

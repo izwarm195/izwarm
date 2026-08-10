@@ -2,12 +2,10 @@
 title: "SS-QNA-06"
 slug: "signals/signals-and-systems/ss-qna/ss-qna-06"
 description: "查完了—— 三个问题教材里都有解释 ，只是分散在不同小节。对照如下："
-date: "2026-08-06"
-updated: "2026-08-06"
-category: "Signals"
-section: "Signals & Systems/SS-QNA"
+publishDate: "2026-08-06"
+updatedDate: "2026-08-06"
 tags: ["SS-QNA","template","signals"]
-status: "published"
+series: ["Signals","Signals & Systems","SS-QNA"]
 ---
 
 > **[question]** ### **1. $F_n$ 是复数，为什么这里的 $F_n$ 是实函数？**

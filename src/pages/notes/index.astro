@@ -1,13 +1,16 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Landing from '../../components/home/Landing.astro';
-import { getCollection } from 'astro:content';
+import NotesSidebar from '../../components/notes/NotesSidebar.astro';
+import SeriesExplorer from '../../components/notes/SeriesExplorer.astro';
+import { getPublishedNotes } from '../../lib/notes';
 
-const notes = (await getCollection('notes'))
-  .filter((n) => n.data.status === 'published')
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const notes = await getPublishedNotes();
 ---
 
 <BaseLayout title="Notes · izwarm">
-  <Landing initialPanel notes={notes} />
+  <Landing open active="home">
+    <Fragment slot="notes-left"><NotesSidebar notes={notes} /></Fragment>
+    <Fragment slot="notes-main"><SeriesExplorer notes={notes} /></Fragment>
+  </Landing>
 </BaseLayout>

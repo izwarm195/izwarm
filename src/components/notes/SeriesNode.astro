@@ -1,0 +1,34 @@
+---
+import SeriesNode from './SeriesNode.astro';
+import { noteUrl } from '../../lib/notes';
+import type { SeriesNode as SeriesNodeType } from '../../lib/notes';
+
+interface Props {
+  node: SeriesNodeType;
+}
+
+const { node } = Astro.props;
+const hasChildren = node.children.length > 0;
+const hasNotes = node.notes.length > 0;
+---
+
+<div class="series-node">
+  {hasChildren && (
+    <button class="series-node-btn" type="button" aria-expanded="false">
+      <span>{node.name}</span>
+    </button>
+  )}
+  {hasChildren ? (
+    <div class="series-node-children">
+      {node.children.map((child) => <SeriesNode node={child} />)}
+      {hasNotes && node.notes.map((note) => (
+        <a class="series-note" href={noteUrl(note)}>{note.data.title}</a>
+      ))}
+    </div>
+  ) : (
+    hasNotes &&
+    node.notes.map((note) => (
+      <a class="series-note" href={noteUrl(note)}>{note.data.title}</a>
+    ))
+  )}
+</div>

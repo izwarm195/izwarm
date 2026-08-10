@@ -2,12 +2,10 @@
 title: "Vector Optimizing"
 slug: "cpp/summaries/vector-optimizing"
 description: "https://www.youtube.com/watch?v HcESuwmlHEY"
-date: "2026-07-20"
-updated: "2026-07-20"
-category: "CPP"
-section: "Summaries"
+publishDate: "2026-07-20"
+updatedDate: "2026-07-20"
 tags: ["cpp","summaries"]
-status: "published"
+series: ["CPP","Summaries"]
 ---
 
 ---

@@ -2,12 +2,10 @@
 title: "Numpy 对话总结 I"
 slug: "machine-and-deep-learning/python/numpy-对话总结-i"
 description: "常用创建方式："
-date: "2026-07-29"
-updated: "2026-07-29"
-category: "Machine & Deep Learning"
-section: "Python"
+publishDate: "2026-07-29"
+updatedDate: "2026-07-29"
 tags: ["machine-learning","python"]
-status: "published"
+series: ["Machine & Deep Learning","Python"]
 ---
 
 ## 1. 数组创建与形状

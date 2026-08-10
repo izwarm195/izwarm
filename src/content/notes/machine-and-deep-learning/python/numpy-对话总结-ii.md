@@ -2,12 +2,10 @@
 title: "Numpy 对话总结 II"
 slug: "machine-and-deep-learning/python/numpy-对话总结-ii"
 description: "1、np.atleast_xd 传入多参数"
-date: "2026-08-02"
-updated: "2026-08-02"
-category: "Machine & Deep Learning"
-section: "Python"
+publishDate: "2026-08-02"
+updatedDate: "2026-08-02"
 tags: ["machine-learning","python"]
-status: "published"
+series: ["Machine & Deep Learning","Python"]
 ---
 
 1、np.atleast_xd 传入多参数

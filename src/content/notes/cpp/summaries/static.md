@@ -2,12 +2,10 @@
 title: "static"
 slug: "cpp/summaries/static"
 description: "位置 含义 生命周期 可见性"
-date: "2026-07-10"
-updated: "2026-07-10"
-category: "CPP"
-section: "Summaries"
+publishDate: "2026-07-10"
+updatedDate: "2026-07-10"
 tags: ["cpp","summaries"]
-status: "published"
+series: ["CPP","Summaries"]
 ---
 
 ### `static` 在 C++ 中有 **五种不同的含义**，取决于它出现的位置。再加上 `extern` 作为它的对立面，一起梳理。
