@@ -15,6 +15,8 @@ export const MEDIA_BASE = base + '/media';
 export const media = {
   avatar: base + '/avatar.svg',
   profile: `${MEDIA_BASE}/profile.png`,
+  bilibiliIcon: `${MEDIA_BASE}/bilibili.svg`,
+  neteaseIcon: `${MEDIA_BASE}/netease-cloud-music.svg`,
   logo: `${MEDIA_BASE}/logo.png`,
   logoIz: `${MEDIA_BASE}/iz.png`,
   logoW: `${MEDIA_BASE}/w.png`,

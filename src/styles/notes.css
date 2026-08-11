@@ -112,6 +112,14 @@ body::-webkit-scrollbar {
   height: 17px;
   fill: currentColor;
 }
+.notes-social img {
+  width: 17px;
+  height: 17px;
+  filter: invert(1); /* 源 SVG 为黑色，深色主题下反相为白色 */
+}
+[data-theme='light'] .notes-social img {
+  filter: none; /* 浅色主题保持原色（黑色），与浅色按钮底色适配 */
+}
 
 /* ---- 统计 ---- */
 .notes-stats {
