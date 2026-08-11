@@ -3,6 +3,7 @@ title: "求第 n 位数字"
 slug: "cpp/examples/求第-n-位数字"
 description: "输入一个正整数 n，输出从 1 开始依次写下所有正整数后，第 n 位上的数字。例如：写下：12345678910111213..."
 publishDate: "2026-07-12"
+createdAt: "2026-07-12T00:00:00Z"
 updatedDate: "2026-07-12"
 tags: ["cpp","examples"]
 series: ["CPP","Examples"]

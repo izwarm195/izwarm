@@ -19,6 +19,11 @@ export const url = (path: string): string => baseUrl + (path.startsWith('/') ? p
 
 export const noteUrl = (note: Note): string => url(`/notes/${note.slug}/`);
 
+/** 创建时间（含时刻）：缺省回退 publishDate，用于同一天内排序 */
+function creationTime(note: Note): number {
+  return note.data.createdAt?.valueOf() ?? note.data.publishDate.valueOf();
+}
+
 /** 获取已发布文章（draft 默认排除；开发环境可用 includeDraft 查看并自行标记） */
 export async function getPublishedNotes(includeDraft = false): Promise<Note[]> {
   const all = await getCollection('notes');
@@ -26,15 +31,15 @@ export async function getPublishedNotes(includeDraft = false): Promise<Note[]> {
   return sortNotes(list);
 }
 
-/** 稳定排序：order → 发布日期 → 标题 */
+/** 稳定排序：order → 创建时间（同日从早到晚）→ slug */
 export function sortNotes(notes: Note[]): Note[] {
   return [...notes].sort((a, b) => {
     const ao = a.data.order ?? Number.MAX_SAFE_INTEGER;
     const bo = b.data.order ?? Number.MAX_SAFE_INTEGER;
     if (ao !== bo) return ao - bo;
-    const d = a.data.publishDate.valueOf() - b.data.publishDate.valueOf();
-    if (d !== 0) return d;
-    return a.data.title.localeCompare(b.data.title, 'zh-Hans-CN');
+    const created = creationTime(a) - creationTime(b);
+    if (created !== 0) return created;
+    return a.slug.localeCompare(b.slug);
   });
 }
 
@@ -102,11 +107,18 @@ export function getArchiveData(notes: Note[]): ArchiveYear[] {
         .sort((a, b) => b[0].localeCompare(a[0]))
         .map(([month, list]) => ({
           month,
-          // 归档：同一月内从新到旧（同日期按标题稳定排序）
+          // 归档：发布日期从新到旧；同一天按创建时间从早到晚，再按 order / slug
           notes: [...list].sort(
-            (a, b) =>
-              b.data.publishDate.valueOf() - a.data.publishDate.valueOf() ||
-              a.data.title.localeCompare(b.data.title, 'zh-Hans-CN')
+            (a, b) => {
+              const published = b.data.publishDate.valueOf() - a.data.publishDate.valueOf();
+              if (published !== 0) return published;
+              const created = creationTime(a) - creationTime(b);
+              if (created !== 0) return created;
+              const ao = a.data.order ?? Number.MAX_SAFE_INTEGER;
+              const bo = b.data.order ?? Number.MAX_SAFE_INTEGER;
+              if (ao !== bo) return ao - bo;
+              return a.slug.localeCompare(b.slug);
+            }
           ),
         })),
     }));

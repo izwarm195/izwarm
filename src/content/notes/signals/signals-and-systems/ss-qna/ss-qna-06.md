@@ -3,6 +3,7 @@ title: "SS-QNA-06"
 slug: "signals/signals-and-systems/ss-qna/ss-qna-06"
 description: "查完了—— 三个问题教材里都有解释 ，只是分散在不同小节。对照如下："
 publishDate: "2026-08-06"
+createdAt: "2026-08-06T00:00:00Z"
 updatedDate: "2026-08-06"
 tags: ["SS-QNA","template","signals"]
 series: ["Signals","Signals & Systems","SS-QNA"]

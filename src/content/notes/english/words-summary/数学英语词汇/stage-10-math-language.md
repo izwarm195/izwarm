@@ -3,6 +3,7 @@ title: "Stage 10 - Math Language"
 slug: "english/words-summary/数学英语词汇/stage-10-math-language"
 description: "1. notation 记号"
 publishDate: "2026-08-03"
+createdAt: "2026-08-03T00:00:00Z"
 updatedDate: "2026-08-03"
 tags: ["english","vocabulary","math"]
 series: ["English","Words Summary","数学英语词汇"]

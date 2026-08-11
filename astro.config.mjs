@@ -10,7 +10,27 @@ export default defineConfig({
   site: 'https://www.izwarm.top',
   base: process.env.ASTRO_BASE ?? '',
   markdown: {
-    remarkPlugins: [remarkMath],
-    rehypePlugins: [rehypeKatex],
+    remarkPlugins: [
+      [
+        remarkMath,
+        {
+          singleDollarTextMath: true,
+        },
+      ],
+    ],
+    rehypePlugins: [
+      [
+        rehypeKatex,
+        {
+          output: 'htmlAndMathml',
+          throwOnError: false,
+          strict: 'warn',
+          trust: false,
+          errorColor: '#d98b8b',
+          fleqn: false,
+          leqno: false,
+        },
+      ],
+    ],
   },
 });

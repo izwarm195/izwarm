@@ -43,11 +43,15 @@ function groupByDate(list: Note[]): { date: string; notes: Note[] }[] {
                   <a class="archive-title" href={noteUrl(note)}>{note.data.title}</a>
                   <div class="archive-meta">
                     {note.data.series.length > 0 && (
-                      <span>{note.data.series.join(' / ')}</span>
+                      <span class="archive-series">{note.data.series.join(' / ')}</span>
                     )}
-                    {note.data.tags.map((tag) => (
-                      <a href={url(`/notes/tags/${encodeURIComponent(tag)}/`)}>#{tag}</a>
-                    ))}
+                    {note.data.tags.length > 0 && (
+                      <span class="archive-tags">
+                        {note.data.tags.map((tag) => (
+                          <a href={url(`/notes/tags/${encodeURIComponent(tag)}/`)}>#{tag}</a>
+                        ))}
+                      </span>
+                    )}
                   </div>
                 </div>
               ))}

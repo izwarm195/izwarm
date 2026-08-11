@@ -89,10 +89,21 @@ document.addEventListener('click', (e) => {
 
 // ---------- 大纲滚动高亮 ----------
 let tocObserver: IntersectionObserver | null = null;
+let activeHeadingId = '';
+
+function setActiveHeading(id: string): void {
+  if (!id || id === activeHeadingId) return;
+  activeHeadingId = id;
+  document.querySelector<HTMLAnchorElement>('.notes-toc a.active')?.classList.remove('active');
+  document
+    .querySelector<HTMLAnchorElement>(`.notes-toc a[href="#${CSS.escape(id)}"]`)
+    ?.classList.add('active');
+}
 
 function initToc(): void {
   tocObserver?.disconnect();
   tocObserver = null;
+  activeHeadingId = '';
   const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.notes-toc a'));
   if (links.length === 0 || !('IntersectionObserver' in window)) return;
   const headings = links
@@ -106,8 +117,7 @@ function initToc(): void {
         .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
       const current = visible[0];
       if (!current) return;
-      const id = current.target.id;
-      links.forEach((a) => a.classList.toggle('active', a.getAttribute('href') === `#${id}`));
+      setActiveHeading(current.target.id);
     },
     { rootMargin: '-15% 0px -70% 0px' }
   );
@@ -125,15 +135,35 @@ async function loadState(url: string, push: boolean): Promise<void> {
     const next = doc.getElementById('notesShell');
     if (!next) return;
     const hash = url.includes('#') ? url.slice(url.indexOf('#')) : '';
-    shellEl.classList.add('notes-swap-out');
+    const currentMain = shellEl.querySelector<HTMLElement>('[data-notes-region="main"]');
+    const nextMain = next.querySelector<HTMLElement>('[data-notes-region="main"]');
+    const currentLeft = shellEl.querySelector<HTMLElement>('[data-notes-region="left"]');
+    const nextLeft = next.querySelector<HTMLElement>('[data-notes-region="left"]');
+    const currentRail = shellEl.querySelector<HTMLElement>('[data-notes-region="rail"]');
+    const nextRail = next.querySelector<HTMLElement>('[data-notes-region="rail"]');
+    if (!currentMain || !nextMain || !currentLeft || !nextLeft || !currentRail || !nextRail) return;
+
+    const currentState = shellEl.dataset.notesState ?? '';
+    const nextState = next.dataset.notesState ?? '';
+
+    currentMain.classList.add('notes-swap-out');
     await new Promise((resolve) => setTimeout(resolve, 160));
-    shellEl.innerHTML = next.innerHTML;
-    shellEl.classList.remove('notes-swap-out');
+
+    currentMain.innerHTML = nextMain.innerHTML;
+    currentRail.innerHTML = nextRail.innerHTML;
+
+    // Home / Archive / Tags 共用左栏，切换时不替换；跨 Article 边界才更新左栏
+    const bothShared = currentState !== 'article' && nextState !== 'article';
+    if (!bothShared) {
+      currentLeft.innerHTML = nextLeft.innerHTML;
+      currentLeft.scrollTop = 0;
+    }
+
+    shellEl.dataset.notesState = nextState;
+    currentMain.scrollTop = 0;
+    currentMain.classList.remove('notes-swap-out');
     if (doc.title) document.title = doc.title;
     if (push) history.pushState({}, '', url);
-    document.querySelectorAll<HTMLElement>('.notes-col').forEach((col) => {
-      col.scrollTop = 0;
-    });
     initToc();
     if (hash) {
       const target = document.getElementById(hash.slice(1));

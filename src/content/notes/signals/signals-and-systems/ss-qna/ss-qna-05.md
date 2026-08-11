@@ -2,6 +2,7 @@
 title: "SS-QNA-05"
 slug: "signals/signals-and-systems/ss-qna/ss-qna-05"
 publishDate: "2026-08-06"
+createdAt: "2026-08-06T00:00:00Z"
 updatedDate: "2026-08-06"
 tags: ["SS-QNA","template","signals"]
 series: ["Signals","Signals & Systems","SS-QNA"]

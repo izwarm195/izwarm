@@ -3,6 +3,7 @@ title: "禁止在int乘int时不开long long"
 slug: "cpp/examples/禁止在int乘int时不开long-long"
 description: "在比赛中，根据数据范围分析清楚变量的取值范围是非常重要的。int 类型变量与 int 类型变量相乘，往往可能超出 int 类型可以表示的取值范围。"
 publishDate: "2026-07-10"
+createdAt: "2026-07-10T00:00:00Z"
 updatedDate: "2026-07-10"
 tags: ["cpp","examples"]
 series: ["CPP","Examples"]

@@ -11,6 +11,8 @@ const notes = defineCollection({
     title: z.string(),
     description: z.string().optional(),
     publishDate: z.coerce.date(),
+    /** 创建时间（含时刻，用于同一天排序；缺省回退 publishDate） */
+    createdAt: z.coerce.date().optional(),
     updatedDate: z.coerce.date().optional(),
     tags: z.array(z.string()).default([]),
     /** 多级系列路径，如 ["English", "Words Summary", "数学英语词汇"] */

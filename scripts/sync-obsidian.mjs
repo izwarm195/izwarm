@@ -114,6 +114,23 @@ function noteUrlOf(slug) {
   return SITE_BASE + '/notes/' + slug + '/';
 }
 
+// Obsidian 公式规范化：仅处理明确的块公式，跳过代码围栏
+function normalizeObsidianMath(markdown) {
+  const lines = markdown.split('\n');
+  let inFence = false;
+  return lines
+    .map((line) => {
+      if (/^\s*(```|~~~)/.test(line)) {
+        inFence = !inFence;
+        return line;
+      }
+      if (inFence) return line;
+      // 同行的 $$x$$ 规范为独占三行，便于 KaTeX 正确识别为块公式
+      return line.replace(/^\s*\$\$\s*([^\n]+?)\s*\$\$\s*$/, '$$\n$1\n$$');
+    })
+    .join('\n');
+}
+
 function toYaml(o) {
   return Object.entries(o)
     .filter(([, v]) => v !== undefined)
@@ -151,9 +168,11 @@ async function main() {
         continue;
       }
       const relPosix = file.rel.split(path.sep).join('/');
+      let birthtimeIso = null;
       try {
         const st = await fs.stat(file.full);
         if (st.birthtime) manifestData[relPosix] = st.birthtime.toISOString().slice(0, 10);
+        birthtimeIso = st.birthtime ? st.birthtime.toISOString() : null;
       } catch {
         /* 忽略 stat 失败 */
       }
@@ -175,12 +194,19 @@ async function main() {
         createdDates[relPosix] ||
         gitDate(VAULT, file.rel, true) ||
         (await fs.stat(file.full)).birthtime.toISOString().slice(0, 10);
+      // 创建时间（含时刻）：frontmatter → 清单 → 文件创建时间 → git → publishDate
+      const createdAt =
+        parseDateStr(data.createdAt || data.created) ||
+        (createdDates[relPosix] ? createdDates[relPosix] + 'T00:00:00Z' : null) ||
+        birthtimeIso ||
+        gitDate(VAULT, file.rel, true) ||
+        date;
       const updated = parseDateStr(data.updated_at) || gitDate(VAULT, file.rel, false) || date;
       const tags = [
         ...(Array.isArray(data.tags) ? data.tags.map((t) => String(t).replace(/^#/, '')) : []),
         CATEGORY_TAG[category],
       ].filter(Boolean);
-      candidates.push({ file, data, content, basename, title, category, dirBelow, slug, date, updated, tags });
+      candidates.push({ file, data, content, basename, title, category, dirBelow, slug, date, createdAt, updated, tags });
     }
   }
 
@@ -200,12 +226,13 @@ async function main() {
 
   // 第二遍：转换双链并写出
   for (const n of candidates) {
-      const body = convertBody(n.content, slugIndex).replace(/^\s+/, '');
+      const body = normalizeObsidianMath(convertBody(n.content, slugIndex)).replace(/^\s+/, '');
       const fm = {
         title: n.title,
         slug: n.slug,
         description: n.data.description || firstParagraph(body) || undefined,
         publishDate: n.date,
+        createdAt: n.createdAt,
         updatedDate: n.updated,
         tags: [...new Set(n.tags)],
         series: n.dirBelow ? [n.category, ...n.dirBelow.split(path.sep)] : [n.category],

@@ -3,6 +3,7 @@ title: "Numpy 对话总结 II"
 slug: "machine-and-deep-learning/python/numpy-对话总结-ii"
 description: "1、np.atleast_xd 传入多参数"
 publishDate: "2026-08-02"
+createdAt: "2026-08-02T00:00:00Z"
 updatedDate: "2026-08-02"
 tags: ["machine-learning","python"]
 series: ["Machine & Deep Learning","Python"]

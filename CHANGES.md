@@ -411,6 +411,45 @@
 - **验证**：`npm run typecheck`、`npm run build` 通过；本地归档日期分散、
   总目录 17 个章节链接全部正确。
 
+## 34. KaTeX 严格模式、公式规范化、分区 SPA、W 方向过场与 Obsidian 阅读排版
+
+- **KaTeX 严格模式**：`astro.config.mjs` 配置 `throwOnError: false` +
+  `strict: 'warn'` + `output: 'htmlAndMathml'`，公式错误不再导致整站构建失败，
+  并以 `.katex-error` 样式可见；保留构建期 `remark-math + rehype-katex`，
+  不引入客户端重复渲染。
+- **公式规范化**：`scripts/sync-obsidian.mjs` 新增 `normalizeObsidianMath()`，
+  把同一行内的 `$$…$$` 块公式规范为独占三行（跳过代码围栏），提高 KaTeX
+  识别率；写入前对正文统一调用。
+- **创建时间（createdAt）**：内容模型新增 `createdAt?: Date`；同步脚本按
+  frontmatter → 创建时间清单 → 文件 birthtime → git 首次提交 → 发布日期
+  推导；`sortNotes` 与归档改为 order → createdAt → slug 排序，同一天文章
+  不再退化为标题排序（归档同月仍从新到旧，同日从早到晚）。
+- **分区 SPA 切换**：`NotesShell.astro` 给左 / 中 / 右栏加
+  `data-notes-region` 与 `data-notes-state`；`notes.ts` 的 `loadState()`
+  只替换中栏与右栏，Home / Archive / Tags 共享左栏时不再整壳重建，
+  左栏不再闪烁；跨 Article 边界才更新左栏并重置滚动。
+- **W 方向过场**：`home.ts` 的 `slideWToNotes()` 重写为「右栏竖条 →
+  向左展开」（`is-rail-seed` / `is-opening-left`，右边缘固定），返回镜像
+  执行；新增 `setPanelMotion()` 只在动画期间给底板加方向模糊与投影
+  （`.is-panel-moving`），不在每帧计算 blur。
+- **长文章快速折叠**：返回首页前先给 shell 加 `is-preparing-collapse`
+  （中/左栏淡出 + blur），延迟后再加 `is-collapsing`（隐藏内容）并收缩
+  底板，长文收回不再逐帧重排。
+- **归档标签右对齐**：`ArchiveList.astro` 拆分 `archive-series` /
+  `archive-tags`，标签整体靠右、可换行，窄屏自动换行到底部。
+- **底板配色**：深色主题底板加深为 `rgba(72,74,82,.34)` +
+  `blur(20px) saturate(1.06) brightness(.83)`；浅色主题单独覆盖
+  `rgba(122,126,134,.27)` + `brightness(.93)`，避免浅色模式过灰。
+- **文章阅读排版（Obsidian 风格）**：文章区改为浅色「阅读卡」（白底、
+  底板同款左下直角圆角）——正文 18px / 1.75 行高，英文 CMU 衬线、中文
+  宋体；标题不加粗，h1 楷体、h2 仿宋、h3–h6 继承正文；强调色
+  `#3e7575`（链接 / 引用 / 列表标记 / 选区高亮）；代码用 JetBrains Mono；
+  KaTeX 块公式居中、带浅色卡片背景与横向滚动，错误公式以红色虚线显示。
+- **滚动顺滑**：`html` 与各栏启用 `scroll-behavior: smooth`、
+  `overscroll-behavior: contain`，大纲高亮仅在目标变化时更新 class。
+- **验证**：`npm run typecheck`、`npm run build` 通过；公式、阅读排版、
+  底板过场与归档排序均已在构建产物中确认。
+
 ## 验证方式汇总
 
 - TypeScript 检查：`npm run typecheck`

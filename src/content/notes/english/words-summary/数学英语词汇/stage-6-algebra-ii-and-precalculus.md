@@ -3,6 +3,7 @@ title: "Stage 6 - Algebra II & Precalculus"
 slug: "english/words-summary/数学英语词汇/stage-6-algebra-ii-and-precalculus"
 description: "1. polynomial function 多项式函数"
 publishDate: "2026-08-03"
+createdAt: "2026-08-03T00:00:00Z"
 updatedDate: "2026-08-03"
 tags: ["english","vocabulary","math"]
 series: ["English","Words Summary","数学英语词汇"]

@@ -2,6 +2,7 @@
 title: "SS-QNA-03"
 slug: "signals/signals-and-systems/ss-qna/ss-qna-03"
 publishDate: "2026-08-03"
+createdAt: "2026-08-03T00:00:00Z"
 updatedDate: "2026-08-03"
 tags: ["SS-QNA","signals","signals-systems"]
 series: ["Signals","Signals & Systems","SS-QNA"]

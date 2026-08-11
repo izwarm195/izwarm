@@ -258,13 +258,13 @@
   width: 0;
   height: 0;
   z-index: 1; /* 低于 logo-stage(z6)，原 W 始终盖在底板上方 */
-  background: rgba(120, 122, 130, 0.26);
-  backdrop-filter: blur(18px) saturate(1.1);
-  -webkit-backdrop-filter: blur(18px) saturate(1.1);
+  background: rgba(72, 74, 82, 0.34);
+  backdrop-filter: blur(20px) saturate(1.06) brightness(0.83);
+  -webkit-backdrop-filter: blur(20px) saturate(1.06) brightness(0.83);
   border: none;
   /* 左上、右上、右下圆角；左下直角 —— 对应 W 字体轮廓 */
   border-radius: 18px 18px 18px 0;
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.38);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.46), inset 0 1px 0 rgba(255, 255, 255, 0.018);
   opacity: 0;
   pointer-events: none;
   overflow: hidden;
@@ -289,4 +289,60 @@
 .landing.panel-open .logo-full {
   opacity: 0;
   pointer-events: none;
+}
+
+/* 浅色主题下的底板：略微压暗但不过灰 */
+[data-theme='light'] .notes-panel {
+  background: rgba(122, 126, 134, 0.27);
+  backdrop-filter: blur(20px) saturate(0.96) brightness(0.93);
+  -webkit-backdrop-filter: blur(20px) saturate(0.96) brightness(0.93);
+}
+
+/* ---- 底板过场动效：只加类与 CSS 变量，不在每帧计算 blur ---- */
+.notes-panel.is-panel-moving {
+  filter: blur(0.75px);
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.45),
+    var(--motion-shadow-x, 0) var(--motion-shadow-y, 0) 24px rgba(150, 156, 172, 0.16);
+}
+
+.notes-panel.is-panel-moving .notes-shell {
+  pointer-events: none;
+}
+
+.notes-panel.is-panel-moving.is-horizontal .notes-shell {
+  filter: blur(1.4px);
+  transform: translate3d(var(--content-drift-x, 0), 0, 0);
+}
+
+.notes-panel.is-panel-moving.is-vertical .notes-shell {
+  filter: blur(1.4px);
+  transform: translate3d(0, var(--content-drift-y, 0), 0);
+}
+
+/* 打开动画第一阶段：只显示右栏竖条（W 落位） */
+.notes-panel.is-rail-seed .notes-left,
+.notes-panel.is-rail-seed .notes-main {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.notes-panel.is-rail-seed .notes-shell {
+  grid-template-columns: 0 minmax(0, 0) 100%;
+}
+
+/* 打开动画第二阶段：向左展开时中栏/左栏淡入 */
+.notes-panel.is-opening-left .notes-left,
+.notes-panel.is-opening-left .notes-main {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 160ms ease 120ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notes-panel.is-panel-moving,
+  .notes-panel.is-panel-moving .notes-shell {
+    filter: none !important;
+    transform: none !important;
+  }
 }

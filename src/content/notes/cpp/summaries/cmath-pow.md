@@ -3,6 +3,7 @@ title: "cmath pow()"
 slug: "cpp/summaries/cmath-pow"
 description: "..."
 publishDate: "2026-07-11"
+createdAt: "2026-07-11T00:00:00Z"
 updatedDate: "2026-07-11"
 tags: ["cpp","summaries"]
 series: ["CPP","Summaries"]

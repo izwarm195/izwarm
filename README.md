@@ -184,12 +184,15 @@ Notes 工作台整体承载在首页的磨砂“底板”内：首页点击字�
 focus 或移动端底部固定栏展开）；手机为单栏 + 底部导航（底板内滚动）。
 所有统计、归档、标签、日历均由 `src/lib/notes.ts` 从内容集合自动派生。
 正文支持 LaTeX 公式（KaTeX）与站内双链跳转；日历在内容跨年度时显示年份切换。
+文章正文渲染为浅色「阅读卡」，遵循 Obsidian 阅读样式（宋体正文、楷体 h1、
+仿宋 h2、强调色 `#3e7575`），与深色磨砂底板形成对比。
 
 ### 内容模型
 
 `src/content.config.ts` 的 notes 集合字段：`title`、`description?`、
-`publishDate`、`updatedDate?`、`tags`、`series`（多级路径数组）、
-`order?`、`draft?`、`cover?`。`slug` 由 Astro 保留为 entry slug。
+`publishDate`、`createdAt?`（创建时间，含时刻，用于同一天排序）、
+`updatedDate?`、`tags`、`series`（多级路径数组）、`order?`、`draft?`、
+`cover?`。`slug` 由 Astro 保留为 entry slug。
 
 **系列数统计口径**：目录树中所有层级的系列节点数量（每个唯一前缀计一次）。
 **字数统计口径**：中英文混合——CJK 逐字计数，拉丁词按词计数（见 `countWords`）。
@@ -225,7 +228,9 @@ npm run sync:notes <path>   # 或指定 Obsidian 库路径
 ```
 
 本地同步会同时刷新 `src/config/created-dates.json`（无日期笔记的真实创建时间
-清单），请随改动一起提交；CI 会读取它，确保初始批量导入的笔记不堆在同一个日期。
+清单），并在生成的 frontmatter 中写入 `createdAt`，请随改动一起提交；CI 会
+读取它，确保初始批量导入的笔记不堆在同一个日期，同一天内的文章按创建时间
+从早到晚排序。
 
 ## 变更记录
 

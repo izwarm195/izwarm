@@ -8,10 +8,10 @@ interface Props {
 const { active } = Astro.props;
 ---
 
-<div class="notes-shell" id="notesShell">
-  <aside class="notes-col notes-left"><slot name="left" /></aside>
-  <main class="notes-col notes-main"><slot /></main>
-  <NotesRail active={active} />
+<div class="notes-shell" id="notesShell" data-notes-state={active}>
+  <aside class="notes-col notes-left" data-notes-region="left"><slot name="left" /></aside>
+  <main class="notes-col notes-main" data-notes-region="main"><slot /></main>
+  <div data-notes-region="rail"><NotesRail active={active} /></div>
 </div>
 
 <script>

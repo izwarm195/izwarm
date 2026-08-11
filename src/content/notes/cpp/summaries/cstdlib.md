@@ -3,6 +3,7 @@ title: "cstdlib"
 slug: "cpp/summaries/cstdlib"
 description: "<cstdlib 中的内容 和 <stdlib.h 几乎完全相同，区别在于前者把符号包装进了 std:: 命名空间（不过大多数实现也同时在全局命名空间中提供它们）。新代码里应该优先用 <cstdlib 加 std:: 前缀。"
 publishDate: "2026-07-10"
+createdAt: "2026-07-10T00:00:00Z"
 updatedDate: "2026-07-10"
 tags: ["cpp","summaries"]
 series: ["CPP","Summaries"]

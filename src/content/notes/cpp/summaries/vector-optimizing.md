@@ -3,6 +3,7 @@ title: "Vector Optimizing"
 slug: "cpp/summaries/vector-optimizing"
 description: "https://www.youtube.com/watch?v HcESuwmlHEY"
 publishDate: "2026-07-20"
+createdAt: "2026-07-20T00:00:00Z"
 updatedDate: "2026-07-20"
 tags: ["cpp","summaries"]
 series: ["CPP","Summaries"]
