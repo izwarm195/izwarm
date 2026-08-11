@@ -4,7 +4,7 @@ slug: "cpp/summaries/cast"
 description: "适用于数值类型转换、 void 转回对象指针、继承体系中的已知转换等。"
 publishDate: "2026-07-13"
 createdAt: "2026-07-13T00:00:00Z"
-updatedDate: "2026-07-13"
+updatedDate: "2026-08-04T12:25:14+08:00"
 tags: ["cpp","summaries"]
 series: ["CPP","Summaries"]
 ---

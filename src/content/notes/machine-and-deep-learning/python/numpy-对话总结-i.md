@@ -4,7 +4,7 @@ slug: "machine-and-deep-learning/python/numpy-对话总结-i"
 description: "常用创建方式："
 publishDate: "2026-07-29"
 createdAt: "2026-07-29T00:00:00Z"
-updatedDate: "2026-07-29"
+updatedDate: "2026-08-05T15:40:42+08:00"
 tags: ["machine-learning","python"]
 series: ["Machine & Deep Learning","Python"]
 ---
@@ -544,7 +544,7 @@ np.atleast_2d(a)      # 至少变成二维
 np.atleast_3d(a)      # 至少变成三维
 ```
 
-> <span class="callout-badge" data-callout="note"></span>**`np.atleast_xd()` 可以传入多个数组！**
+> <img class="callout-badge" src="/media/icons/note.svg" alt="note">**`np.atleast_xd()` 可以传入多个数组！**
 > 例如：`X,Y=np.atleast_2d(Z[:,0],Z[:,0])`
 ### 转置与轴操作
 

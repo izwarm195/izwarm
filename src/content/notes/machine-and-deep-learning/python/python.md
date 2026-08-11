@@ -4,7 +4,7 @@ slug: "machine-and-deep-learning/python/python"
 description: "Numpy"
 publishDate: "2026-07-26"
 createdAt: "2026-07-26T00:00:00Z"
-updatedDate: "2026-07-26"
+updatedDate: "2026-08-05T15:40:42+08:00"
 tags: ["machine-learning","python","moc"]
 series: ["Machine & Deep Learning","Python"]
 ---

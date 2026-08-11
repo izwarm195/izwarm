@@ -4,7 +4,7 @@ slug: "cpp/tips/objects-on-stackandheap"
 description: "The Cherno 在这期视频中讲解了 C++ 中实例化对象的两种方式，核心区别在于 对象的内存从哪来 。"
 publishDate: "2026-07-16"
 createdAt: "2026-07-16T00:00:00Z"
-updatedDate: "2026-07-16"
+updatedDate: "2026-08-04T12:25:14+08:00"
 tags: ["cpp","tips"]
 series: ["CPP","Tips"]
 ---

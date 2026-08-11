@@ -4,7 +4,7 @@ slug: "english/words-summary/数学英语词汇/stage-4-algebra-i"
 description: "1. linear 线性的"
 publishDate: "2026-08-03"
 createdAt: "2026-08-03T00:00:00Z"
-updatedDate: "2026-08-03"
+updatedDate: "2026-08-07T00:56:16+08:00"
 tags: ["english","vocabulary","math"]
 series: ["English","Words Summary","数学英语词汇"]
 ---

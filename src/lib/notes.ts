@@ -24,6 +24,47 @@ function creationTime(note: Note): number {
   return note.data.createdAt?.valueOf() ?? note.data.publishDate.valueOf();
 }
 
+// ---------- 智能排序 ----------
+const CN_DIGIT: Record<string, number> = {
+  零: 0, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9,
+};
+
+/** 中文数字（一~九十九）→ 数字 */
+function chineseNumeral(s: string): number {
+  if (CN_DIGIT[s] !== undefined) return CN_DIGIT[s];
+  if (s === '十') return 10;
+  if (s.startsWith('十')) return 10 + (CN_DIGIT[s[1]] ?? 0);
+  if (s.endsWith('十')) return (CN_DIGIT[s[0]] ?? 0) * 10;
+  const parts = s.split('十');
+  if (parts.length === 2) return (CN_DIGIT[parts[0]] ?? 0) * 10 + (CN_DIGIT[parts[1]] ?? 0);
+  return 999;
+}
+
+/**
+ * 名称排序键：总目录最先、第X章按中文/阿拉伯数字排、附录最后。
+ * 返回 null 表示无特殊键，走通用自然排序。
+ */
+function nameSortKey(name: string): number | null {
+  if (/总目录|index|toc/i.test(name)) return -2;
+  const ch = name.match(/第([一二三四五六七八九十\d]+)章/);
+  if (ch) {
+    const n = ch[1];
+    return (/^\d+$/.test(n) ? parseInt(n, 10) : chineseNumeral(n)) * 10;
+  }
+  if (/附录|appendix/i.test(name)) return 999;
+  return null;
+}
+
+/** 通用智能比较：特殊键优先，其次按数字感知的自然顺序 */
+export function smartCompare(a: string, b: string): number {
+  const ka = nameSortKey(a);
+  const kb = nameSortKey(b);
+  if (ka !== null && kb !== null) return ka - kb;
+  if (ka !== null) return -1;
+  if (kb !== null) return 1;
+  return a.localeCompare(b, 'zh-Hans-CN', { numeric: true, sensitivity: 'base' });
+}
+
 /** 获取已发布文章（draft 默认排除；开发环境可用 includeDraft 查看并自行标记） */
 export async function getPublishedNotes(includeDraft = false): Promise<Note[]> {
   const all = await getCollection('notes');
@@ -39,7 +80,7 @@ export function sortNotes(notes: Note[]): Note[] {
     if (ao !== bo) return ao - bo;
     const created = creationTime(a) - creationTime(b);
     if (created !== 0) return created;
-    return a.slug.localeCompare(b.slug);
+    return smartCompare(a.slug, b.slug);
   });
 }
 
@@ -69,7 +110,13 @@ export function buildSeriesTree(notes: Note[]): SeriesNode[] {
 }
 
 function sortSeriesNodes(nodes: SeriesNode[]): SeriesNode[] {
-  return [...nodes].sort((a, b) => a.name.localeCompare(b.name, 'zh-Hans-CN'));
+  return [...nodes]
+    .sort((a, b) => smartCompare(a.name, b.name))
+    .map((node) => ({
+      ...node,
+      notes: sortNotes(node.notes),
+      children: sortSeriesNodes(node.children),
+    }));
 }
 
 /** 与当前文章同直接子系列的文章（含自身，供侧栏列表高亮当前项） */

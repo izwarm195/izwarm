@@ -4,7 +4,7 @@ slug: "cpp/summaries/libraries"
 description: "这三节课围绕一个主题层层递进： C++ 中如何使用和管理库 。从链接外部预编译二进制文件（第 49、50 节），到在同一个解决方案里自己创建库并链接（第 51 节），构成了完整的知识链条。"
 publishDate: "2026-07-21"
 createdAt: "2026-07-21T00:00:00Z"
-updatedDate: "2026-07-21"
+updatedDate: "2026-08-04T12:25:14+08:00"
 tags: ["cpp","summaries"]
 series: ["CPP","Summaries"]
 ---

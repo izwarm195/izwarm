@@ -197,6 +197,7 @@ function computeLetterPositions(): {
 // 直接访问 Notes 路由：把字母 W 定位到右下角（与滑动转场终点一致），保留为交互锚点
 function panelOpenInit(): void {
   if (!notesPanel) return;
+  notesPanel.classList.add('is-settled');
   const wEl = document.getElementById('letter-w') as HTMLElement | null;
   if (!wEl) return;
   const { vw, margin } = getViewMetrics();
@@ -432,6 +433,7 @@ function slideWToNotes(): void {
     notesPanel.classList.remove('is-opening-left');
     setPanelMotion(null);
     history.pushState({ page: 'notes' }, '', siteBase + '/notes/');
+    notesPanel.classList.add('is-settled'); // 动画结束，悬停菜单才生效
     isAnimating = false;
   });
 }
@@ -470,6 +472,7 @@ function slideWToHome(): void {
 
   const notesShell = notesPanel.querySelector<HTMLElement>('.notes-shell');
   notesShell?.classList.add('is-preparing-collapse');
+  notesPanel.classList.remove('is-settled'); // 收起动画期间不再响应悬停菜单
 
   // 收起前关闭右栏悬停菜单，避免残留在收缩动画里
   notesPanel.querySelector<HTMLElement>('.notes-rail')?.classList.remove('menu-open');
@@ -579,6 +582,7 @@ function restoreHomeExpanded(pos: PositionMap): void {
   expanded = true;
   panelOpen = false;
   if (notesPanel) {
+    notesPanel.classList.remove('is-settled');
     notesPanel.classList.remove('active');
     notesPanel.style.left = '0px';
     notesPanel.style.top = '0px';

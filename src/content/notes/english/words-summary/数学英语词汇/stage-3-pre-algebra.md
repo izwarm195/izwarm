@@ -4,7 +4,7 @@ slug: "english/words-summary/数学英语词汇/stage-3-pre-algebra"
 description: "1. integer 整数"
 publishDate: "2026-08-03"
 createdAt: "2026-08-03T00:00:00Z"
-updatedDate: "2026-08-03"
+updatedDate: "2026-08-05T15:40:42+08:00"
 tags: ["english","vocabulary","math"]
 series: ["English","Words Summary","数学英语词汇"]
 ---

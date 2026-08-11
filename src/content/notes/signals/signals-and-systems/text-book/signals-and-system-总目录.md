@@ -4,7 +4,7 @@ slug: "signals/signals-and-systems/text-book/signals-and-system-总目录"
 description: "第一章 信号与系统概论 (/notes/signals/signals and systems/text book/第一章 信号与系统概论/)"
 publishDate: "2026-08-02"
 createdAt: "2026-08-02T00:00:00Z"
-updatedDate: "2026-08-02"
+updatedDate: "2026-08-10T09:05:49+08:00"
 tags: ["signals","signals-systems","textbook"]
 series: ["Signals","Signals & Systems","Text Book"]
 ---

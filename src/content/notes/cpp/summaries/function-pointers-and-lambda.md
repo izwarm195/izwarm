@@ -4,7 +4,7 @@ slug: "cpp/summaries/function-pointers-and-lambda"
 description: "这一集 Cherno 继续延续上一集 auto 的节奏，系统讲解了 C++ 中的 函数指针 。以下是核心内容："
 publishDate: "2026-07-25"
 createdAt: "2026-07-25T00:00:00Z"
-updatedDate: "2026-07-25"
+updatedDate: "2026-08-04T12:25:14+08:00"
 tags: ["cpp","summaries"]
 series: ["CPP","Summaries"]
 ---

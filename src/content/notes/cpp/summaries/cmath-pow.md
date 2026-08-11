@@ -4,7 +4,7 @@ slug: "cpp/summaries/cmath-pow"
 description: "..."
 publishDate: "2026-07-11"
 createdAt: "2026-07-11T00:00:00Z"
-updatedDate: "2026-07-11"
+updatedDate: "2026-08-04T12:25:14+08:00"
 tags: ["cpp","summaries"]
 series: ["CPP","Summaries"]
 ---

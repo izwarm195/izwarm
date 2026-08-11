@@ -4,7 +4,7 @@ slug: "cpp/summaries/static"
 description: "位置 含义 生命周期 可见性"
 publishDate: "2026-07-10"
 createdAt: "2026-07-10T00:00:00Z"
-updatedDate: "2026-07-10"
+updatedDate: "2026-08-04T12:25:14+08:00"
 tags: ["cpp","summaries"]
 series: ["CPP","Summaries"]
 ---

@@ -3,15 +3,15 @@ title: "SS-QNA-04"
 slug: "signals/signals-and-systems/ss-qna/ss-qna-04"
 publishDate: "2026-08-05"
 createdAt: "2026-08-05T00:00:00Z"
-updatedDate: "2026-08-05"
+updatedDate: "2026-08-06T18:31:06+08:00"
 tags: ["SS-QNA","template","signals"]
 series: ["Signals","Signals & Systems","SS-QNA"]
 ---
 
-> <span class="callout-badge" data-callout="question"></span>**3.3.3 到底要表达什么？**
+> <img class="callout-badge" src="/media/icons/circled-question.svg" alt="question">**3.3.3 到底要表达什么？**
 
 
-> <span class="callout-badge" data-callout="answer"></span>**Answer**
+> <img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer">**Answer**
 >> 下面是大肥鲸之回答，感觉回答了个寂寞。
 > 
 > 3.3.3 的核心就一句话：**指数形式傅里叶级数和三角函数形式是同一件事的两种等价写法，指数形式的系数 $F(n\omega_1)$ 恰好把幅度和相位信息合成一个复数**，由此引出"复数频谱"以及它的对称性。

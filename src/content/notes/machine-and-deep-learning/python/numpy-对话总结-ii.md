@@ -4,7 +4,7 @@ slug: "machine-and-deep-learning/python/numpy-对话总结-ii"
 description: "1、np.atleast_xd 传入多参数"
 publishDate: "2026-08-02"
 createdAt: "2026-08-02T00:00:00Z"
-updatedDate: "2026-08-02"
+updatedDate: "2026-08-04T12:25:14+08:00"
 tags: ["machine-learning","python"]
 series: ["Machine & Deep Learning","Python"]
 ---

@@ -4,7 +4,7 @@ slug: "english/english"
 description: "WD 26 08 03 (/notes/english/words daily/wd 26 08 03/)"
 publishDate: "2026-08-03"
 createdAt: "2026-08-03T00:00:00Z"
-updatedDate: "2026-08-03"
+updatedDate: "2026-08-05T15:40:42+08:00"
 tags: ["english","moc"]
 series: ["English"]
 ---

@@ -3,22 +3,22 @@ title: "SS-QNA-02"
 slug: "signals/signals-and-systems/ss-qna/ss-qna-02"
 publishDate: "2026-08-02"
 createdAt: "2026-08-02T00:00:00Z"
-updatedDate: "2026-08-02"
+updatedDate: "2026-08-04T12:25:14+08:00"
 tags: ["SS-QNA","signals","signals-systems"]
 series: ["Signals","Signals & Systems","SS-QNA"]
 ---
 
-> <span class="callout-badge" data-callout="question"></span>**Question**
+> <img class="callout-badge" src="/media/icons/circled-question.svg" alt="question">**Question**
 > 前面已经推出，单位冲激响应相当于零输入响应，为什么会在 $n\le m$ 的时候出现$\delta (t)$呢？
 
 
-> <span class="callout-badge" data-callout="answer"></span>**Answer**
+> <img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer">**Answer**
 > 这是一个冲激平衡的问题，书中只讨论了 $n > m$ 的情形！
 > 关于后面两种情况的分析，详见https://www.bilibili.com/video/BV1tV4y1n7HP/
 > 以及郑君里教材写出的清晰的分析思路
 > Pasted image 20260802235335.png
 
-> <span class="callout-badge" data-callout="important"></span>**而且经过我的神秘思考**
+> <img class="callout-badge" src="/media/icons/bullhorn.svg" alt="important">**而且经过我的神秘思考**
 > 从
 > $$
 > \frac{d^nr(t)}{dt^n}有\frac{d^n \delta(t)}{dt^n}

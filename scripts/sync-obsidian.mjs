@@ -25,6 +25,40 @@ const SITE_BASE = (process.env.ASTRO_BASE ?? '').replace(/\/$/, '');
 // ---------- 纯函数（可单测） ----------
 const PREFIX_DATE = /^(?:CS|CE|WD|WS)\s+(\d{2})-(\d{2})-(\d{2})[\s:：]*(.*)$/;
 
+// Obsidian callout 类型 → Zest Interface Icons（本地 media/icons，MIT）
+const CALLOUT_ICONS = {
+  note: 'note',
+  question: 'circled-question',
+  faq: 'circled-question',
+  help: 'circled-question',
+  answer: 'circled-check',
+  tip: 'lightbulb',
+  hint: 'lightbulb',
+  important: 'bullhorn',
+  warning: 'triangle-exclaimation',
+  caution: 'triangle-exclaimation',
+  attention: 'triangle-exclaimation',
+  danger: 'circled-x',
+  error: 'circled-x',
+  failure: 'circled-x',
+  bug: 'circled-x',
+  success: 'circled-check',
+  check: 'circled-check',
+  done: 'circled-check',
+  example: 'tag',
+  quote: 'chat-bubble',
+  cite: 'chat-bubble',
+  abstract: 'document',
+  summary: 'document',
+  tldr: 'document',
+  info: 'circled-info',
+  todo: 'circled-info',
+};
+
+function calloutIcon(type) {
+  return CALLOUT_ICONS[type] || 'circled-info';
+}
+
 function deriveTitle(name, fm) {
   if (fm.title) return String(fm.title);
   const base = name.replace(/\.md$/i, '');
@@ -106,12 +140,12 @@ function convertBody(body, slugIndex) {
     .replace(/!\[\[([^\]|]+)(?:\|[^\]]+)?\]\]/g, '$1')
     .replace(/\[\[([^\]|]+)\|([^\]]+)\]\]/g, (_, target, label) => linkify(target, label))
     .replace(/\[\[([^\]]+)\]\]/g, (_, target) => linkify(target, target))
-    // Obsidian callout：隐藏 [!type]，改为带 data-callout 的徽标 span + 标题
+    // Obsidian callout：隐藏 [!type]，改为 Zest 图标徽标 + 标题
     // 兼容列表内 callout：- > [!note] 标题
     .replace(/^(\s*(?:[-*+]\s+)?(?:>\s*)?)\[!(\w+)\][+-]?[ \t]*(.*)$/gm, (_, quote, type, title) => {
       const t = type.toLowerCase();
       const label = title && title.trim() ? title.trim() : t.charAt(0).toUpperCase() + t.slice(1);
-      return `${quote}<span class="callout-badge" data-callout="${t}"></span>**${label}**`;
+      return `${quote}<img class="callout-badge" src="${SITE_BASE}/media/icons/${calloutIcon(t)}.svg" alt="${t}">**${label}**`;
     })
     // 引用块内本应是标题但漏了空格：> ###标题 → > ### 标题（连续 # 才是标题）
     .replace(/^(\s*>\s*)(#{2,6})(?=\S)/gm, '$1$2 ')
@@ -392,23 +426,23 @@ function selftest() {
     'wikilink to published slug'
   );
   assert(convertBody('[[不存在的笔记|别名]]', idx) === '别名', 'unpublished link stays text');
-  // callout：隐藏 [!type]，换成带 data-callout 的徽标 span
+  // callout：隐藏 [!type]，换成 Zest 图标徽标
   assert(
     convertBody('> [!question]\n> 神秘氛围感公式推导', idx) ===
-      '> <span class="callout-badge" data-callout="question"></span>**Question**\n> 神秘氛围感公式推导',
+      '> <img class="callout-badge" src="/media/icons/circled-question.svg" alt="question">**Question**\n> 神秘氛围感公式推导',
     'callout badge no title',
     convertBody('> [!question]\n> 神秘氛围感公式推导', idx),
-    '> <span class="callout-badge" data-callout="question"></span>**Question**\n> 神秘氛围感公式推导'
+    '> <img class="callout-badge" src="/media/icons/circled-question.svg" alt="question">**Question**\n> 神秘氛围感公式推导'
   );
   assert(
     convertBody('> [!note] 重要说明\n> text', idx) ===
-      '> <span class="callout-badge" data-callout="note"></span>**重要说明**\n> text',
+      '> <img class="callout-badge" src="/media/icons/note.svg" alt="note">**重要说明**\n> text',
     'callout badge with title'
   );
   // 列表内 callout：- > [!important] 标题
   assert(
     convertBody('- > [!important] 单位冲激', idx) ===
-      '- > <span class="callout-badge" data-callout="important"></span>**单位冲激**',
+      '- > <img class="callout-badge" src="/media/icons/bullhorn.svg" alt="important">**单位冲激**',
     'callout badge in list item'
   );
   // 引用内 #：连续 # 补空格成标题，孤立单 # 去掉

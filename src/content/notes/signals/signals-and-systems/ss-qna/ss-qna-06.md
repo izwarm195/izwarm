@@ -4,14 +4,14 @@ slug: "signals/signals-and-systems/ss-qna/ss-qna-06"
 description: "查完了—— 三个问题教材里都有解释 ，只是分散在不同小节。对照如下："
 publishDate: "2026-08-06"
 createdAt: "2026-08-06T00:00:00Z"
-updatedDate: "2026-08-06"
+updatedDate: "2026-08-10T09:05:49+08:00"
 tags: ["SS-QNA","template","signals"]
 series: ["Signals","Signals & Systems","SS-QNA"]
 ---
 
-> <span class="callout-badge" data-callout="question"></span>**### **1. $F_n$ 是复数，为什么这里的 $F_n$ 是实函数？****
+> <img class="callout-badge" src="/media/icons/circled-question.svg" alt="question">**### **1. $F_n$ 是复数，为什么这里的 $F_n$ 是实函数？****
 
-><span class="callout-badge" data-callout="answer"></span>**Answer**
+><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer">**Answer**
 > $$
 > F_n = \frac{1}{T} \int_{-\frac{T}{2}}^{\frac{T}{2}} f(t) e^{-jn\omega_0 t} dt
 > = \underbrace{\frac{1}{T}\int f(t)\cos(n\omega_0 t)dt}_{\text{实部}}
@@ -19,18 +19,18 @@ series: ["Signals","Signals & Systems","SS-QNA"]
 > $$ 
 > 周期矩形信号通常取**偶对称**（脉冲居中），$f(t)$ 为偶函数，$\sin$ 为奇函数，乘积为奇函数，对称区间积分为零，**虚部消失**，$F_n$ 退化为实函数。这只是特例，不是普遍结论。
 
-> <span class="callout-badge" data-callout="question"></span>**### **2. $f(t)$ 不是偶函数就画不了频谱了？****
+> <img class="callout-badge" src="/media/icons/circled-question.svg" alt="question">**### **2. $f(t)$ 不是偶函数就画不了频谱了？****
 
-> <span class="callout-badge" data-callout="answer"></span>**不是。$F_n$ 为复数时需分**两张图**：**
+> <img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer">**不是。$F_n$ 为复数时需分**两张图**：**
 > 
 > - **幅度谱** $|F_n|$：恒为正，偶函数
 > - **相位谱** $\angle F_n$：奇函数
 > 
 > 矩形脉冲平移距离 $t_0$ 后，$F_n = \frac{A\tau}{T}\mathrm{Sa}\left(\frac{n\omega_0\tau}{2}\right) \cdot e^{-jn\omega_0 t_0}$，幅度谱形状不变，相位谱变成一条斜线（线性相位）。一张图变两张，仅此而已。
 
-> <span class="callout-badge" data-callout="question"></span>**### **3. 频谱有正有负，幅度谱却恒为正，为什么？****
+> <img class="callout-badge" src="/media/icons/circled-question.svg" alt="question">**### **3. 频谱有正有负，幅度谱却恒为正，为什么？****
 
-> <span class="callout-badge" data-callout="answer"></span>**频谱 $F_n$ 是**复振幅**，本身可正可负（正负号编码相位）。幅度谱 $|F_n|$ 是取模长，丢掉相位，故恒为正。负 $F_n$ 的物理意义：**
+> <img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer">**频谱 $F_n$ 是**复振幅**，本身可正可负（正负号编码相位）。幅度谱 $|F_n|$ 是取模长，丢掉相位，故恒为正。负 $F_n$ 的物理意义：**
 > 
 > $$
 > F_n = -|F_n| \;\Longrightarrow\; 2F_n\cos(n\omega_0 t) = 2|F_n|\cos(n\omega_0 t + \pi)

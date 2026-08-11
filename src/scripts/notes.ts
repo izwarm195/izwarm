@@ -13,11 +13,17 @@ const notesBase = import.meta.env.BASE_URL.replace(/\/$/, '') + '/notes';
 const letterW = document.getElementById('letter-w');
 let menuTimer: number | undefined;
 
+// 底板动画完全结束后才允许悬停展开菜单（动画期间 W 会移动，悬停不稳定）
+function isPanelSettled(): boolean {
+  return document.querySelector('#notesPanel')?.classList.contains('is-settled') ?? false;
+}
+
 function currentRail(): HTMLElement | null {
   return document.querySelector('.notes-rail');
 }
 
 function openMenu(): void {
+  if (!isPanelSettled()) return;
   if (menuTimer !== undefined) window.clearTimeout(menuTimer);
   currentRail()?.classList.add('menu-open');
 }
@@ -39,6 +45,7 @@ railRegion?.addEventListener('pointerleave', closeMenu);
 
 // ---------- 系列树：原地手风琴展开（整窗不移动，悬停/聚焦激活分支、收起同级） ----------
 const seriesWindow = document.getElementById('seriesWindow');
+let seriesTimer: number | undefined;
 
 function setNodeActive(node: HTMLElement): void {
   const level = node.parentElement;
@@ -59,20 +66,83 @@ function deactivateAll(): void {
     const btn = node.querySelector<HTMLButtonElement>('.series-node-btn');
     if (btn) btn.setAttribute('aria-expanded', 'false');
   });
+  // 等收起过渡结束后再解除固定，窗口平滑回到垂直居中
+  scheduleUnpin();
+}
+
+// 悬停期间固定系列窗口顶边：窗口高度随展开/收起变化时不再重新垂直居中，
+// 否则内容会在静止的指针下方滑动，导致连续激活下一个系列（“一连串上滑”）。
+let unpinTimer: number | undefined;
+
+function pinSeriesWindow(ev?: PointerEvent): void {
+  if (!seriesWindow || seriesWindow.dataset.pinned === '1') return;
+  if (ev?.pointerType === 'touch') return;
+  if (unpinTimer !== undefined) {
+    window.clearTimeout(unpinTimer);
+    unpinTimer = undefined;
+  }
+  const container = seriesWindow.parentElement;
+  if (!container) return;
+  const cRect = container.getBoundingClientRect();
+  const wRect = seriesWindow.getBoundingClientRect();
+  const offset = Math.max(0, wRect.top - cRect.top);
+  seriesWindow.style.marginTop = offset + 'px';
+  seriesWindow.style.alignSelf = 'flex-start';
+  seriesWindow.dataset.pinned = '1';
+}
+
+function unpinSeriesWindow(): void {
+  if (!seriesWindow) return;
+  seriesWindow.style.marginTop = '';
+  seriesWindow.style.alignSelf = '';
+  delete seriesWindow.dataset.pinned;
+}
+
+function scheduleUnpin(): void {
+  if (unpinTimer !== undefined) window.clearTimeout(unpinTimer);
+  unpinTimer = window.setTimeout(() => {
+    unpinTimer = undefined;
+    unpinSeriesWindow();
+  }, 420);
+}
+
+// 从一个系列滑到另一个系列时，若下一个分支更矮，窗口会瞬间收缩导致鼠标短暂离开；
+// 延后收起并允许重新进入任意系列节点时取消，避免整个系列栏直接收起。
+function scheduleDeactivate(): void {
+  if (seriesTimer !== undefined) window.clearTimeout(seriesTimer);
+  seriesTimer = window.setTimeout(() => {
+    seriesTimer = undefined;
+    deactivateAll();
+  }, 220);
+}
+
+function cancelDeactivate(): void {
+  if (seriesTimer !== undefined) {
+    window.clearTimeout(seriesTimer);
+    seriesTimer = undefined;
+  }
 }
 
 if (seriesWindow) {
+  seriesWindow.addEventListener('pointerenter', (e) => pinSeriesWindow(e));
   document.addEventListener('mouseover', (e) => {
     const node = (e.target as HTMLElement).closest<HTMLElement>('.series-node');
-    if (node) setNodeActive(node);
+    if (node) {
+      cancelDeactivate();
+      setNodeActive(node);
+    }
   });
   seriesWindow.addEventListener('focusin', (e) => {
     const node = (e.target as HTMLElement).closest<HTMLElement>('.series-node');
-    if (node) setNodeActive(node);
+    if (node) {
+      pinSeriesWindow();
+      cancelDeactivate();
+      setNodeActive(node);
+    }
   });
-  seriesWindow.addEventListener('mouseleave', deactivateAll);
+  seriesWindow.addEventListener('mouseleave', scheduleDeactivate);
   seriesWindow.addEventListener('focusout', (e) => {
-    if (!seriesWindow.contains(e.relatedTarget as Node | null)) deactivateAll();
+    if (!seriesWindow.contains(e.relatedTarget as Node | null)) scheduleDeactivate();
   });
 }
 
@@ -126,6 +196,69 @@ function initToc(): void {
   headings.forEach((h) => tocObserver?.observe(h));
 }
 
+// ---------- 代码块复制按钮 ----------
+const siteBase = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+function attachCopyButton(container: HTMLElement, label: string, getText: () => string): void {
+  if (container.querySelector(':scope > .code-copy')) return;
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'code-copy';
+  btn.title = label;
+  btn.setAttribute('aria-label', label);
+  const icon = document.createElement('img');
+  icon.src = `${siteBase}/media/icons/copy.svg`;
+  icon.alt = '';
+  icon.width = 15;
+  icon.height = 15;
+  btn.appendChild(icon);
+  btn.addEventListener('click', () => {
+    const text = getText();
+    const done = () => {
+      btn.classList.add('copied');
+      icon.src = `${siteBase}/media/icons/circled-check.svg`;
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        icon.src = `${siteBase}/media/icons/copy.svg`;
+      }, 1400);
+    };
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(text).then(done, () => fallbackCopy(text, done));
+    } else {
+      fallbackCopy(text, done);
+    }
+  });
+  container.appendChild(btn);
+}
+
+function initCodeCopy(): void {
+  // 代码块：复制代码文本
+  document.querySelectorAll<HTMLElement>('.article-body pre').forEach((pre) => {
+    attachCopyButton(pre, '复制代码', () => pre.querySelector('code')?.innerText ?? pre.innerText);
+  });
+  // 行间公式：复制 LaTeX 源码（data-latex 由 rehype-math-latex 注入）
+  document.querySelectorAll<HTMLElement>('.article-body .math-block').forEach((block) => {
+    attachCopyButton(block, '复制公式', () => block.getAttribute('data-latex') ?? block.innerText);
+  });
+}
+
+function fallbackCopy(text: string, done: () => void): void {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.setAttribute('readonly', '');
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try {
+    document.execCommand('copy');
+  } catch {
+    /* 复制失败不阻断交互 */
+  }
+  ta.remove();
+  done();
+}
+
 // ---------- Notes 内部无缝导航 ----------
 async function loadState(url: string, push: boolean): Promise<void> {
   if (!shellEl) return;
@@ -148,17 +281,22 @@ async function loadState(url: string, push: boolean): Promise<void> {
     const currentState = shellEl.dataset.notesState ?? '';
     const nextState = next.dataset.notesState ?? '';
 
+    // Home / Archive / Tags 共用左栏，切换时不替换；跨 Article 边界才更新左栏
+    const bothShared = currentState !== 'article' && nextState !== 'article';
+    const leftWillSwap = !bothShared;
+
     currentMain.classList.add('notes-swap-out');
+    if (leftWillSwap) currentLeft.classList.add('notes-left-fade');
     await new Promise((resolve) => setTimeout(resolve, 160));
 
     currentMain.innerHTML = nextMain.innerHTML;
     currentRail.innerHTML = nextRail.innerHTML;
 
-    // Home / Archive / Tags 共用左栏，切换时不替换；跨 Article 边界才更新左栏
-    const bothShared = currentState !== 'article' && nextState !== 'article';
-    if (!bothShared) {
+    if (leftWillSwap) {
       currentLeft.innerHTML = nextLeft.innerHTML;
       currentLeft.scrollTop = 0;
+      void currentLeft.offsetWidth; // 强制重排，让移除 fade 类后执行淡入过渡
+      currentLeft.classList.remove('notes-left-fade');
     }
 
     shellEl.dataset.notesState = nextState;
@@ -178,6 +316,7 @@ async function loadState(url: string, push: boolean): Promise<void> {
     if (doc.title) document.title = doc.title;
     if (push) history.pushState({}, '', url);
     initToc();
+    initCodeCopy();
     if (hash) {
       const target = document.getElementById(hash.slice(1));
       if (target) target.scrollIntoView({ block: 'start' });
@@ -208,4 +347,5 @@ if (shellEl && 'fetch' in window) {
   });
 }
 
+initCodeCopy();
 initToc();

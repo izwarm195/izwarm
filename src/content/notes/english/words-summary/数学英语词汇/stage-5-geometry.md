@@ -4,7 +4,7 @@ slug: "english/words-summary/数学英语词汇/stage-5-geometry"
 description: "1. collinear 共线的"
 publishDate: "2026-08-03"
 createdAt: "2026-08-03T00:00:00Z"
-updatedDate: "2026-08-03"
+updatedDate: "2026-08-04T12:25:14+08:00"
 tags: ["english","vocabulary","math"]
 series: ["English","Words Summary","数学英语词汇"]
 ---
@@ -20,7 +20,7 @@ series: ["English","Words Summary","数学英语词汇"]
 5. bisector 二等分线
 6. transversal 截线
 7. corresponding angles 同位角
-8. alternate interior angles 内错角
+8. alternate interior angle[WD 26-08-11](/notes/english/words-daily/wd-26-08-11/)s 内错角
 9. postulate 公设
 10. theorem 定理
 11. proof 证明

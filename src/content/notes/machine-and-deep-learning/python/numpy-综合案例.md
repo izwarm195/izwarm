@@ -4,7 +4,7 @@ slug: "machine-and-deep-learning/python/numpy-综合案例"
 description: "题目： 给定一个 (m, n) 的随机整数矩阵，如果某个元素为 0，则将该元素所在的行和列全部置为 0。"
 publishDate: "2026-08-01"
 createdAt: "2026-08-01T00:00:00Z"
-updatedDate: "2026-08-01"
+updatedDate: "2026-08-04T12:25:14+08:00"
 tags: ["machine-learning","python"]
 series: ["Machine & Deep Learning","Python"]
 ---
@@ -53,7 +53,7 @@ print(a)
 ```
 </details>
 
-> <span class="callout-badge" data-callout="important"></span>**不自己写学了跟没学一样。**
+> <img class="callout-badge" src="/media/icons/bullhorn.svg" alt="important">**不自己写学了跟没学一样。**
 > 1、np.where 默认<=>  np.where[a!=0 ]
 > 2、np.unique(rows)还要赋值呢
 
@@ -135,7 +135,7 @@ print("最近邻距离：", nearest_dist)
 ```
 </details>
 
-> <span class="callout-badge" data-callout="note"></span>**这个广播真是抽象**
+> <img class="callout-badge" src="/media/icons/note.svg" alt="note">**这个广播真是抽象**
 > 
 > 计算点集距离方法目前见到两种：
 > 1、按轴相减
@@ -161,7 +161,7 @@ print("最近邻距离：", nearest_dist)
 > print(Distance)
 > ```
 
-> <span class="callout-badge" data-callout="note"></span>**另外如果要求最小距离索引，需：**
+> <img class="callout-badge" src="/media/icons/note.svg" alt="note">**另外如果要求最小距离索引，需：**
 >  ``` python
 >  np.fill_diagonal(D, np.inf)
 >  ```
@@ -207,7 +207,7 @@ print(f"上涨天数：{up_days}")
 ```
 </details>
 
-> <span class="callout-badge" data-callout="note"></span>**Note**
+> <img class="callout-badge" src="/media/icons/note.svg" alt="note">**Note**
 > 注意 `np.diff()` 
 > `np.nonzero()` 代替 `np.sum(axis=0)` 语义更明确
 ---

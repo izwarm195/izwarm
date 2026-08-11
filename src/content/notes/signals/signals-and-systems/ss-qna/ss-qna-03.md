@@ -3,12 +3,12 @@ title: "SS-QNA-03"
 slug: "signals/signals-and-systems/ss-qna/ss-qna-03"
 publishDate: "2026-08-03"
 createdAt: "2026-08-03T00:00:00Z"
-updatedDate: "2026-08-03"
+updatedDate: "2026-08-04T12:25:14+08:00"
 tags: ["SS-QNA","signals","signals-systems"]
 series: ["Signals","Signals & Systems","SS-QNA"]
 ---
 
-> <span class="callout-badge" data-callout="question"></span>**Question**
+> <img class="callout-badge" src="/media/icons/circled-question.svg" alt="question">**Question**
 > 神秘氛围感公式推导
 > 
 > $$
@@ -16,7 +16,7 @@ series: ["Signals","Signals & Systems","SS-QNA"]
 > $$
 
 
-> <span class="callout-badge" data-callout="answer"></span>**Answer**
+> <img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer">**Answer**
 > $$
 > \begin{aligned}
 > f(t) 
