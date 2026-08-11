@@ -112,13 +112,18 @@ body::-webkit-scrollbar {
   height: 17px;
   fill: currentColor;
 }
-.notes-social img {
+.notes-social-icon {
+  display: inline-block;
   width: 17px;
   height: 17px;
-  filter: invert(1); /* 源 SVG 为黑色，深色主题下反相为白色 */
+  /* 用 SVG 作遮罩、以 currentColor 着色：与 GitHub 图标同色，悬停一起变亮 */
+  background: currentColor;
+  -webkit-mask: var(--icon-url) center / contain no-repeat;
+  mask: var(--icon-url) center / contain no-repeat;
 }
-[data-theme='light'] .notes-social img {
-  filter: none; /* 浅色主题保持原色（黑色），与浅色按钮底色适配 */
+.notes-social-icon.icon-netease {
+  width: 19px;
+  height: 19px; /* 网易云 glyph 视觉偏小，略微放大与 GitHub 观感一致 */
 }
 
 /* ---- 统计 ---- */

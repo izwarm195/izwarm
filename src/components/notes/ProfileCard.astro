@@ -14,7 +14,11 @@ import { media } from '../../config/media';
       aria-label="哔哩哔哩"
       title="哔哩哔哩"
     >
-      <img class="notes-social-icon" src={media.bilibiliIcon} alt="" width="17" height="17" />
+      <span
+        class="notes-social-icon"
+        style={`--icon-url: url('${media.bilibiliIcon}')`}
+        aria-hidden="true"
+      ></span>
     </a>
     <a
       class="w-shape"
@@ -36,7 +40,11 @@ import { media } from '../../config/media';
       aria-label="网易云音乐人"
       title="网易云音乐人"
     >
-      <img class="notes-social-icon" src={media.neteaseIcon} alt="" width="17" height="17" />
+      <span
+        class="notes-social-icon icon-netease"
+        style={`--icon-url: url('${media.neteaseIcon}')`}
+        aria-hidden="true"
+      ></span>
     </a>
   </div>
 </section>
