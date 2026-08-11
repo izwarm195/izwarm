@@ -395,18 +395,17 @@ function slideWToNotes(): void {
   setRailVars(wW, wH);
 
   const railWidth = wW + RAIL_GAP * 2;
-  const panelRight = vw - margin;
   // 终点：W 在右栏内水平 + 垂直居中，右边缘距底板右缘 rail-gap
   const endWx = vw / 2 - margin - RAIL_GAP - wW / 2;
   const endWy = 0;
 
-  // 起点：右栏宽度竖条（右边缘固定），W 从展开位飞向右栏中心
+  // 起点：右栏宽度竖条，以 W 的展开位为中心（W 原地不动，竖条只显示右栏）
   const p: PanelState = {
     wx: startWx,
     wy: startWy,
-    l: panelRight - railWidth,
+    l: cx + startWx - railWidth / 2,
     t: cy + startWy - wH / 2 - PANEL_RING,
-    r: panelRight,
+    r: cx + startWx + railWidth / 2,
     b: cy + startWy + wH / 2 + PANEL_RING,
   };
 
@@ -419,16 +418,16 @@ function slideWToNotes(): void {
     },
   });
 
-  // 第一段：W 归位右栏中心，右栏竖条上下铺满（仅显示右栏）
+  // 第一段：W 竖直下移到中央，右栏竖条上下铺满（仍只显示右栏）
   tl.call(() => setPanelMotion('vertical', 1));
-  tl.to(p, { wx: endWx, wy: endWy, t: margin, b: vh - margin, duration: 0.46, ease: 'power2.inOut' });
-  // 第二段：从右向左展开（右边缘保持不动）
+  tl.to(p, { wy: endWy, t: margin, b: vh - margin, duration: 0.5, ease: 'power2.inOut' });
+  // 第二段：右栏与 W 一起右移，左/中栏顺势展开
   tl.call(() => {
     notesPanel.classList.remove('is-rail-seed');
     notesPanel.classList.add('is-opening-left');
-    setPanelMotion('horizontal', -1);
+    setPanelMotion('horizontal', 1);
   });
-  tl.to(p, { l: margin, duration: 0.72, ease: 'power3.inOut' });
+  tl.to(p, { wx: endWx, l: margin, r: vw - margin, duration: 0.72, ease: 'power3.inOut' });
   tl.call(() => {
     notesPanel.classList.remove('is-opening-left');
     setPanelMotion(null);
@@ -472,6 +471,8 @@ function slideWToHome(): void {
   const notesShell = notesPanel.querySelector<HTMLElement>('.notes-shell');
   notesShell?.classList.add('is-preparing-collapse');
 
+  // 收起前关闭右栏悬停菜单，避免残留在收缩动画里
+  notesPanel.querySelector<HTMLElement>('.notes-rail')?.classList.remove('menu-open');
   notesPanel.style.pointerEvents = 'none';
 
   const p: PanelState = {

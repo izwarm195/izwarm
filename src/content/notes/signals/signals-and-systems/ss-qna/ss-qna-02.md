@@ -20,7 +20,9 @@ series: ["Signals","Signals & Systems","SS-QNA"]
 
 > **[important]** 而且经过我的神秘思考
 > 从
-> $$\frac{d^nr(t)}{dt^n}有\frac{d^n \delta(t)}{dt^n}$$ 
+> $$
+> \frac{d^nr(t)}{dt^n}有\frac{d^n \delta(t)}{dt^n}
+> $$
 > 所推出的
 > 
 > $$

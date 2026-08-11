@@ -18,8 +18,11 @@ series: ["Signals","Signals & Systems","SS-QNA"]
 > > 注意在郑君里及很多教材中，$a_0$ 就是 $a_n$ 中 $a=0$ 的情况，因此 $f(t)=\frac{a_0}{2}+\dots$
 > 
 > 这实际上是因为这本书对傅里叶级数的阐释，是基于“正交分解”这一概念的。因此在统一的形式
-> $$\begin{aligned}a_{0}&=\frac{\displaystyle\int_{-\frac{T_{1}}{2}}^{\frac{T_{1}}{2}}f(t)\cos0\omega_{1}t\mathrm{d}t}{\displaystyle\int_{-\frac{T_{1}}{2}}^{\frac{T_{1}}{2}}\cos^{2}0\omega_{1}t\mathrm{d}t}=\frac{1}{T_{1}}\int_{-\frac{T_{1}}{2}}^{\frac{T_{1}}{2}}f(t)\cos0\omega_{1}t\mathrm{d}t\\&=\frac{1}{T_{1}}\int_{-\frac{T_{1}}{2}}^{\frac{T_{1}}{2}}f(t)\mathrm{d}t\end{aligned}$$
-> $$\begin{aligned}a_{n}&=\frac{\displaystyle\int_{-\frac{T_{1}}{2}}^{\frac{T_{1}}{2}}f(t)\cos n\omega_{1}t\mathrm{d}t}{\displaystyle\int_{-\frac{T_{1}}{2}}^{\frac{T_{1}}{2}}\cos^{2}n\omega_{1}t\mathrm{d}t}=\frac{2}{T_{1}}\int_{-\frac{T_{1}}{2}}^{\frac{T_{1}}{2}}f(t)\cos n\omega_{1}t\mathrm{d}t\\b_{n}&=\frac{\displaystyle\int_{-\frac{T_{1}}{2}}^{\frac{T_{1}}{2}}f(t)\sin n\omega_{1}t\mathrm{d}t}{\displaystyle\int_{-\frac{T_{1}}{2}}^{\frac{T_{1}}{2}}\sin^{2}n\omega_{1}t\mathrm{d}t}=\frac{2}{T_{1}}\int_{-\frac{T_{1}}{2}}^{\frac{T_{1}}{2}}f(t)\sin n\omega_{1}t\mathrm{d}t\end{aligned}
+> $$
+> \begin{aligned}a_{0}&=\frac{\displaystyle\int_{-\frac{T_{1}}{2}}^{\frac{T_{1}}{2}}f(t)\cos0\omega_{1}t\mathrm{d}t}{\displaystyle\int_{-\frac{T_{1}}{2}}^{\frac{T_{1}}{2}}\cos^{2}0\omega_{1}t\mathrm{d}t}=\frac{1}{T_{1}}\int_{-\frac{T_{1}}{2}}^{\frac{T_{1}}{2}}f(t)\cos0\omega_{1}t\mathrm{d}t\\&=\frac{1}{T_{1}}\int_{-\frac{T_{1}}{2}}^{\frac{T_{1}}{2}}f(t)\mathrm{d}t\end{aligned}
+> $$
+> $$
+> \begin{aligned}a_{n}&=\frac{\displaystyle\int_{-\frac{T_{1}}{2}}^{\frac{T_{1}}{2}}f(t)\cos n\omega_{1}t\mathrm{d}t}{\displaystyle\int_{-\frac{T_{1}}{2}}^{\frac{T_{1}}{2}}\cos^{2}n\omega_{1}t\mathrm{d}t}=\frac{2}{T_{1}}\int_{-\frac{T_{1}}{2}}^{\frac{T_{1}}{2}}f(t)\cos n\omega_{1}t\mathrm{d}t\\b_{n}&=\frac{\displaystyle\int_{-\frac{T_{1}}{2}}^{\frac{T_{1}}{2}}f(t)\sin n\omega_{1}t\mathrm{d}t}{\displaystyle\int_{-\frac{T_{1}}{2}}^{\frac{T_{1}}{2}}\sin^{2}n\omega_{1}t\mathrm{d}t}=\frac{2}{T_{1}}\int_{-\frac{T_{1}}{2}}^{\frac{T_{1}}{2}}f(t)\sin n\omega_{1}t\mathrm{d}t\end{aligned}
 > $$
 > 下，直流分量直接写 $a_0$ 更为自然。
 > # - 其次为什么有一个 $\frac{1}{2}$?

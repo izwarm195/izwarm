@@ -391,15 +391,17 @@ html {
   color: var(--text-primary);
   border-color: var(--metal-highlight);
 }
-/* ---- 文章：浅色阅读卡（遵循 Obsidian 阅读样式：宋体正文、楷体 h1、仿宋 h2） ---- */
+/* ---- 文章：深色阅读卡（与大底板同风格但更深；正文白字，遵循 Obsidian 字体） ---- */
 .article {
   width: min(100%, 780px);
   margin-inline: auto;
   padding: clamp(26px, 4vw, 48px) clamp(22px, 3.4vw, 44px);
-  background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(26, 28, 33, 0.82);
+  backdrop-filter: blur(22px) saturate(1.02) brightness(0.78);
+  -webkit-backdrop-filter: blur(22px) saturate(1.02) brightness(0.78);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px 16px 16px 0; /* 与底板一致的左下直角 */
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.42);
 }
 .article-cover {
   width: 100%;
@@ -415,7 +417,7 @@ html {
   font-weight: normal;
   letter-spacing: 0.02em;
   line-height: 1.3;
-  color: #222;
+  color: #f2f4f7;
   margin: 0 0 10px;
 }
 .article-meta {
@@ -424,16 +426,16 @@ html {
   gap: 10px 18px;
   margin-bottom: 26px;
   padding-bottom: 16px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   font-size: 12px;
-  color: #666;
+  color: #a4aab5;
 }
 .article-meta a {
-  color: #3e7575;
+  color: #7fc0c0;
   text-decoration: none;
 }
 .article-meta a:hover {
-  color: #2f5c5c;
+  color: #a2d6d6;
   text-decoration: underline;
 }
 
@@ -443,7 +445,7 @@ html {
   font-size: 18px;
   line-height: 1.75;
   letter-spacing: 0.01em;
-  color: #333;
+  color: #d9dce2;
   overflow-wrap: break-word;
   text-wrap: pretty;
 }
@@ -459,7 +461,7 @@ html {
 .article-body h5,
 .article-body h6 {
   font-weight: normal;
-  color: #222;
+  color: #eef1f4;
   line-height: 1.3;
   scroll-margin-top: 28px;
   text-wrap: balance;
@@ -475,7 +477,7 @@ html {
   font-size: 1.3em;
   margin: 1.6em 0 0.65em;
   padding-bottom: 0.35em;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 .article-body h3 {
   font-size: 1.15em;
@@ -497,11 +499,11 @@ html {
   margin: 0.9em 0;
 }
 .article-body strong {
-  color: #222;
+  color: #f0f2f5;
   font-weight: 620;
 }
 .article-body em {
-  color: #555;
+  color: #b9bfc9;
 }
 .article-body hr {
   height: 1px;
@@ -510,8 +512,8 @@ html {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(0, 0, 0, 0.12) 12%,
-    rgba(0, 0, 0, 0.12) 88%,
+    rgba(255, 255, 255, 0.12) 12%,
+    rgba(255, 255, 255, 0.12) 88%,
     transparent
   );
 }
@@ -525,15 +527,15 @@ html {
   padding-left: 0.18em;
 }
 .article-body li::marker {
-  color: #3e7575;
+  color: #7fc0c0;
 }
 .article-body blockquote {
   margin: 1.25em 0;
   padding: 0.8em 1.1em;
-  border-left: 3px solid #3e7575;
+  border-left: 3px solid #6fb6b6;
   border-radius: 0 10px 10px 0;
-  color: #4a4d52;
-  background: rgba(62, 117, 117, 0.06);
+  color: #c3c8d0;
+  background: rgba(62, 117, 117, 0.14);
 }
 .article-body blockquote > :first-child {
   margin-top: 0;
@@ -548,10 +550,10 @@ html {
 }
 .article-body :not(pre) > code {
   padding: 0.14em 0.38em;
-  border: 1px solid rgba(62, 117, 117, 0.18);
+  border: 1px solid rgba(127, 192, 192, 0.28);
   border-radius: 5px;
-  color: #2c5a5a;
-  background: rgba(62, 117, 117, 0.07);
+  color: #a8d8d8;
+  background: rgba(62, 117, 117, 0.14);
 }
 .article-body pre {
   position: relative;
@@ -559,10 +561,10 @@ html {
   padding: 16px 18px;
   overflow-x: auto;
   overscroll-behavior-inline: contain;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px 12px 12px 0;
-  background: #f6f7f8;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  background: #202329;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
   tab-size: 2;
   scrollbar-width: thin;
 }
@@ -581,14 +583,14 @@ html {
   scrollbar-width: thin;
 }
 .article-body th {
-  color: #222;
-  background: rgba(62, 117, 117, 0.07);
+  color: #eef1f4;
+  background: rgba(62, 117, 117, 0.16);
 }
 .article-body th,
 .article-body td {
   min-width: 7em;
   padding: 0.6em 0.8em;
-  border: 1px solid #dde0e4;
+  border: 1px solid rgba(255, 255, 255, 0.14);
 }
 .article-body img {
   display: block;
@@ -599,7 +601,7 @@ html {
   box-shadow: 0 16px 42px rgba(0, 0, 0, 0.14);
 }
 .article-body a {
-  color: #3e7575;
+  color: #7fc0c0;
   text-decoration-line: underline;
   text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
   text-decoration-thickness: 1px;
@@ -607,10 +609,10 @@ html {
 }
 .article-body mark,
 .article-body ::selection {
-  background: rgba(62, 117, 117, 0.2);
+  background: rgba(62, 117, 117, 0.26);
 }
 
-/* ---- 数学公式：接近 Obsidian 阅读视图（浅色阅读卡内） ---- */
+/* ---- 数学公式：接近 Obsidian 阅读视图（深色阅读卡内） ---- */
 .article-body .katex {
   font-size: 1.08em;
   color: inherit;
@@ -628,8 +630,8 @@ html {
   scrollbar-color: rgba(62, 117, 117, 0.28) transparent;
   text-align: center;
   box-sizing: border-box;
-  background: rgba(62, 117, 117, 0.05);
-  border: 1px solid rgba(62, 117, 117, 0.16);
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px 12px 12px 0;
   overscroll-behavior-inline: contain;
   -webkit-overflow-scrolling: touch;
@@ -669,9 +671,9 @@ html {
 }
 
 .article-body .katex-error {
-  color: #b23b3b;
-  background: rgba(178, 59, 59, 0.07);
-  border-bottom: 1px dashed rgba(178, 59, 59, 0.45);
+  color: #ff9c9c;
+  background: rgba(255, 120, 120, 0.1);
+  border-bottom: 1px dashed rgba(255, 140, 140, 0.45);
   padding: 0.08em 0.22em;
   border-radius: 3px;
   white-space: pre-wrap;

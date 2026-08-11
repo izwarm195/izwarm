@@ -1,7 +1,7 @@
 ---
 title: "SS-QNA-01"
 slug: "signals/signals-and-systems/ss-qna/ss-qna-01"
-description: "h(t) left sum_{i 1}^{n}A_{i} mathrm{e}^{ alpha_{i}t} right u(t) 由冲激响应的微分方程，得到的这个解的形式 h(t)。"
+description: "h(t) left sum_{i 1}^{n}A_{i} mathrm{e}^{ alpha_{i}t} right u(t)"
 publishDate: "2026-08-02"
 createdAt: "2026-08-02T00:00:00Z"
 updatedDate: "2026-08-02"
@@ -10,7 +10,10 @@ series: ["Signals","Signals & Systems","SS-QNA"]
 ---
 
 > **[question]**
-$$h(t)=\left[\sum_{i=1}^{n}A_{i}\mathrm{e}^{\alpha_{i}t}\right]u(t)$$ 由冲激响应的微分方程，得到的这个解的形式 h(t)。
+$$
+h(t)=\left[\sum_{i=1}^{n}A_{i}\mathrm{e}^{\alpha_{i}t}\right]u(t)
+$$
+由冲激响应的微分方程，得到的这个解的形式 h(t)。
 >  那么对 h(t)求导会得到冲激函数。然而，一般的响应都能写为 $f\cdot u(t)$ 的形式，难道所有相应都是冲激响应吗？
 
 > **[answer]**

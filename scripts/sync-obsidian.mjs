@@ -114,21 +114,112 @@ function noteUrlOf(slug) {
   return SITE_BASE + '/notes/' + slug + '/';
 }
 
-// Obsidian 公式规范化：仅处理明确的块公式，跳过代码围栏
+// Obsidian 公式规范化：把各种“看着是块公式、remark-math 却解析成行内/空公式”的写法
+// 统一成 KaTeX 能正确识别的独占三行（$$ / 内容 / $$），跳过代码围栏。
 function normalizeObsidianMath(markdown) {
   const lines = markdown.split('\n');
+  const out = [];
   let inFence = false;
-  return lines
-    .map((line) => {
-      if (/^\s*(```|~~~)/.test(line)) {
-        inFence = !inFence;
-        return line;
+  let pending = null; // { pre: 行首缩进/引用前缀, body: 内容行[] }
+
+  // 显示公式内容里的杂散 $（PaddleOCR 常见：$$(1) $h(n)=...$$）是语法错误，直接剔除
+  const cleanDisplay = (s) => s.replace(/\$/g, '');
+
+  function flushPending() {
+    out.push(pending.pre + '$$');
+    for (const b of pending.body) out.push(pending.pre + b);
+    out.push(pending.pre + '$$');
+    pending = null;
+  }
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (/^\s*(```|~~~)/.test(line)) {
+      inFence = !inFence;
+      out.push(line);
+      continue;
+    }
+    if (inFence) {
+      out.push(line);
+      continue;
+    }
+
+    // 跨行块公式：开 $$ 行已带内容、闭合 $$ 在后续行（含 > 引用前缀）
+    if (pending) {
+      const bareClose = line.match(/^(\s*(?:>\s*)?)\$\$\s*$/);
+      if (bareClose) {
+        flushPending();
+        continue;
       }
-      if (inFence) return line;
-      // 同行的 $$x$$ 规范为独占三行，便于 KaTeX 正确识别为块公式
-      return line.replace(/^\s*\$\$\s*([^\n]+?)\s*\$\$\s*$/, '$$\n$1\n$$');
-    })
-    .join('\n');
+      const contentClose = line.match(/^(\s*(?:>\s*)?)(.*?)\$\$\s*$/);
+      if (contentClose && contentClose[2].trim()) {
+        pending.body.push(cleanDisplay(contentClose[2].trim()));
+        flushPending();
+        continue;
+      }
+      // 下一行又开了一个新 $$ 块：当前块到此为止，按普通行重新处理
+      if (/^\s*(?:>\s*)?\$\$/.test(line)) {
+        flushPending();
+        // 不 continue：让下面的同行/开块规则处理这一行
+      } else {
+        pending.body.push(cleanDisplay(line.replace(/^\s*(?:>\s*)+/, '')));
+        continue;
+      }
+    }
+
+    // 列表项里的同行块公式：- 说明：$$x$$ → 列表项文本 + 缩进的独占三行
+    const listItem = line.match(/^(\s*(?:>\s*)?)([-*+]\s+)(.*?)\$\$(.+?)\$\$\s*(.*)$/);
+    if (listItem) {
+      const pre = listItem[1];
+      const indent = pre + ' '.repeat(listItem[2].length);
+      out.push(pre + listItem[2] + listItem[3].trimEnd());
+      out.push(indent + '$$');
+      out.push(indent + cleanDisplay(listItem[4].trim()));
+      out.push(indent + '$$');
+      if (listItem[5].trim()) out.push(pre + listItem[2] + listItem[5].trim());
+      continue;
+    }
+
+    // 同行开闭：$$x$$（可有 > 前缀，$$ 后可带尾随文字）→ 拆成独占三行
+    const inline = line.match(/^(\s*(?:>\s*)?)\$\$(.+?)\$\$\s*(.*)$/);
+    if (inline) {
+      const pre = inline[1];
+      out.push(pre + '$$');
+      out.push(pre + cleanDisplay(inline[2].trim()));
+      out.push(pre + '$$');
+      if (inline[3].trim()) out.push(pre + inline[3].trim());
+      continue;
+    }
+
+    // 编号标签 + 行内开 + $$ 收尾：(2) $x(t)=...$$ → 标签行 + 独占三行显示公式
+    const labeled = line.match(/^(\s*(?:>\s*)?)([^\n$]*[^\s$])\s*\$([^\n]+?)\$\$\s*$/);
+    if (labeled) {
+      out.push(labeled[1] + labeled[2]);
+      out.push(labeled[1] + '$$');
+      out.push(labeled[1] + cleanDisplay(labeled[3].trim()));
+      out.push(labeled[1] + '$$');
+      continue;
+    }
+
+    // 开 $$ 带内容且同行未闭合 → 挂起收集直到闭合行
+    const open = line.match(/^(\s*(?:>\s*)?)\$\$(\s*\S.*)$/);
+    if (open) {
+      pending = { pre: open[1], body: [cleanDisplay(open[2].trim())] };
+      continue;
+    }
+
+    // 行中多余的 $$（PaddleOCR：$x$$y$ 应为 $xy$）：仅当行内还有其他 $ 才合并，
+    // 避免误伤行中的合法 $$x$$（去掉 $$ 后不再含 $，不会命中）
+    const withoutDouble = line.replace(/\$\$/g, '');
+    if (line.includes('$$') && withoutDouble.includes('$')) {
+      out.push(withoutDouble);
+      continue;
+    }
+
+    out.push(line);
+  }
+  if (pending) flushPending();
+  return out.join('\n');
 }
 
 function toYaml(o) {
@@ -267,6 +358,75 @@ function selftest() {
     'wikilink to published slug'
   );
   assert(convertBody('[[不存在的笔记|别名]]', idx) === '别名', 'unpublished link stays text');
+  // 公式规范化：同行 $$x$$ → 独占三行
+  assert(
+    normalizeObsidianMath('$$f(t)=A\\cos(\\omega t+\\theta_{0})$$') === '$$\nf(t)=A\\cos(\\omega t+\\theta_{0})\n$$',
+    'math same-line split'
+  );
+  // 同行 $$x$$ + 尾随文字 → 公式三行 + 尾随文字保留
+  assert(
+    normalizeObsidianMath('$$h(t)=x$$ 由冲激响应得到') === '$$\nh(t)=x\n$$\n由冲激响应得到',
+    'math same-line trailing text'
+  );
+  // 引用内同行 $$x$$ → 带 > 前缀的三行
+  assert(
+    normalizeObsidianMath('> $$a=b$$') === '> $$\n> a=b\n> $$',
+    'math blockquote same-line'
+  );
+  // 开 $$ 带内容、闭合在下一行 → 合并为三行
+  assert(
+    normalizeObsidianMath('$$ \\int f(t)\\delta(t-t_{0})dt = f(t_{0})\n$$') ===
+      '$$\n\\int f(t)\\delta(t-t_{0})dt = f(t_{0})\n$$',
+    'math open-with-content close next line'
+  );
+  // 引用内开 $$ 带内容、闭合在下一行
+  assert(
+    normalizeObsidianMath('> $$a&=1\\\\b&=2\n> $$') === '> $$\n> a&=1\\\\b&=2\n> $$',
+    'math blockquote open-with-content close next line'
+  );
+  // 引用内两个相邻的同行走 $$ 块 → 各自拆成三行，不能合并成一个块
+  assert(
+    normalizeObsidianMath('> $$a_{0}&=x\n> $$a_{n}&=y\n> $$') ===
+      '> $$\n> a_{0}&=x\n> $$\n> $$\n> a_{n}&=y\n> $$',
+    'math blockquote adjacent same-line blocks'
+  );
+  // 列表项里的同行块公式 → 列表项文本 + 缩进三行
+  assert(
+    normalizeObsidianMath('- 单位冲激响应：$$\\delta (t) \\Rightarrow h(t)$$') ===
+      '- 单位冲激响应：\n  $$\n  \\delta (t) \\Rightarrow h(t)\n  $$',
+    'math list item same-line'
+  );
+  // 编号标签 + 行内开 + $$ 收尾 → 标签行 + 三行显示公式
+  assert(
+    normalizeObsidianMath('(2) $x_{2}(t)=1$$') === '(2)\n$$\nx_{2}(t)=1\n$$',
+    'math labeled open single close double'
+  );
+  // 显示块内容里的杂散 $ → 剔除
+  assert(
+    normalizeObsidianMath('$$(1) $h(n)=2^{n}$x(n)$$') === '$$\n(1) h(n)=2^{n}x(n)\n$$',
+    'math stray dollar inside display'
+  );
+  // 行中多余 $$（OCR：$x$$y$ 应为 $xy$）
+  assert(
+    normalizeObsidianMath('$\\sin \\omega t$$u(t)$') === '$\\sin \\omega tu(t)$',
+    'math mid-line double dollar collapse'
+  );
+  // 行中的合法 $$x$$（前后有文字）不应被误删
+  assert(
+    normalizeObsidianMath('由式 $$a=b$$ 可知') === '由式 $$a=b$$ 可知',
+    'math mid-line valid pair untouched'
+  );
+  // 开 $$ 带 \begin，闭合在最后一行末尾 → 合并为三行
+  assert(
+    normalizeObsidianMath('$$\\begin{aligned}\na&=1\\\\b&=2\n\\end{aligned}$$') ===
+      '$$\n\\begin{aligned}\na&=1\\\\b&=2\n\\end{aligned}\n$$',
+    'math open-with-content close at last line'
+  );
+  // 标准三行块公式与代码围栏保持不变
+  assert(
+    normalizeObsidianMath('$$\na=b\n$$\n\n```\n$$x$$\n```') === '$$\na=b\n$$\n\n```\n$$x$$\n```',
+    'math valid block and fence untouched'
+  );
   console.log('selftest ok');
 }
 

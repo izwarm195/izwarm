@@ -26,14 +26,12 @@ function closeMenu(): void {
   menuTimer = window.setTimeout(() => currentRail()?.classList.remove('menu-open'), 260);
 }
 
-letterW?.addEventListener('mouseenter', openMenu);
-letterW?.addEventListener('mouseleave', closeMenu);
-document.addEventListener('mouseover', (e) => {
-  if ((e.target as HTMLElement).closest('.notes-rail')) openMenu();
-});
-document.addEventListener('mouseout', (e) => {
-  if ((e.target as HTMLElement).closest('.notes-rail')) closeMenu();
-});
+// 用 Pointer Events：鼠标/触控笔/触摸都覆盖，且 W 与右栏任一触发都可靠展开
+letterW?.addEventListener('pointerenter', openMenu);
+letterW?.addEventListener('pointerleave', closeMenu);
+document.querySelector('.notes-rail')?.addEventListener('pointerenter', openMenu);
+document.querySelector('.notes-rail')?.addEventListener('pointerleave', closeMenu);
+// 右栏被 SPA 替换时（innerHTML 更新），元素仍是同一 <nav>，无需重绑
 
 // ---------- 系列树：原地手风琴展开（整窗不移动，悬停/聚焦激活分支、收起同级） ----------
 const seriesWindow = document.getElementById('seriesWindow');

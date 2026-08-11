@@ -22,7 +22,9 @@ export default defineConfig({
       [
         rehypeKatex,
         {
-          output: 'htmlAndMathml',
+          // 只用视觉 HTML：KaTeX 的 MathML 副本在部分 Chromium 版本里会因
+          // clip-path 失效而显示出来，造成“公式以不同字体重复一遍”。
+          output: 'html',
           throwOnError: false,
           strict: 'warn',
           trust: false,
