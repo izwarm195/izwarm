@@ -9,14 +9,14 @@ tags: ["SS-QNA","signals","signals-systems"]
 series: ["Signals","Signals & Systems","SS-QNA"]
 ---
 
-> **[question]**
+> <span class="callout-badge" data-callout="question"></span>**Question**
 $$
 h(t)=\left[\sum_{i=1}^{n}A_{i}\mathrm{e}^{\alpha_{i}t}\right]u(t)
 $$
 由冲激响应的微分方程，得到的这个解的形式 h(t)。
 >  那么对 h(t)求导会得到冲激函数。然而，一般的响应都能写为 $f\cdot u(t)$ 的形式，难道所有相应都是冲激响应吗？
 
-> **[answer]**
+> <span class="callout-badge" data-callout="answer"></span>**Answer**
 > 问这个问题的时候没有看懂本节前面的一段话：
 > **因此  $\delta (t)$ 作用系统的过程就是，在 0 时刻的瞬间将其能量转化为系统的储能，**
 > 因此这个问题应该问的是：

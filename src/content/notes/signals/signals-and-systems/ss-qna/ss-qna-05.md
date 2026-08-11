@@ -8,12 +8,12 @@ tags: ["SS-QNA","template","signals"]
 series: ["Signals","Signals & Systems","SS-QNA"]
 ---
 
-> **[question]**
+> <span class="callout-badge" data-callout="question"></span>**Question**
 > 为什么这里的 $a_{0}$ 会有不同？为什么在三角函数形式下的傅里叶分解， 其正余弦分量是 $\frac{2}{T}$ 的形式而不是 $\frac{1}{T}$？也即为什么直流分量的幅值会是正余弦分量振幅的 $\frac{1}{2}$？
 
 
 
-> **[answer]**
+> <span class="callout-badge" data-callout="answer"></span>**Answer**
 > # - 首先为什么这个教材这么写：
 > > 注意在郑君里及很多教材中，$a_0$ 就是 $a_n$ 中 $a=0$ 的情况，因此 $f(t)=\frac{a_0}{2}+\dots$
 > 

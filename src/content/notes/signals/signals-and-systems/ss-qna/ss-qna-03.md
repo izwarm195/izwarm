@@ -8,7 +8,7 @@ tags: ["SS-QNA","signals","signals-systems"]
 series: ["Signals","Signals & Systems","SS-QNA"]
 ---
 
-> **[question]**
+> <span class="callout-badge" data-callout="question"></span>**Question**
 > 神秘氛围感公式推导
 > 
 > $$
@@ -16,7 +16,7 @@ series: ["Signals","Signals & Systems","SS-QNA"]
 > $$
 
 
-> **[answer]**
+> <span class="callout-badge" data-callout="answer"></span>**Answer**
 > $$
 > \begin{aligned}
 > f(t) 

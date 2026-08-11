@@ -106,7 +106,17 @@ function convertBody(body, slugIndex) {
     .replace(/!\[\[([^\]|]+)(?:\|[^\]]+)?\]\]/g, '$1')
     .replace(/\[\[([^\]|]+)\|([^\]]+)\]\]/g, (_, target, label) => linkify(target, label))
     .replace(/\[\[([^\]]+)\]\]/g, (_, target) => linkify(target, target))
-    .replace(/^>\s*\[!(\w+)\](.*)$/gm, (_, t, r) => `> **[${t}]**${r}`)
+    // Obsidian callout：隐藏 [!type]，改为带 data-callout 的徽标 span + 标题
+    // 兼容列表内 callout：- > [!note] 标题
+    .replace(/^(\s*(?:[-*+]\s+)?(?:>\s*)?)\[!(\w+)\][+-]?[ \t]*(.*)$/gm, (_, quote, type, title) => {
+      const t = type.toLowerCase();
+      const label = title && title.trim() ? title.trim() : t.charAt(0).toUpperCase() + t.slice(1);
+      return `${quote}<span class="callout-badge" data-callout="${t}"></span>**${label}**`;
+    })
+    // 引用块内本应是标题但漏了空格：> ###标题 → > ### 标题（连续 # 才是标题）
+    .replace(/^(\s*>\s*)(#{2,6})(?=\S)/gm, '$1$2 ')
+    // 引用块内孤立的单个 #（Obsidian 常当作普通文字）：去掉井号只留文字
+    .replace(/^(\s*>\s*)#(?=[^\s#])/gm, '$1')
     .replace(/==([^=]+)==/g, '**$1**');
 }
 
@@ -222,6 +232,24 @@ function normalizeObsidianMath(markdown) {
   return out.join('\n');
 }
 
+// Obsidian 源里常有用制表符/空格缩进的文字或列表；CommonMark 会把缩进行当作代码块，
+// 夹在行间公式之间的这类内容会被整段吞掉（里面的公式也不渲染）。这里去掉代码围栏外
+// 所有行首空白，让它们按普通文字/列表渲染。
+function dedentIndentedLines(markdown) {
+  const lines = markdown.split('\n');
+  let inFence = false;
+  return lines
+    .map((line) => {
+      if (/^\s*(```|~~~)/.test(line)) {
+        inFence = !inFence;
+        return line;
+      }
+      if (inFence) return line;
+      return line.replace(/^\s+/, '');
+    })
+    .join('\n');
+}
+
 function toYaml(o) {
   return Object.entries(o)
     .filter(([, v]) => v !== undefined)
@@ -317,7 +345,7 @@ async function main() {
 
   // 第二遍：转换双链并写出
   for (const n of candidates) {
-      const body = normalizeObsidianMath(convertBody(n.content, slugIndex)).replace(/^\s+/, '');
+      const body = dedentIndentedLines(normalizeObsidianMath(convertBody(n.content, slugIndex))).replace(/^\s+/, '');
       const fm = {
         title: n.title,
         slug: n.slug,
@@ -341,8 +369,14 @@ async function main() {
 
 // ---------- 自检 ----------
 function selftest() {
-  const assert = (cond, msg) => {
-    if (!cond) throw new Error('selftest failed: ' + msg);
+  const assert = (cond, msg, actual, expected) => {
+    if (!cond) {
+      throw new Error(
+        'selftest failed: ' +
+          msg +
+          (actual !== undefined ? `\n  actual: ${JSON.stringify(actual)}\n  expect: ${JSON.stringify(expected)}` : '')
+      );
+    }
   };
   assert(slugify('Machine & Deep Learning') === 'machine-and-deep-learning', 'slugify &');
   assert(slugify('第二章 连续时间系统时域分析') === '第二章-连续时间系统时域分析', 'slugify CJK');
@@ -358,6 +392,30 @@ function selftest() {
     'wikilink to published slug'
   );
   assert(convertBody('[[不存在的笔记|别名]]', idx) === '别名', 'unpublished link stays text');
+  // callout：隐藏 [!type]，换成带 data-callout 的徽标 span
+  assert(
+    convertBody('> [!question]\n> 神秘氛围感公式推导', idx) ===
+      '> <span class="callout-badge" data-callout="question"></span>**Question**\n> 神秘氛围感公式推导',
+    'callout badge no title',
+    convertBody('> [!question]\n> 神秘氛围感公式推导', idx),
+    '> <span class="callout-badge" data-callout="question"></span>**Question**\n> 神秘氛围感公式推导'
+  );
+  assert(
+    convertBody('> [!note] 重要说明\n> text', idx) ===
+      '> <span class="callout-badge" data-callout="note"></span>**重要说明**\n> text',
+    'callout badge with title'
+  );
+  // 列表内 callout：- > [!important] 标题
+  assert(
+    convertBody('- > [!important] 单位冲激', idx) ===
+      '- > <span class="callout-badge" data-callout="important"></span>**单位冲激**',
+    'callout badge in list item'
+  );
+  // 引用内 #：连续 # 补空格成标题，孤立单 # 去掉
+  assert(
+    convertBody('> ###标题\n> #孤立文字', idx) === '> ### 标题\n> 孤立文字',
+    'quote hash normalize'
+  );
   // 公式规范化：同行 $$x$$ → 独占三行
   assert(
     normalizeObsidianMath('$$f(t)=A\\cos(\\omega t+\\theta_{0})$$') === '$$\nf(t)=A\\cos(\\omega t+\\theta_{0})\n$$',
@@ -426,6 +484,16 @@ function selftest() {
   assert(
     normalizeObsidianMath('$$\na=b\n$$\n\n```\n$$x$$\n```') === '$$\na=b\n$$\n\n```\n$$x$$\n```',
     'math valid block and fence untouched'
+  );
+  // 缩进清理：制表符缩进的列表/文字去掉缩进（避免渲染成代码块），代码围栏内不动
+  assert(
+    dedentIndentedLines('\t\t- $x$ 运算\n\t\t\t- 时移运算：\n\n```\n\tcode\n```') ===
+      '- $x$ 运算\n- 时移运算：\n\n```\n\tcode\n```',
+    'dedent tab lines keep fence'
+  );
+  assert(
+    dedentIndentedLines('  $$\n\tcos\\omega t\n  $$') === '$$\ncos\\omega t\n$$',
+    'dedent math block lines'
   );
   console.log('selftest ok');
 }

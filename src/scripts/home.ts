@@ -253,12 +253,12 @@ function expandLogo(): void {
       const p = positions[key];
       gsap.fromTo(
         el,
-        { x: 0, y: 0, opacity: 0, filter: reduceMotion ? 'none' : 'blur(6px)' },
+        { x: 0, y: 0, opacity: 0, filter: 'none' },
         {
           x: p.x,
           y: p.y,
           opacity: 1,
-          filter: 'blur(0px)',
+          filter: 'none',
           duration: dur,
           delay: i * 0.05,
           ease,
@@ -499,18 +499,24 @@ function slideWToHome(): void {
   tl.call(() => {
     notesShell?.classList.remove('is-preparing-collapse');
     notesShell?.classList.add('is-collapsing');
-    setPanelMotion('horizontal', 1);
+    setPanelMotion('horizontal', -1);
   });
-  // 第一段：左边缘向右收缩到只剩右栏
-  tl.to(p, { l: panelRight - railWidth, duration: 0.5, ease: 'power3.inOut' });
+  // 第一段（正向第二段的反向）：W 水平左移回展开位横坐标，右栏竖条带着 W 一起左移，
+  // 底板收缩到以 W 展开位为中心的竖条
+  tl.to(p, {
+    wx: startWx,
+    l: cx + startWx - railWidth / 2,
+    r: cx + startWx + railWidth / 2,
+    duration: 0.72,
+    ease: 'power3.inOut',
+  });
   // iz 提前淡入
   tl.add(function () {
     gsap.to('#letter-iz', { opacity: 1, duration: 0.5, ease: 'power2.out' });
-  }, '-=0.15');
-  // 第二段：右栏竖条收回 W（W 回展开位）
+  }, '-=0.2');
+  // 第二段（正向第一段的反向）：竖条竖直上收，W 回到展开位纵坐标
   tl.call(() => setPanelMotion('vertical', -1));
   tl.to(p, {
-    wx: startWx,
     wy: startWy,
     t: cy + startWy - wH / 2 - PANEL_RING,
     b: cy + startWy + wH / 2 + PANEL_RING,
@@ -520,7 +526,7 @@ function slideWToHome(): void {
 
   // 与 W 第二段同步：a/r/m 展开并停留
   const wave = gsap.timeline({
-    delay: 0.5,
+    delay: 0.68,
     onStart: function () {
       if (sfxExpand) {
         sfxExpand.currentTime = 0;

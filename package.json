@@ -17,9 +17,12 @@
   "devDependencies": {
     "@types/node": "^26.2.0",
     "gray-matter": "^4.0.3",
-    "katex": "^0.18.4",
+    "katex": "0.18.4",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
     "typescript": "^5.8.0"
+  },
+  "overrides": {
+    "katex": "0.18.4"
   }
 }

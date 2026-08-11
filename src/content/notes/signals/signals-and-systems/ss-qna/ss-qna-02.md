@@ -8,17 +8,17 @@ tags: ["SS-QNA","signals","signals-systems"]
 series: ["Signals","Signals & Systems","SS-QNA"]
 ---
 
-> **[question]**
+> <span class="callout-badge" data-callout="question"></span>**Question**
 > 前面已经推出，单位冲激响应相当于零输入响应，为什么会在 $n\le m$ 的时候出现$\delta (t)$呢？
 
 
-> **[answer]**
+> <span class="callout-badge" data-callout="answer"></span>**Answer**
 > 这是一个冲激平衡的问题，书中只讨论了 $n > m$ 的情形！
 > 关于后面两种情况的分析，详见https://www.bilibili.com/video/BV1tV4y1n7HP/
 > 以及郑君里教材写出的清晰的分析思路
 > Pasted image 20260802235335.png
 
-> **[important]** 而且经过我的神秘思考
+> <span class="callout-badge" data-callout="important"></span>**而且经过我的神秘思考**
 > 从
 > $$
 > \frac{d^nr(t)}{dt^n}有\frac{d^n \delta(t)}{dt^n}
@@ -43,7 +43,7 @@ series: ["Signals","Signals & Systems","SS-QNA"]
 > 
 > ---
 > 
-> ### **具体推导过程**
+> ## # **具体推导过程**
 > 
 > 假设 $n=m$，右边最高是 $\delta^{(n)}(t)$。从最高阶开始匹配：
 > 
@@ -61,7 +61,7 @@ series: ["Signals","Signals & Systems","SS-QNA"]
 > 
 > ---
 > 
-> ### **那会不会在某个中间阶次抵消？**
+> ## # **那会不会在某个中间阶次抵消？**
 > 
 > 唯一可能发生抵消的是**同一阶 $\delta$ 导数**来自不同路径。比如：
 > 
@@ -72,7 +72,7 @@ series: ["Signals","Signals & Systems","SS-QNA"]
 > 
 > ---
 > 
-> ### **结论**
+> ## # **结论**
 > 
 > 冲激平衡法按 $\delta$ 的导数阶次从高到低逐级匹配，每一阶独立求解对应系数。$\delta^{(k)}$ 和 $\delta^{(j)}$（$k \neq j$）是线性无关的，永远不可能互相抵消。这就像解方程时，$x^3$ 的系数和 $x^2$ 的系数各管各，不会串门。
 

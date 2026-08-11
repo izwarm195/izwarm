@@ -44,7 +44,7 @@
 }
 
 .landing.expanded .bg-video {
-  filter: brightness(0.7) contrast(1.1) saturate(0.8) blur(6px);
+  filter: brightness(0.7) contrast(1.1) saturate(0.8) blur(0px);
 }
 
 /* 暗角 + 颗粒噪点 */
@@ -300,7 +300,7 @@
 
 /* ---- 底板过场动效：只加类与 CSS 变量，不在每帧计算 blur ---- */
 .notes-panel.is-panel-moving {
-  filter: blur(0.75px);
+  filter: none;
   box-shadow:
     0 24px 70px rgba(0, 0, 0, 0.45),
     var(--motion-shadow-x, 0) var(--motion-shadow-y, 0) 24px rgba(150, 156, 172, 0.16);
@@ -311,12 +311,12 @@
 }
 
 .notes-panel.is-panel-moving.is-horizontal .notes-shell {
-  filter: blur(1.4px);
+  filter: none;
   transform: translate3d(var(--content-drift-x, 0), 0, 0);
 }
 
 .notes-panel.is-panel-moving.is-vertical .notes-shell {
-  filter: blur(1.4px);
+  filter: none;
   transform: translate3d(0, var(--content-drift-y, 0), 0);
 }
 

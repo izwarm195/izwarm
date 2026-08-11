@@ -53,7 +53,7 @@ print(a)
 ```
 </details>
 
-> **[important]**  不自己写学了跟没学一样。
+> <span class="callout-badge" data-callout="important"></span>**不自己写学了跟没学一样。**
 > 1、np.where 默认<=>  np.where[a!=0 ]
 > 2、np.unique(rows)还要赋值呢
 
@@ -135,7 +135,7 @@ print("最近邻距离：", nearest_dist)
 ```
 </details>
 
-> **[note]** 这个广播真是抽象
+> <span class="callout-badge" data-callout="note"></span>**这个广播真是抽象**
 > 
 > 计算点集距离方法目前见到两种：
 > 1、按轴相减
@@ -144,8 +144,8 @@ print("最近邻距离：", nearest_dist)
 > N = 10
 > points = np.random.randint(0,100,(N,2))
 > X,Y = np.atleast_2d(points[:,0],points[:,1])
->#注意这里X,Y变成了二维的横向的数组，而不是竖的，
-> #这是因为points[:,0]输出1维数组，而points[:,0:1]则是二维。
+>注意这里X,Y变成了二维的横向的数组，而不是竖的，
+> 这是因为points[:,0]输出1维数组，而points[:,0:1]则是二维。
 > Distance =  np.sqrt((X-X.T)**2+(Y-Y.T)**2)
 > print(Ditance)
 > ```
@@ -161,7 +161,7 @@ print("最近邻距离：", nearest_dist)
 > print(Distance)
 > ```
 
-> **[note]** 另外如果要求最小距离索引，需：
+> <span class="callout-badge" data-callout="note"></span>**另外如果要求最小距离索引，需：**
 >  ``` python
 >  np.fill_diagonal(D, np.inf)
 >  ```
@@ -207,7 +207,7 @@ print(f"上涨天数：{up_days}")
 ```
 </details>
 
-> **[note]**
+> <span class="callout-badge" data-callout="note"></span>**Note**
 > 注意 `np.diff()` 
 > `np.nonzero()` 代替 `np.sum(axis=0)` 语义更明确
 ---

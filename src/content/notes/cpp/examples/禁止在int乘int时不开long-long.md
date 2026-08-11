@@ -58,9 +58,9 @@ int main() {
 
 ## Notes
 - 1、`abs` 可能不适用于 `long long int`
-	`<cmath>` 是否把 `std::abs` 注入全局命名空间是**实现定义**的，在某些编译器上会退化成 C 语言的 `abs(int)`，把 `long long` 截断为 `int` 再取绝对值——对超出 `int` 范围的值彻底错误。
-	**修正**：使用 `std::llabs`（C++11 起专为 `long long` 设计）或显式调用 `std::abs`
-	[CS 26-07-10 cstdlib](/notes/cpp/summaries/cstdlib/)
+`<cmath>` 是否把 `std::abs` 注入全局命名空间是**实现定义**的，在某些编译器上会退化成 C 语言的 `abs(int)`，把 `long long` 截断为 `int` 再取绝对值——对超出 `int` 范围的值彻底错误。
+**修正**：使用 `std::llabs`（C++11 起专为 `long long` 设计）或显式调用 `std::abs`
+[CS 26-07-10 cstdlib](/notes/cpp/summaries/cstdlib/)
 - 2、常考虑使用 `const` 引用
 - 3、先除而非乘
 ```cpp

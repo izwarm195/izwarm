@@ -8,10 +8,10 @@ tags: ["SS-QNA","template","signals"]
 series: ["Signals","Signals & Systems","SS-QNA"]
 ---
 
-> **[question]** 3.3.3 到底要表达什么？
+> <span class="callout-badge" data-callout="question"></span>**3.3.3 到底要表达什么？**
 
 
-> **[answer]**
+> <span class="callout-badge" data-callout="answer"></span>**Answer**
 >> 下面是大肥鲸之回答，感觉回答了个寂寞。
 > 
 > 3.3.3 的核心就一句话：**指数形式傅里叶级数和三角函数形式是同一件事的两种等价写法，指数形式的系数 $F(n\omega_1)$ 恰好把幅度和相位信息合成一个复数**，由此引出"复数频谱"以及它的对称性。

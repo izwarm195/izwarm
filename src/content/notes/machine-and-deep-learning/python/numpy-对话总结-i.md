@@ -12,17 +12,17 @@ series: ["Machine & Deep Learning","Python"]
 ## 1. 数组创建与形状
 
 - 常用创建方式：
-  - `np.array()`：由列表、元组创建数组。
-  - `np.arange(start, stop, step)`：按步长生成半开区间 `[start, stop)`。
-  - `np.linspace(start, stop, num)`：在指定区间均匀取 `num` 个值，默认包含终点。
-  - `np.zeros()`、`np.ones()`、`np.eye()`：创建全 0、全 1、单位矩阵等数组。
-  - `np.fromfunction()`：根据索引坐标和函数规则生成数组。
-  - `np.fromiter()`：从可迭代对象直接构建一维数组；Python 3 的 `range` 本身就是可迭代对象。
+- `np.array()`：由列表、元组创建数组。
+- `np.arange(start, stop, step)`：按步长生成半开区间 `[start, stop)`。
+- `np.linspace(start, stop, num)`：在指定区间均匀取 `num` 个值，默认包含终点。
+- `np.zeros()`、`np.ones()`、`np.eye()`：创建全 0、全 1、单位矩阵等数组。
+- `np.fromfunction()`：根据索引坐标和函数规则生成数组。
+- `np.fromiter()`：从可迭代对象直接构建一维数组；Python 3 的 `range` 本身就是可迭代对象。
 
 - `shape` 表示每一维的长度：
-  - `(4,)`：一维，4 个元素。
-  - `(2, 3)`：2 行 3 列。
-  - `(4, 3, 2)`：4 个块，每块 3 行，每行 2 个元素。
+- `(4,)`：一维，4 个元素。
+- `(2, 3)`：2 行 3 列。
+- `(4, 3, 2)`：4 个块，每块 3 行，每行 2 个元素。
 
 - `reshape()` 只改变查看方式，元素总数必须不变：
   ```python
@@ -38,9 +38,9 @@ series: ["Machine & Deep Learning","Python"]
 ## 2. 维度、轴与广播
 
 - `axis` 是数组维度编号：
-  - 二维数组中，`axis=0` 沿行方向聚合，得到每一列的结果。
-  - 二维数组中，`axis=1` 沿列方向聚合，得到每一行的结果。
-  - 聚合操作会“压缩”对应轴。
+- 二维数组中，`axis=0` 沿行方向聚合，得到每一列的结果。
+- 二维数组中，`axis=1` 沿列方向聚合，得到每一行的结果。
+- 聚合操作会“压缩”对应轴。
 
 ```python
 a.sum(axis=0)  # 每列求和
@@ -56,8 +56,8 @@ a.mean(axis=1, keepdims=True)
 ```
 
 - `np.mean(a, axis=1, keepdims=True)` 与 `a.mean(axis=1, keepdims=True)` 结果和性能基本等价：
-  - `a.mean()`：简洁，适合明确知道 `a` 是 ndarray 的场景。
-  - `np.mean(a)`：更通用，可直接接收列表等输入，正式代码中常见。
+- `a.mean()`：简洁，适合明确知道 `a` 是 ndarray 的场景。
+- `np.mean(a)`：更通用，可直接接收列表等输入，正式代码中常见。
 
 - 广播从右往左对齐维度；每个维度必须相等，或其中一边为 1。
 
@@ -153,9 +153,9 @@ a[rows, cols] = 1
 ## 4. 布尔索引与逻辑运算
 
 - NumPy 数组条件组合必须使用：
-  - `&`：逐元素且。
-  - `|`：逐元素或。
-  - `~`：逐元素非。
+- `&`：逐元素且。
+- `|`：逐元素或。
+- `~`：逐元素非。
 
 ```python
 a[(a > 2) & (a < 7)]
@@ -173,9 +173,9 @@ a > 2 & a < 7      # 错误或语义不符合预期
 - 不要用 `and`、`or`、`not` 处理 ndarray 条件，因为它们不能做逐元素布尔运算，常导致“数组真值不明确”错误。
 
 - `~` 的含义取决于 dtype：
-  - 布尔数组：逻辑非。
-  - 整数数组：逐位取反，满足 `~x == -(x + 1)`。
-  - 浮点数组：不支持，会报错。
+- 布尔数组：逻辑非。
+- 整数数组：逐位取反，满足 `~x == -(x + 1)`。
+- 浮点数组：不支持，会报错。
 
 ```python
 ~np.array([True, False])  # [False, True]
@@ -219,8 +219,8 @@ np.random.choice(10, 5)
 等价于从 `0~9` 中等概率、有放回地抽取 5 次。
 
 - `replace` 控制是否允许重复：
-  - `replace=True`：有放回，允许重复。
-  - `replace=False`：无放回，不允许重复。
+- `replace=True`：有放回，允许重复。
+- `replace=False`：无放回，不允许重复。
 
 ```python
 np.random.choice(10, 5, replace=False)
@@ -420,9 +420,9 @@ sliding_window_view(x, window_shape=3)
 ```
 
 - 典型用途：
-  - 时间序列的滑动窗口特征。
-  - 图像卷积前提取局部 patch。
-  - 构造连续序列的监督学习样本。
+- 时间序列的滑动窗口特征。
+- 图像卷积前提取局部 patch。
+- 构造连续序列的监督学习样本。
 
 ```python
 ts = np.arange(100)
@@ -457,16 +457,16 @@ Z < (-Z)
 ## 13. 数据导入：`loadtxt` 与 `genfromtxt`
 
 - `np.loadtxt()`：
-  - 适合格式干净、列数一致、类型一致的文本数据。
-  - 通常更快。
-  - 遇到缺失值或混合类型时较严格。
+- 适合格式干净、列数一致、类型一致的文本数据。
+- 通常更快。
+- 遇到缺失值或混合类型时较严格。
 
 - `np.genfromtxt()`：
-  - 可处理缺失值、注释、混合类型、字段名称等复杂情况。
-  - 可用 `missing_values` 指定缺失值标记。
-  - 可用 `filling_values` 填补缺失值。
-  - `dtype=None` 时可自动推断每列的数据类型。
-  - `names=True` 可从文件头读取字段名并生成结构化数组。
+- 可处理缺失值、注释、混合类型、字段名称等复杂情况。
+- 可用 `missing_values` 指定缺失值标记。
+- 可用 `filling_values` 填补缺失值。
+- `dtype=None` 时可自动推断每列的数据类型。
+- `names=True` 可从文件头读取字段名并生成结构化数组。
 
 ```python
 data = np.genfromtxt(
@@ -515,21 +515,21 @@ np.random.choice(total, size, replace=False)
 ## 15. VS Code 与 Jupyter 常用操作
 
 - Jupyter 单元格执行：
-  - `Shift + Enter`：运行当前单元格并跳到下一格。
-  - `Ctrl + Enter`：运行当前单元格，停留在当前格。
-  - `Esc` 后按 `A`：在上方插入单元格。
-  - `Esc` 后按 `B`：在下方插入单元格。
-  - `Esc` 后按 `M`：切换为 Markdown 单元格。
-  - `Esc` 后按 `Y`：切换为代码单元格。
+- `Shift + Enter`：运行当前单元格并跳到下一格。
+- `Ctrl + Enter`：运行当前单元格，停留在当前格。
+- `Esc` 后按 `A`：在上方插入单元格。
+- `Esc` 后按 `B`：在下方插入单元格。
+- `Esc` 后按 `M`：切换为 Markdown 单元格。
+- `Esc` 后按 `Y`：切换为代码单元格。
 
 - VS Code 标签页切换：
-  - `Ctrl + Tab`：在最近使用的标签间切换。
-  - `Ctrl + PageDown`：切换到下一个标签。
-  - `Ctrl + PageUp`：切换到上一个标签。
+- `Ctrl + Tab`：在最近使用的标签间切换。
+- `Ctrl + PageDown`：切换到下一个标签。
+- `Ctrl + PageUp`：切换到上一个标签。
 
 - 多处手动编辑或对齐可使用多光标：
-  - `Alt + 单击`：添加光标。
-  - 适合对齐结构化 dtype、批量修改变量名等场景。
+- `Alt + 单击`：添加光标。
+- 适合对齐结构化 dtype、批量修改变量名等场景。
 
 ## 16. 数组基本操作速记
 
@@ -544,7 +544,7 @@ np.atleast_2d(a)      # 至少变成二维
 np.atleast_3d(a)      # 至少变成三维
 ```
 
-> **[note]** `np.atleast_xd()` 可以传入多个数组！
+> <span class="callout-badge" data-callout="note"></span>**`np.atleast_xd()` 可以传入多个数组！**
 > 例如：`X,Y=np.atleast_2d(Z[:,0],Z[:,0])`
 ### 转置与轴操作
 
@@ -2332,8 +2332,8 @@ rng.choice(10, size=5, replace=False)       # 无放回抽样
 ```text
 A: (5, 5, 3)
 B: (   5, 5)
-            ↑
-        3 ≠ 5，且都不是 1
+↑
+3 ≠ 5，且都不是 1
 ```
 
 正确补轴：
@@ -2479,7 +2479,7 @@ np.apply_along_axis(np.max, axis=1, arr=a)
 
 ```python
 def range_size(x):
-    return x.max() - x.min()
+return x.max() - x.min()
 
 np.apply_along_axis(range_size, axis=1, arr=a)
 # 每行的最大值减最小值
@@ -2605,8 +2605,8 @@ np.multiply.outer(x, y)
 
 ```python
 a = np.array([
-    [3, 8, 1],
-    [6, 2, 9]
+[3, 8, 1],
+[6, 2, 9]
 ])
 
 a.argmax()
@@ -2654,13 +2654,13 @@ np.nanargmin(a)
 
 ```python
 a = np.array([
-    [10, 20, 30],
-    [40, 50, 60]
+[10, 20, 30],
+[40, 50, 60]
 ])
 
 idx = np.array([
-    [2, 0],
-    [1, 2]
+[2, 0],
+[1, 2]
 ])
 
 np.take_along_axis(a, idx, axis=1)
@@ -2820,7 +2820,7 @@ values = np.take_along_axis(a, idx, axis=1)
 
 ```python
 def f(x):
-    return x * x + 1
+return x * x + 1
 
 vf = np.vectorize(f)
 vf(np.arange(5))
@@ -2854,7 +2854,7 @@ np.select(conditions, choices, default=...)
 # 不推荐
 result = []
 for x in a:
-    result.append(x * 2)
+result.append(x * 2)
 
 # 推荐
 result = a * 2
@@ -2882,7 +2882,7 @@ np.multiply(a, 2, out=out)
 ```python
 # 不推荐：循环内不断扩容复制
 for item in items:
-    a = np.append(a, item)
+a = np.append(a, item)
 ```
 
 更好的方式：
@@ -2890,7 +2890,7 @@ for item in items:
 ```python
 values = []
 for item in items:
-    values.append(item)
+values.append(item)
 
 a = np.array(values)
 ```

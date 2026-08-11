@@ -27,11 +27,15 @@ function closeMenu(): void {
 }
 
 // 用 Pointer Events：鼠标/触控笔/触摸都覆盖，且 W 与右栏任一触发都可靠展开
+// W 常驻在 logo-stage，节点不变，直接绑定
 letterW?.addEventListener('pointerenter', openMenu);
 letterW?.addEventListener('pointerleave', closeMenu);
-document.querySelector('.notes-rail')?.addEventListener('pointerenter', openMenu);
-document.querySelector('.notes-rail')?.addEventListener('pointerleave', closeMenu);
-// 右栏被 SPA 替换时（innerHTML 更新），元素仍是同一 <nav>，无需重绑
+
+// 关键：绑到稳定的 region 容器（SPA 只改它的 innerHTML，节点本身不销毁），
+// 而不是会被重建的 <nav class="notes-rail">，避免 SPA 跳转后悬停失效
+const railRegion = document.querySelector<HTMLElement>('[data-notes-region="rail"]');
+railRegion?.addEventListener('pointerenter', openMenu);
+railRegion?.addEventListener('pointerleave', closeMenu);
 
 // ---------- 系列树：原地手风琴展开（整窗不移动，悬停/聚焦激活分支、收起同级） ----------
 const seriesWindow = document.getElementById('seriesWindow');
@@ -160,6 +164,17 @@ async function loadState(url: string, push: boolean): Promise<void> {
     shellEl.dataset.notesState = nextState;
     currentMain.scrollTop = 0;
     currentMain.classList.remove('notes-swap-out');
+
+    // 进入文章时，中栏“卡片放大 + 正文淡入”，形成无缝扩张感
+    if (nextState === 'article') {
+      currentMain.classList.add('notes-swap-in');
+      currentMain.addEventListener(
+        'animationend',
+        () => currentMain.classList.remove('notes-swap-in'),
+        { once: true }
+      );
+    }
+
     if (doc.title) document.title = doc.title;
     if (push) history.pushState({}, '', url);
     initToc();

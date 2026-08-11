@@ -70,6 +70,22 @@ html {
   transform: translateY(4px);
 }
 
+/* 系列 → 文章：中栏“卡片放大 + 正文淡入”，形成同一底板扩张感 */
+.notes-main.notes-swap-in {
+  animation: notes-card-grow 0.34s ease both;
+}
+
+@keyframes notes-card-grow {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
 /* 长文章返回首页：先快速淡出内容，再收缩底板，避免大正文逐帧重排 */
 .notes-shell.is-preparing-collapse .notes-main,
 .notes-shell.is-preparing-collapse .notes-left {
@@ -255,14 +271,19 @@ html {
   width: 100%;
 }
 .series-window {
-  border: 1px solid var(--edge-line);
-  background: var(--bg-obsidian-soft);
-  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(26, 28, 33, 0.82);
+  backdrop-filter: blur(22px) saturate(1.02) brightness(0.78);
+  -webkit-backdrop-filter: blur(22px) saturate(1.02) brightness(0.78);
+  border-radius: 16px 16px 16px 0; /* 与文章卡一致：左下直角 */
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.42);
+  padding: 14px;
   width: 100%;
-  max-width: 540px;
+  max-width: 560px;
+  margin-inline: auto; /* 与文章卡同轴居中，放大切换时中心不跳 */
 }
 .series-window > .series-node + .series-node {
-  border-top: 1px solid var(--edge-line);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 .series-node {
   position: relative;
@@ -312,7 +333,7 @@ html {
 .series-note {
   display: block;
   padding: 8px 10px 8px 18px;
-  border-left: 1px solid var(--edge-line);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
   color: var(--text-dim);
   font-size: 13px;
   line-height: 1.45;
@@ -326,6 +347,7 @@ html {
 /* ---- 右栏 W 导航 ---- */
 .notes-rail {
   position: relative;
+  height: 100%; /* 撑满右栏容器：悬停菜单的 bottom:50% 才能以右栏中心为基准，出现在 W 上方 */
   border-left: 1px solid var(--edge-line);
   display: flex;
   flex-direction: column;
@@ -393,7 +415,7 @@ html {
 }
 /* ---- 文章：深色阅读卡（与大底板同风格但更深；正文白字，遵循 Obsidian 字体） ---- */
 .article {
-  width: min(100%, 780px);
+  width: min(100%, 860px);
   margin-inline: auto;
   padding: clamp(26px, 4vw, 48px) clamp(22px, 3.4vw, 44px);
   background: rgba(26, 28, 33, 0.82);
@@ -442,8 +464,8 @@ html {
 /* 正文：英文 CMU 衬线，中文宋体 —— 与 Obsidian 阅读视图一致 */
 .article-body {
   font-family: 'CMU Classical Serif', 'FandolSong', 'SimSun', 'Songti SC', 'STSong', 'NSimSun', serif;
-  font-size: 18px;
-  line-height: 1.75;
+  font-size: 16px;
+  line-height: 1.72;
   letter-spacing: 0.01em;
   color: #d9dce2;
   overflow-wrap: break-word;
@@ -612,9 +634,69 @@ html {
   background: rgba(62, 117, 117, 0.26);
 }
 
+/* ---- Obsidian 风格 callout 徽标 ---- */
+.article-body .callout-badge {
+  display: inline-block;
+  width: 1.05em;
+  height: 1.05em;
+  margin-right: 0.4em;
+  vertical-align: -0.15em;
+  font-style: normal;
+}
+.article-body .callout-badge::before {
+  content: 'ℹ️';
+}
+.article-body .callout-badge[data-callout='note']::before {
+  content: '📝';
+}
+.article-body .callout-badge[data-callout='question']::before,
+.article-body .callout-badge[data-callout='faq']::before,
+.article-body .callout-badge[data-callout='help']::before {
+  content: '❓';
+}
+.article-body .callout-badge[data-callout='answer']::before {
+  content: '✅';
+}
+.article-body .callout-badge[data-callout='tip']::before,
+.article-body .callout-badge[data-callout='hint']::before,
+.article-body .callout-badge[data-callout='important']::before {
+  content: '💡';
+}
+.article-body .callout-badge[data-callout='warning']::before,
+.article-body .callout-badge[data-callout='caution']::before,
+.article-body .callout-badge[data-callout='attention']::before {
+  content: '⚠️';
+}
+.article-body .callout-badge[data-callout='danger']::before,
+.article-body .callout-badge[data-callout='error']::before,
+.article-body .callout-badge[data-callout='bug']::before {
+  content: '🛑';
+}
+.article-body .callout-badge[data-callout='success']::before,
+.article-body .callout-badge[data-callout='check']::before,
+.article-body .callout-badge[data-callout='done']::before {
+  content: '✅';
+}
+.article-body .callout-badge[data-callout='example']::before {
+  content: '📌';
+}
+.article-body .callout-badge[data-callout='quote']::before,
+.article-body .callout-badge[data-callout='cite']::before {
+  content: '❝';
+}
+.article-body .callout-badge[data-callout='abstract']::before,
+.article-body .callout-badge[data-callout='summary']::before,
+.article-body .callout-badge[data-callout='tldr']::before {
+  content: '📄';
+}
+.article-body .callout-badge[data-callout='info']::before,
+.article-body .callout-badge[data-callout='todo']::before {
+  content: 'ℹ️';
+}
+
 /* ---- 数学公式：接近 Obsidian 阅读视图（深色阅读卡内） ---- */
 .article-body .katex {
-  font-size: 1.08em;
+  font-size: 1em;
   color: inherit;
   text-rendering: geometricPrecision;
 }
@@ -642,6 +724,7 @@ html {
   min-width: max-content;
   margin-inline: auto;
   text-align: initial;
+  font-size: 1.03em; /* 独立公式略大于行内，但明显小于原值 */
 }
 
 /* rehype-katex 的外层通常是 span.math-display；同时兜底 p 内只有公式时的居中 */
@@ -878,6 +961,9 @@ html {
   html,
   .notes-col {
     scroll-behavior: auto !important;
+  }
+  .notes-main.notes-swap-in {
+    animation: none;
   }
   .notes-shell *,
   .notes-rail * {
