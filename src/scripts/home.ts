@@ -111,6 +111,143 @@ const bgmA = document.getElementById('bgmA') as HTMLAudioElement | null;
 const bgmB = document.getElementById('bgmB') as HTMLAudioElement | null;
 const notesPanel = document.getElementById('notesPanel') as HTMLElement | null;
 
+// ===== 加载动画：复用首页真实 logo/小字，进度线绕 logo 一圈，音视频就绪后淡出 =====
+const loadingOverlay = document.getElementById('loadingOverlay');
+const loadingProgress = document.getElementById('loadingProgress') as SVGPathElement | null;
+const loadingFrameSvg = document.getElementById('loadingFrameSvg') as SVGSVGElement | null;
+const introText = document.getElementById('introText') as HTMLElement | null;
+const introOriginalHtml = introText?.innerHTML ?? '';
+const LOADING_MIN_MS = 1200; // 最短展示时间，避免一闪而过
+const loadingStartedAt = performance.now();
+let loadingShown = 0;
+let loadingFinished = false;
+
+// 进度框几何：绕中央 logo 一大圈，底边穿过小字垂直中心（1:1 viewBox，像素坐标）
+let frameGeom: { left: number; top: number; right: number; bottom: number; r: number } | null = null;
+
+function framePathD(textLeft: number, textRight: number): string {
+  const g = frameGeom;
+  if (!g) return '';
+  // viewBox 为框的局部坐标（0,0 → 宽,高），所有坐标需减去框左上角
+  const m = 8; // 首尾端距小字左右端的一小段距离
+  const R = g.right - g.left;
+  const B = g.bottom - g.top;
+  const sx = Math.max(8, textLeft - g.left - m);
+  const ex = Math.min(R - 8, textRight - g.left + m);
+  const r = g.r;
+  return [
+    `M ${sx} ${B}`,
+    `L 0 ${B}`,
+    `L 0 ${r}`,
+    `A ${r} ${r} 0 0 1 ${r} 0`,
+    `L ${R - r} 0`,
+    `A ${r} ${r} 0 0 1 ${R} ${r}`,
+    `L ${R} ${B - r}`,
+    `A ${r} ${r} 0 0 1 ${R - r} ${B}`,
+    `L ${ex} ${B}`,
+  ].join(' ');
+}
+
+function buildFrameGeom(): void {
+  const logo = document.getElementById('logoFull');
+  if (!logo || !introText || !loadingFrameSvg || !loadingProgress) return;
+  const lr = logo.getBoundingClientRect();
+  const tr = introText.getBoundingClientRect();
+  const centerX = lr.left + lr.width / 2;
+  const frameW = Math.min(Math.max(lr.width + 190, tr.width + 120), window.innerWidth - 60);
+  const left = centerX - frameW / 2;
+  const top = lr.top - 68;
+  const right = centerX + frameW / 2;
+  const bottom = tr.top + tr.height / 2;
+  frameGeom = { left, top, right, bottom, r: 18 };
+  loadingFrameSvg.setAttribute('viewBox', `0 0 ${right - left} ${bottom - top}`);
+  loadingFrameSvg.style.width = right - left + 'px';
+  loadingFrameSvg.style.height = bottom - top + 'px';
+  loadingFrameSvg.style.left = left + 'px';
+  loadingFrameSvg.style.top = top + 'px';
+  loadingProgress.setAttribute('d', framePathD(tr.left, tr.right));
+}
+
+function setLoadingProgress(p: number): void {
+  if (loadingProgress) loadingProgress.style.strokeDashoffset = String(1000 * (1 - p));
+  const pct = Math.round(p * 100) + '%';
+  if (introText && introText.textContent !== pct) {
+    introText.textContent = pct;
+    const tr = introText.getBoundingClientRect();
+    if (loadingProgress && frameGeom) loadingProgress.setAttribute('d', framePathD(tr.left, tr.right));
+  }
+}
+
+// 加载目标：视频按已缓冲比例、音频按可播放状态；两者就绪即为 1
+function loadingTarget(): number {
+  let v = 0;
+  if (bgVideo) {
+    if (bgVideo.readyState >= 4) v = 1;
+    else if (bgVideo.buffered.length && bgVideo.duration && isFinite(bgVideo.duration)) {
+      v = Math.min(1, bgVideo.buffered.end(bgVideo.buffered.length - 1) / bgVideo.duration);
+    } else if (bgVideo.readyState >= 2) {
+      v = 0.55;
+    }
+  } else {
+    v = 1;
+  }
+  const a =
+    (bgmA?.readyState ?? 0) >= 3 && (bgmB?.readyState ?? 0) >= 3
+      ? 1
+      : (bgmA?.readyState ?? 0) >= 2 && (bgmB?.readyState ?? 0) >= 2
+        ? 0.5
+        : 0;
+  return 0.65 * v + 0.35 * a;
+}
+
+function finishLoading(): void {
+  if (loadingFinished || !loadingOverlay) return;
+  loadingFinished = true;
+  setLoadingProgress(1);
+  landing?.classList.remove('is-loading');
+  // 小字淡出，恢复原文
+  if (introText) {
+    introText.classList.add('loading-swap');
+    window.setTimeout(() => {
+      if (!introText) return;
+      introText.innerHTML = introOriginalHtml;
+      introText.classList.remove('loading-swap');
+    }, 320);
+  }
+  loadingOverlay.classList.add('done');
+}
+
+function tickLoading(): void {
+  if (loadingFinished || !loadingOverlay) return;
+  const target = Math.max(loadingShown, loadingTarget());
+  loadingShown += (target - loadingShown) * 0.14;
+  if (Math.abs(target - loadingShown) < 0.003) loadingShown = target;
+  setLoadingProgress(loadingShown);
+  const minElapsed = performance.now() - loadingStartedAt >= LOADING_MIN_MS;
+  if (target >= 1 && minElapsed) {
+    finishLoading();
+    return;
+  }
+  requestAnimationFrame(tickLoading);
+}
+
+if (loadingOverlay && introText) {
+  landing?.classList.add('is-loading');
+  buildFrameGeom();
+  // 小字先淡出原文，再渐入为百分比
+  introText.classList.add('loading-swap');
+  window.setTimeout(() => {
+    if (!introText) return;
+    introText.textContent = '0%';
+    introText.classList.remove('loading-swap');
+    buildFrameGeom(); // 底边重新对齐到百分比文字的中心
+    requestAnimationFrame(tickLoading);
+  }, 320);
+  bgVideo?.addEventListener('error', finishLoading);
+  // 兜底：异常情况下最多 20s 强制结束，避免一直卡在加载页
+  window.setTimeout(finishLoading, 20000);
+}
+
 let expanded = false;
 let isAnimating = false;
 let panelOpen = false; // Notes 底板是否已铺开（含动画完成 or 直接访问）

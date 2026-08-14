@@ -92,6 +92,21 @@ const { open = false, active = 'home' } = Astro.props;
   <div class="transition-mask" id="transitionMask"><div class="core"></div></div>
 </div>
 
+<!-- 加载动画：复用首页真实 logo 与小字（位置不变），小字淡入淡出为进度百分比；
+     进度线从小字左端外侧出发，沿 W 形大矩形框绕 logo 一圈，到小字右端外侧收尾 -->
+<div class="loading-overlay" id="loadingOverlay" role="status" aria-label="加载中">
+  <svg
+    class="loading-frame-svg"
+    id="loadingFrameSvg"
+    viewBox="0 0 548 220"
+    fill="none"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <path class="loading-frame-progress" id="loadingProgress" d="" pathLength="1000" />
+  </svg>
+</div>
+
 <audio id="bgmA" src={media.ambientAudio} preload="auto"></audio>
 <audio id="bgmB" src={media.ambientAudio} preload="auto"></audio>
 

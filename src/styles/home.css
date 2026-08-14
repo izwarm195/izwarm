@@ -349,3 +349,47 @@
     transform: none !important;
   }
 }
+
+/* ---- 加载动画：透明覆盖层拦截交互，logo/小字用首页原元素，位置不变 ---- */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: transparent; /* 露出真实的中央 logo 与小字 */
+  pointer-events: auto; /* 加载期间拦截点击 */
+  transition: opacity 0.55s ease, visibility 0s linear 0.55s;
+}
+.loading-overlay.done {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.loading-frame-svg {
+  position: absolute;
+  overflow: visible; /* 圆头线帽允许略超出边界 */
+}
+.loading-frame-progress {
+  fill: none;
+  stroke: var(--text-dim); /* 与小字同色同亮度 */
+  stroke-width: 1.5;
+  stroke-linecap: round; /* 圆头 */
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  will-change: stroke-dashoffset;
+}
+
+/* 加载期间强制显示中央 logo 与小字（Notes 页 panel-open 会隐藏它们） */
+.landing.is-loading .logo-full {
+  opacity: 1;
+  pointer-events: none;
+}
+.landing.is-loading .intro-text {
+  opacity: 1;
+  pointer-events: none;
+}
+
+/* 小字在原文与进度百分比之间淡入淡出 */
+.intro-text.loading-swap {
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
