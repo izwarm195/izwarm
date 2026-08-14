@@ -266,22 +266,153 @@ function normalizeObsidianMath(markdown) {
   return out.join('\n');
 }
 
-// Obsidian 源里常有用制表符/空格缩进的文字或列表；CommonMark 会把缩进行当作代码块，
-// 夹在行间公式之间的这类内容会被整段吞掉（里面的公式也不渲染）。这里去掉代码围栏外
-// 所有行首空白，让它们按普通文字/列表渲染。
-function dedentIndentedLines(markdown) {
+// Obsidian 源里常用制表符/空格做视觉缩进；CommonMark 会把 4 空格以上缩进当成代码块，
+// 夹在行间公式之间的缩进内容会被整段吞掉（里面的公式也不渲染）。
+// 这里不再无脑去缩进，而是按行追踪活动列表层级：
+// - 列表项/续行重排到合法的 CommonMark 网格（每层缩进 = 父项内容缩进，
+//   内容缩进 = 标记位置 + 标记宽度，子弹 2 格、`5. ` 3 格、`10. ` 4 格），
+//   保留嵌套列表结构；
+// - 行间公式视为当前列表项的内容（缩进进列表），避免公式把列表打断后
+//   后续缩进项退化成代码块；
+// - 只有脱离列表且缩进 >= 4 空格的孤立文本才去掉缩进，防止被识别为代码块。
+function normalizeListIndent(markdown) {
   const lines = markdown.split('\n');
+  const out = [];
   let inFence = false;
-  return lines
-    .map((line) => {
-      if (/^\s*(```|~~~)/.test(line)) {
-        inFence = !inFence;
-        return line;
+  let inMath = false;
+  let mathIndent = 0;
+  let srcStack = []; // 活动列表各层 { w: 源缩进宽度, mw: 输出标记宽度 }
+
+  // 第 level 层列表项的标记缩进 = 前面各层标记宽度之和
+  const markerIndent = (stack, level) => stack.slice(0, level).reduce((s, e) => s + e.mw, 0);
+  // 当前最内层列表项的内容缩进
+  const innerContentIndent = (stack) => stack.reduce((s, e) => s + e.mw, 0);
+  // 列表项标记宽度：`- ` → 2，`5. ` → 3，`10. ` → 4
+  const markerWidthOf = (stripped) => {
+    const m = stripped.match(/^([-*+]|\d+[.)])\s+/);
+    if (!m) return 0;
+    return (m[1].length > 1 ? m[1].length : 1) + 1;
+  };
+
+  const leadingInfo = (line) => {
+    let width = 0;
+    let chars = 0;
+    for (const ch of line) {
+      if (ch === ' ') {
+        width++;
+        chars++;
+      } else if (ch === '\t') {
+        width += 4 - (width % 4);
+        chars++;
+      } else {
+        break;
       }
-      if (inFence) return line;
-      return line.replace(/^\s+/, '');
-    })
-    .join('\n');
+    }
+    return { width, stripped: line.slice(chars) };
+  };
+
+  for (const line of lines) {
+    if (/^\s*(```|~~~)/.test(line)) {
+      inFence = !inFence;
+      out.push(line);
+      continue;
+    }
+    if (inFence) {
+      out.push(line);
+      continue;
+    }
+    if (!line.trim()) {
+      out.push('');
+      continue;
+    }
+
+    const { width, stripped } = leadingInfo(line);
+
+    // 行间公式内容行（可能以 > 等开头）优先按公式内容处理
+    if (inMath) {
+      if (/^\$\$\s*$/.test(stripped)) {
+        inMath = false;
+        out.push(' '.repeat(mathIndent) + '$$');
+      } else {
+        out.push(' '.repeat(mathIndent) + stripped);
+      }
+      continue;
+    }
+    // 行间公式定界符
+    if (/^\$\$\s*$/.test(stripped)) {
+      inMath = true;
+      mathIndent = innerContentIndent(srcStack); // 当前最内层列表项的内容缩进
+      out.push(' '.repeat(mathIndent) + '$$');
+      continue;
+    }
+
+    const contentIndent = innerContentIndent(srcStack); // 输出网格中当前最内层列表项的内容缩进
+    const inList = srcStack.length > 0;
+
+    // 引用块：列表内缩进到内容缩进；缩进不足视为脱离列表
+    if (stripped.startsWith('>')) {
+      if (inList && width >= contentIndent) {
+        out.push(' '.repeat(contentIndent) + stripped);
+      } else {
+        out.push(line);
+        srcStack = [];
+      }
+      continue;
+    }
+
+    // 标题：顶格（或缩进不足）时结束列表；列表内且缩进足够时留在项内
+    if (/^#{1,6}\s/.test(stripped)) {
+      if (inList && width >= contentIndent) {
+        out.push(' '.repeat(contentIndent) + stripped);
+      } else {
+        out.push(width >= 4 ? stripped : line);
+        if (inList) srcStack = [];
+      }
+      continue;
+    }
+
+    // 列表项：根据源缩进找到层级，输出到 2 空格/级网格
+    const item = stripped.match(/^([-*+]|\d+[.)])\s+/);
+    if (item) {
+      let level;
+      if (!inList) {
+        level = 0;
+        srcStack = [{ w: width <= 3 ? width : 0, mw: markerWidthOf(stripped) }];
+      } else {
+        const same = srcStack.map((e) => e.w).lastIndexOf(width);
+        if (same >= 0) {
+          level = same;
+          srcStack = srcStack.slice(0, same + 1);
+        } else if (width > srcStack[srcStack.length - 1].w) {
+          level = srcStack.length;
+          srcStack.push({ w: width, mw: markerWidthOf(stripped) });
+        } else {
+          let l = srcStack.length - 1;
+          while (l >= 0 && srcStack[l].w > width) l--;
+          if (l < 0) {
+            level = 0;
+            srcStack = [{ w: width <= 3 ? width : 0, mw: markerWidthOf(stripped) }];
+          } else if (width >= srcStack[l].w + 2) {
+            level = l + 1;
+            srcStack = srcStack.slice(0, l + 1);
+            srcStack.push({ w: width, mw: markerWidthOf(stripped) });
+          } else {
+            level = l;
+            srcStack = srcStack.slice(0, l + 1);
+            srcStack[l].w = width;
+          }
+        }
+      }
+      out.push(' '.repeat(markerIndent(srcStack, level)) + stripped);
+      continue;
+    }
+
+    // 其他文本：列表内一律视为当前项的（惰性）续行，缩进到内容缩进，
+    // 保持列表层级不被顶格段落打断；脱离列表且 >= 4 空格才去缩进防代码块
+    if (inList) out.push(' '.repeat(contentIndent) + stripped);
+    else out.push(width >= 4 ? stripped : line);
+  }
+  return out.join('\n');
 }
 
 function toYaml(o) {
@@ -379,7 +510,7 @@ async function main() {
 
   // 第二遍：转换双链并写出
   for (const n of candidates) {
-      const body = dedentIndentedLines(normalizeObsidianMath(convertBody(n.content, slugIndex))).replace(/^\s+/, '');
+      const body = normalizeListIndent(normalizeObsidianMath(convertBody(n.content, slugIndex))).replace(/^\s+/, '');
       const fm = {
         title: n.title,
         slug: n.slug,
@@ -519,15 +650,47 @@ function selftest() {
     normalizeObsidianMath('$$\na=b\n$$\n\n```\n$$x$$\n```') === '$$\na=b\n$$\n\n```\n$$x$$\n```',
     'math valid block and fence untouched'
   );
-  // 缩进清理：制表符缩进的列表/文字去掉缩进（避免渲染成代码块），代码围栏内不动
+  // 缩进规整：嵌套列表保留层级（重排到 2 空格/级网格），代码围栏内不动
   assert(
-    dedentIndentedLines('\t\t- $x$ 运算\n\t\t\t- 时移运算：\n\n```\n\tcode\n```') ===
-      '- $x$ 运算\n- 时移运算：\n\n```\n\tcode\n```',
-    'dedent tab lines keep fence'
+    normalizeListIndent('\t\t- $x$ 运算\n\t\t\t- 时移运算：\n\n```\n\tcode\n```') ===
+      '- $x$ 运算\n  - 时移运算：\n\n```\n\tcode\n```',
+    'normalize list indent keeps nesting and fence'
   );
   assert(
-    dedentIndentedLines('  $$\n\tcos\\omega t\n  $$') === '$$\ncos\\omega t\n$$',
-    'dedent math block lines'
+    normalizeListIndent('  $$\n\tcos\\omega t\n  $$') === '$$\ncos\\omega t\n$$',
+    'normalize math block lines'
+  );
+  // 行间公式不打断列表：公式缩进进当前列表项，后续更深列表项保持嵌套
+  assert(
+    normalizeListIndent('- a\n\t- b\n$$\nx\n$$\n\t\t- c\n\t\t\t- d') ===
+      '- a\n  - b\n    $$\n    x\n    $$\n    - c\n      - d',
+    'math stays inside list, nesting preserved'
+  );
+  // 脱离列表的孤立缩进文本（>=4 空格）去掉缩进，避免被当成代码块吞掉公式
+  assert(
+    normalizeListIndent('$$\na\n$$\n    说明文字\n$$\nb\n$$') === '$$\na\n$$\n说明文字\n$$\nb\n$$',
+    'orphan indented text dedented at root'
+  );
+  // 列表项续行保留为项内段落
+  assert(
+    normalizeListIndent('- 方法：\n\t冲激函数平衡法\n- 结束') === '- 方法：\n  冲激函数平衡法\n- 结束',
+    'list continuation paragraph kept'
+  );
+  // 顶格解释段落不打断嵌套：后续同层编号项仍留在父项内
+  assert(
+    normalizeListIndent('1. 基于定义\n\t1. 对称性\n由\n$$\nx\n$$\n\t2. 奇偶虚实性\n$$\ny\n$$\n3. 基于时间变量运算') ===
+      '1. 基于定义\n   1. 对称性\n      由\n      $$\n      x\n      $$\n   2. 奇偶虚实性\n      $$\n      y\n      $$\n3. 基于时间变量运算',
+    'top-level paragraphs keep nested numbering'
+  );
+  // 顶格标题结束列表
+  assert(
+    normalizeListIndent('- a\n  b\n## 标题\n- c') === '- a\n  b\n## 标题\n- c',
+    'heading ends list'
+  );
+  // 顶格引用块结束列表
+  assert(
+    normalizeListIndent('- a\n  b\n> 引用\n- c') === '- a\n  b\n> 引用\n- c',
+    'root blockquote ends list'
   );
   console.log('selftest ok');
 }

@@ -70,9 +70,9 @@ void print(const std::vector<int>& data) { /* ... */ }
 - 无法传递临时对象或字面量
 - 这就是违反 const-correctness 的典型例子
 
-对于小类型（如 `int`、`double`、指针），直接按值传递反而更清晰；对于大对象（如 `std::string`、`std::vector`），用 `const T&`。
+  对于小类型（如 `int`、`double`、指针），直接按值传递反而更清晰；对于大对象（如 `std::string`、`std::vector`），用 `const T&`。
 
----
+  ---
 
 ## 三、const 成员函数 —— 这个函数不改变对象状态
 
@@ -114,7 +114,7 @@ private:
 };
 ```
 
----
+  ---
 
 ## 四、const 返回值 —— 防止无意义的赋值
 
@@ -150,7 +150,7 @@ const std::string& ref = getName();   // OK
 - **顶层 const**：对象本身是常量（如 `int* const p`，`const int x`）
 - **底层 const**：对象指向/引用的内容是常量（如 `const int* p`，`const int& r`）
 
-传参或赋值时，**顶层 const 会被忽略**，底层 const 必须保持一致：
+  传参或赋值时，**顶层 const 会被忽略**，底层 const 必须保持一致：
 
 ```cpp
 void f(int x);         // 接受 int
@@ -160,9 +160,9 @@ void g(int& x);        // 接受 int&
 void g(const int& x);  // 合法重载：底层 const 不同
 ```
 
-这就解释了为什么 `void f(const T)` 和 `void f(T)` 不能构成重载——按值传递时，`const` 是顶层的，调用方不关心函数内部是否修改自己的拷贝。
+  这就解释了为什么 `void f(const T)` 和 `void f(T)` 不能构成重载——按值传递时，`const` 是顶层的，调用方不关心函数内部是否修改自己的拷贝。
 
----
+  ---
 
 ## 六、实践 checklist
 

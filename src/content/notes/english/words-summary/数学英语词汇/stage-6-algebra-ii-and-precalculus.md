@@ -4,7 +4,7 @@ slug: "english/words-summary/数学英语词汇/stage-6-algebra-ii-and-precalcul
 description: "1. polynomial function 多项式函数"
 publishDate: "2026-08-03"
 createdAt: "2026-08-03T00:00:00Z"
-updatedDate: "2026-08-04T12:25:14+08:00"
+updatedDate: "2026-08-14T01:36:05+08:00"
 tags: ["english","vocabulary","math"]
 series: ["English","Words Summary","数学英语词汇"]
 ---

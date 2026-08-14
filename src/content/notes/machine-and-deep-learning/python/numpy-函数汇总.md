@@ -4,7 +4,7 @@ slug: "machine-and-deep-learning/python/numpy-函数汇总"
 description: "以下是网页中 NumPy 函数的完整分类整理，每个函数后附带简短注释。"
 publishDate: "2026-07-01"
 createdAt: "2026-07-26T00:00:00Z"
-updatedDate: "2026-08-04T12:25:14+08:00"
+updatedDate: "2026-08-14T01:36:05+08:00"
 tags: ["machine-learning","python"]
 series: ["Machine & Deep Learning","Python"]
 ---
@@ -15,19 +15,19 @@ series: ["Machine & Deep Learning","Python"]
 
 ### **一、数组创建**
 
-| 函数 | 注释 |
-|---|---|
-| `np.array` | 从列表或元组创建 ndarray 数组 |
-| `np.arange` | 在区间内创建均匀间隔的值，类似 range |
-| `np.linspace` | 在区间内返回等间隔的样本，可指定数量 |
-| `np.ones` | 创建全 1 数组 |
-| `np.zeros` | 创建全 0 数组 |
-| `np.eye` | 创建对角线为 1、其余为 0 的二维数组 |
-| `np.frombuffer` | 从缓冲区创建 1 维数组 |
-| `np.fromfile` | 从文本或二进制文件构建数组 |
-| `np.fromfunction` | 通过函数返回值创建数组 |
-| `np.fromiter` | 从可迭代对象创建 1 维数组 |
-| `np.fromstring` | 从字符串创建 1 维数组 |
+| 函数                | 注释                    |
+| ----------------- | --------------------- |
+| `np.array`        | 从列表或元组创建 ndarray 数组   |
+| `np.arange`       | 在区间内创建均匀间隔的值，类似 range |
+| `np.linspace`     | 在区间内返回等间隔的样本，可指定数量    |
+| `np.ones`         | 创建全 1 数组              |
+| `np.zeros`        | 创建全 0 数组              |
+| `np.eye`          | 创建对角线为 1、其余为 0 的二维数组  |
+| `np.frombuffer`   | 从缓冲区创建 1 维数组          |
+| `np.fromfile`     | 从文本或二进制文件构建数组         |
+| `np.fromfunction` | 通过函数返回值创建数组           |
+| `np.fromiter`     | 从可迭代对象创建 1 维数组        |
+| `np.fromstring`   | 从字符串创建 1 维数组          |
 
 ### **二、ndarray 属性**
 
@@ -321,3 +321,14 @@ series: ["Machine & Deep Learning","Python"]
 | `np.searchsorted` | 查找元素应插入的索引位置 |
 | `np.extract` | 提取满足条件的元素 |
 | `np.count_nonzero` | 非 0 元素计数 |
+# 二十二、常用常数
+| 常数               | 写法                                        | 值（近似）      |
+| ---------------- | ----------------------------------------- | ---------- |
+| π                | `np.pi`                                   | 3.14159265 |
+| e                | `np.e`                                    | 2.71828183 |
+| γ                | `np.euler_gamma`                          | 0.57721566 |
+| $\infty$         | `np.inf`                                  | —          |
+| $NaN$            | `np.nan`                                  | —          |
+| 新 NumPy 版本的无穷/非数 | `np.PINF`、`np.NINF`、`np.PZERO`、`np.NZERO` | —          |
+
+

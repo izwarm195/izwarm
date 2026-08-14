@@ -26,7 +26,7 @@ series: ["Machine & Deep Learning","Python"]
 - 两者取单列时**结果完全相同**。
 - `a['Name']` 是快捷取列语法；`a.loc[:, 'Name']` 是通用标签索引器，能同时控制行和列，支持切片和多列。
 
----
+  ---
 
 ## 二、数据删减：`drop()`
 
@@ -40,7 +40,7 @@ series: ["Machine & Deep Learning","Python"]
 - **`index=` / `columns=`**：自带方向的快捷通道，**不能**再配合 `axis` 使用，否则报错。
 - `axis=0` 是默认值（行方向）。
 
----
+  ---
 
 ## 三、数据读取与索引设定
 
@@ -48,7 +48,7 @@ series: ["Machine & Deep Learning","Python"]
 - 指定 CSV 中哪一列成为**行索引**。
 - `index_col='id'`：`id` 列提升为行标签；不指定则自动生成 0, 1, 2… 的索引。
 
----
+  ---
 
 ## 四、缺失值处理
 
@@ -70,7 +70,7 @@ series: ["Machine & Deep Learning","Python"]
 
 - `ffill()` 和 `bfill()` 是独立的 Pandas 方法，等价于 `fillna(method=...)` 的推荐写法。
 
----
+  ---
 
 ## 五、数据操作与类型转换
 
@@ -118,7 +118,7 @@ df.mean(axis=1)   # 每行算一个均值
 ```
 - `axis=0` = 沿行方向（按列汇总）；`axis=1` = 沿列方向（按行汇总）。
 
----
+  ---
 
 ## 七、值映射
 
@@ -132,7 +132,7 @@ df.mean(axis=1)   # 每行算一个均值
 
 - 两者都是 **Pandas 方法**，不是 NumPy 函数。`np.` 开头的才是 NumPy。
 
----
+  ---
 
 ## 八、数据透视表：`pivot_table()`
 
@@ -143,7 +143,7 @@ df.pivot_table(values='age', index='animal', columns='gender', aggfunc='mean')
 - `margins=True` 添加行/列总计。
 - 与 `groupby()` 的区别：`pivot_table` 是二维交叉表，相当于 `groupby` 的二维升级版。
 
----
+  ---
 
 ## 九、总结要点速记
 
