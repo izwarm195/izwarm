@@ -177,10 +177,6 @@
   pointer-events: none;
 }
 
-.logo-letter:hover {
-  text-shadow: 0 0 26px rgba(255, 255, 255, 0.35), 0 0 4px var(--metal-highlight);
-}
-
 /* 角落说明文字 */
 .corner-label {
   position: absolute;
@@ -188,13 +184,20 @@
   letter-spacing: 0.15em;
   color: var(--text-dim);
   opacity: 0;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.4s ease, text-shadow 0.25s ease;
   white-space: nowrap;
   pointer-events: none;
 }
 
 .corner-label.show {
   opacity: 1;
+}
+
+/* 悬停字母时标签一同发光；颜色由 JS 按字母当前相位写入 --glow-color */
+.corner-label.glow {
+  text-shadow:
+    0 0 12px var(--glow-color, rgba(255, 255, 255, 0.45)),
+    0 0 28px var(--glow-color, rgba(255, 255, 255, 0.24));
 }
 
 /* 声音控制 */

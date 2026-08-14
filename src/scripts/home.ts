@@ -194,6 +194,72 @@ function computeLetterPositions(): {
   return { positions, sizes, izW, izH, gap };
 }
 
+// ===== 字母光效：展开反色闪、悬停发光、按下变主题青 =====
+const LETTER_FX: Record<string, { flash: number; glow: number; pressed: boolean }> = {
+  w: { flash: 1, glow: 0, pressed: false },
+  a: { flash: 1, glow: 0, pressed: false },
+  r: { flash: 1, glow: 0, pressed: false },
+  m: { flash: 1, glow: 0, pressed: false },
+};
+
+// 悬停发光仅在字母处于可交互位（主页 expanded / Notes 底板打开）且无动画时生效
+function letterFxCanGlow(): boolean {
+  return !isAnimating && (expanded || panelOpen);
+}
+
+// 由 flash / glow / pressed 三个状态合成当前 filter：反色相位决定发光颜色
+function refreshLetterFx(key: string): void {
+  const el = document.getElementById('letter-' + key) as HTMLElement | null;
+  if (!el) return;
+  const s = LETTER_FX[key];
+  if (s.pressed) {
+    el.style.filter = 'url(#izwarm-teal)';
+    return;
+  }
+  const inv = 1 - s.flash;
+  const bright = s.flash; // 闪光起点 brightness(0)=纯黑，随 flash 进度逐渐变亮回原色
+  const glowColor = s.flash < 0.5 ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.5)';
+  const label = document.getElementById('label-' + key) as HTMLElement | null;
+  if (label) label.style.setProperty('--glow-color', glowColor);
+  const glowPx = s.glow * 10;
+  el.style.filter =
+    glowPx > 0.3
+      ? `invert(${inv.toFixed(3)}) brightness(${bright.toFixed(3)}) drop-shadow(0 0 ${glowPx.toFixed(1)}px ${glowColor})`
+      : `invert(${inv.toFixed(3)}) brightness(${bright.toFixed(3)})`;
+}
+
+/** 展开完成后的反色闪：瞬间反色（变黑），约 1.5s 逐渐变亮回原色 */
+function flashLetterFx(key: string): void {
+  if (reduceMotion) return;
+  const s = LETTER_FX[key];
+  gsap.killTweensOf(s, 'flash');
+  s.flash = 0;
+  refreshLetterFx(key);
+  gsap.to(s, {
+    flash: 1,
+    duration: 1.5,
+    ease: 'power2.out',
+    onUpdate: () => refreshLetterFx(key),
+  });
+}
+
+function setLetterGlow(key: string, on: boolean): void {
+  const s = LETTER_FX[key];
+  gsap.killTweensOf(s, 'glow');
+  gsap.to(s, {
+    glow: on ? 1 : 0,
+    duration: 0.22,
+    ease: 'power1.out',
+    onUpdate: () => refreshLetterFx(key),
+  });
+}
+
+function setLetterPressed(key: string, pressed: boolean): void {
+  const s = LETTER_FX[key];
+  s.pressed = pressed;
+  refreshLetterFx(key);
+}
+
 // 直接访问 Notes 路由：把字母 W 定位到右下角（与滑动转场终点一致），保留为交互锚点
 function panelOpenInit(): void {
   if (!notesPanel) return;
@@ -264,6 +330,7 @@ function expandLogo(): void {
           delay: i * 0.05,
           ease,
           onComplete: function () {
+            flashLetterFx(key);
             const label = document.getElementById(p.label);
             if (label) {
               label.classList.add('show');
@@ -544,7 +611,15 @@ function slideWToHome(): void {
     wave.fromTo(
       el,
       { x: 0, y: 0, opacity: 0, filter: 'blur(4px)' },
-      { x: q.x, y: q.y, opacity: 1, filter: 'blur(0px)', duration: 0.45, ease: 'power3.out' },
+      {
+        x: q.x,
+        y: q.y,
+        opacity: 1,
+        filter: 'blur(0px)',
+        duration: 0.45,
+        ease: 'power3.out',
+        onComplete: () => flashLetterFx(key),
+      },
       i * 0.05
     );
   });
@@ -622,6 +697,30 @@ LETTER_KEYS.forEach(function (key) {
     } else {
       collapseAndNavigate(targetMap[key]);
     }
+  });
+  // 悬停：字母 + 标签轻微发光；按下：瞬时变主题青，松开恢复
+  el.addEventListener('pointerenter', function () {
+    if (letterFxCanGlow()) setLetterGlow(key, true);
+  });
+  el.addEventListener('pointerleave', function () {
+    setLetterGlow(key, false);
+    setLetterPressed(key, false);
+  });
+  el.addEventListener('pointerdown', function () {
+    setLetterPressed(key, true);
+  });
+  el.addEventListener('pointerup', function () {
+    setLetterPressed(key, false);
+  });
+  el.addEventListener('pointercancel', function () {
+    setLetterPressed(key, false);
+  });
+});
+
+// 指针在其他位置松开时兜底恢复
+window.addEventListener('pointerup', function () {
+  LETTER_KEYS.forEach(function (key) {
+    setLetterPressed(key, false);
   });
 });
 

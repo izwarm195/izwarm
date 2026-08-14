@@ -46,6 +46,13 @@ const { open = false, active = 'home' } = Astro.props;
   <div class="vignette"></div>
   <div class="grain"></div>
 
+  <!-- 按下字母时把白色字母精确染成主题青（#3e7575），仅作滤镜引用，不占布局 -->
+  <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true" focusable="false">
+    <filter id="izwarm-teal" color-interpolation-filters="sRGB">
+      <feColorMatrix type="matrix" values="0 0 0 0 0.243 0 0 0 0 0.459 0 0 0 0 0.459 0 0 0 1 0" />
+    </filter>
+  </svg>
+
   <div class="intro-text" id="introText">
     personal notes · projects · selected works<br />
     archive of thoughts, systems and images
