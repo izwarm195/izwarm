@@ -8,57 +8,43 @@ interface Props {
 
 const { notes } = Astro.props;
 const archive = getArchiveData(notes);
-
-function groupByDate(list: Note[]): { date: string; notes: Note[] }[] {
-  const groups: { date: string; notes: Note[] }[] = [];
-  for (const note of list) {
-    const date = formatDate(note.data.publishDate);
-    const last = groups[groups.length - 1];
-    if (last && last.date === date) last.notes.push(note);
-    else groups.push({ date, notes: [note] });
-  }
-  return groups;
-}
 ---
 
 {archive.length === 0 ? (
   <p class="notes-empty">暂无文章。</p>
 ) : (
-  archive.map((year) => (
-    <section class="archive-year">
-      <h2>
-        {year.year}
-        <span class="archive-count">
-          {year.months.reduce((sum, month) => sum + month.notes.length, 0)} 篇
-        </span>
-      </h2>
-      {year.months.map((month) => (
-        <div class="archive-month">
-          <h3>{month.month}</h3>
-          {groupByDate(month.notes).map((group) => (
-            <div class="archive-date-group" id={group.date}>
-              <time>{group.date}</time>
-              {group.notes.map((note) => (
-                <div class="archive-item">
-                  <a class="archive-title" href={noteUrl(note)}>{note.data.title}</a>
-                  <div class="archive-meta">
-                    {note.data.series.length > 0 && (
-                      <span class="archive-series">{note.data.series.join(' / ')}</span>
-                    )}
-                    {note.data.tags.length > 0 && (
-                      <span class="archive-tags">
-                        {note.data.tags.map((tag) => (
-                          <a href={url(`/notes/tags/${encodeURIComponent(tag)}/`)}>#{tag}</a>
-                        ))}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
+  archive.map((year) => {
+    const entries = year.months.flatMap((month) =>
+      month.notes.map((note) => ({ date: formatDate(note.data.publishDate), note })),
+    );
+    return (
+      <section class="archive-year">
+        <header class="archive-year-head">
+          <div class="archive-year-main">
+            <span class="archive-year-text">{year.year}</span>
+            <span class="archive-year-dot" aria-hidden="true"></span>
+          </div>
+          <p class="archive-year-count">{entries.length} 篇</p>
+        </header>
+        <ol class="archive-timeline">
+          {entries.map(({ date, note }) => (
+            <li class="archive-entry" id={date}>
+              <div class="archive-date">
+                <time datetime={date}>{date.slice(5)}</time>
+                <span class="archive-date-dot" aria-hidden="true"></span>
+              </div>
+              <a class="archive-title" href={noteUrl(note)}>{note.data.title}</a>
+              <ul class="archive-tags">
+                {note.data.tags.map((tag) => (
+                  <li>
+                    <a href={url(`/notes/tags/${encodeURIComponent(tag)}/`)}>#{tag}</a>
+                  </li>
+                ))}
+              </ul>
+            </li>
           ))}
-        </div>
-      ))}
-    </section>
-  ))
+        </ol>
+      </section>
+    );
+  })
 )}

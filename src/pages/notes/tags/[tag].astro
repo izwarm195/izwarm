@@ -19,8 +19,8 @@ const tagged = notes.filter((note) => note.data.tags.includes(tag));
 <BaseLayout title={`#${tag} · izwarm`}>
   <Landing open active="tags">
     <Fragment slot="notes-left"><NotesSidebar notes={notes} /></Fragment>
-    <section slot="notes-main" aria-label={`标签 ${tag}`}>
-      <h1 class="notes-page-title">#{tag}</h1>
+    <section slot="notes-main" class="article archive-panel" aria-label={`标签 ${tag}`}>
+      <h1>#{tag}</h1>
       <ArchiveList notes={tagged} />
     </section>
   </Landing>

@@ -11,8 +11,8 @@ const tags = getTagsIndex(notes);
 <BaseLayout title="标签 · izwarm">
   <Landing open active="tags">
     <Fragment slot="notes-left"><NotesSidebar notes={notes} /></Fragment>
-    <section slot="notes-main" aria-label="全部标签">
-      <h1 class="notes-page-title">标签</h1>
+    <section slot="notes-main" class="article archive-panel" aria-label="全部标签">
+      <h1>tags</h1>
       {tags.length === 0 ? (
         <p class="notes-empty">暂无标签。</p>
       ) : (

@@ -11,8 +11,8 @@ const notes = await getPublishedNotes();
 <BaseLayout title="归档 · izwarm">
   <Landing open active="archive">
     <Fragment slot="notes-left"><NotesSidebar notes={notes} /></Fragment>
-    <section slot="notes-main" aria-label="文章归档">
-      <h1 class="notes-page-title">归档</h1>
+    <section slot="notes-main" class="article archive-panel" aria-label="文章归档">
+      <h1>Archive</h1>
       <ArchiveList notes={notes} />
     </section>
   </Landing>
