@@ -47,10 +47,29 @@ jobs:
         env:
           ASTRO_BASE: /izwarm/ # 生成内容中的站内链接需带 base 前缀
 
-      - name: Build site
+      - name: Build site (GitHub Pages)
         env:
           ASTRO_BASE: /izwarm/
         run: npm run build
+
+      - name: Re-sync notes (root base for virtual host)
+        run: node scripts/sync-obsidian.mjs obsidian-vault
+        env:
+          ASTRO_BASE: ''
+
+      - name: Build site (virtual host)
+        env:
+          ASTRO_BASE: ''
+        run: npx astro build --outDir dist-host
+
+      - name: Deploy to virtual host
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist-host/
+          server-dir: /wwwroot/   # ← 替换为你 FileZilla 看到的实际网站根目录（必须保留末尾 /）
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
