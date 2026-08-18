@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Landing from '../../components/home/Landing.astro';
+---
+
+<BaseLayout title="About · izwarm">
+  <Landing open active="about">
+    <section slot="notes-main" class="page-panel" aria-label="About">
+      <h1>About</h1>
+      <p class="page-desc">关于 izwarm 的介绍，将陆续补充。</p>
+      <p class="notes-empty">内容建设中。</p>
+    </section>
+  </Landing>
+</BaseLayout>

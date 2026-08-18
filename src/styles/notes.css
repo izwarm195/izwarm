@@ -1124,3 +1124,46 @@ html {
     transition-delay: 0s;
   }
 }
+
+/* ---- 两栏页面（Projects / Works / About）：内容 + 右栏字母导航 ---- */
+.notes-shell.is-page {
+  grid-template-columns: minmax(0, 1fr) var(--notes-rail);
+}
+.notes-shell.is-page .notes-left {
+  display: none;
+}
+
+/* ---- 两栏页面内容区：与文章卡同风格（磨砂深卡，左下直角） ---- */
+.page-panel {
+  width: min(100%, 860px);
+  margin-inline: auto;
+  padding: clamp(26px, 4vw, 48px) clamp(22px, 3.4vw, 44px);
+  background: rgba(26, 28, 33, 0.82);
+  backdrop-filter: blur(22px) saturate(1.02) brightness(0.78);
+  -webkit-backdrop-filter: blur(22px) saturate(1.02) brightness(0.78);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px 16px 16px 0;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.42);
+}
+.page-panel h1 {
+  font-family: 'CMU Classical Serif', 'KaiTi', 'Kaiti SC', 'STKaiti', 'DFKai-SB', serif;
+  font-size: clamp(26px, 3.4vw, 34px);
+  font-weight: normal;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+  color: #f2f4f7;
+  margin: 0 0 14px;
+}
+.page-desc {
+  margin: 0 0 18px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-dim);
+}
+
+@media (max-width: 900px) {
+  .notes-shell.is-page {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+

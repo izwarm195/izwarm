@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Landing from '../../components/home/Landing.astro';
+---
+
+<BaseLayout title="Projects · izwarm">
+  <Landing open active="projects">
+    <section slot="notes-main" class="page-panel" aria-label="Projects">
+      <h1>Projects</h1>
+      <p class="page-desc">正在进行的项目与实验，将陆续整理到这里。</p>
+      <p class="notes-empty">内容建设中。</p>
+    </section>
+  </Landing>
+</BaseLayout>

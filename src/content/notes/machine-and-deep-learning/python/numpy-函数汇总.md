@@ -1,18 +1,16 @@
 ---
 title: "Numpy 函数汇总"
 slug: "machine-and-deep-learning/python/numpy-函数汇总"
-description: "以下是网页中 NumPy 函数的完整分类整理，每个函数后附带简短注释。"
+description: "Pytorch Tensor 张量操作和 Numpy 数组十分类似，具体详见"
 publishDate: "2026-07-01"
 createdAt: "2026-07-26T00:00:00Z"
-updatedDate: "2026-08-14T01:36:05+08:00"
+updatedDate: "2026-08-18T01:22:20+08:00"
 tags: ["machine-learning","python"]
 series: ["Machine & Deep Learning","Python"]
 ---
 
-以下是网页中 NumPy 函数的完整分类整理，每个函数后附带简短注释。
-
----
-
+Pytorch Tensor 张量操作和 Numpy 数组十分类似，具体详见
+[Tensor & Numpy 函数对比](/notes/machine-and-deep-learning/python/tensor-and-numpy-函数对比/)
 ### **一、数组创建**
 
 | 函数                | 注释                    |
@@ -72,14 +70,14 @@ series: ["Machine & Deep Learning","Python"]
 
 ### **五、拼接与堆叠**
 
-| 函数 | 注释 |
-|---|---|
-| `np.concatenate` | 沿指定轴连接多个数组 |
-| `np.stack` | 沿新轴堆叠数组序列（增加维度） |
+| 函数                | 注释                |
+| ----------------- | ----------------- |
+| `np.concatenate`  | 沿指定轴连接多个数组        |
+| `np.stack`        | 沿新轴堆叠数组序列（增加维度）   |
 | `np.column_stack` | 将 1 维数组作为列堆叠成 2 维 |
-| `np.hstack` | 水平（列方向）堆叠 |
-| `np.vstack` | 垂直（行方向）堆叠 |
-| `np.dstack` | 沿深度方向堆叠 |
+| `np.hstack`       | 水平（列方向）堆叠         |
+| `np.vstack`       | 垂直（行方向）堆叠         |
+| `np.dstack`       | 沿深度方向堆叠           |
 
 ### **六、拆分**
 

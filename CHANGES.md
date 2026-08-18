@@ -450,6 +450,63 @@
 - **验证**：`npm run typecheck`、`npm run build` 通过；公式、阅读排版、
   底板过场与归档排序均已在构建产物中确认。
 
+## 35. 其余三字母页面（Projects / Works / About）：转场泛化与两栏布局
+
+- **转场泛化**：`home.ts` 的 `slideWToNotes()` / `slideWToHome()` 泛化为
+  `slideLetterToPanel(key)` / `slideLetterToHome(key)`，四个字母共用同一套
+  三段式滑动（竖直移动 → 水平右移）+ 磨砂底板延展。竖直方向自动对称：
+  W / A 起点在 iz 上方（先下坠到中央），R / M 起点在 iz 下方（先上移到
+  中央）——同一坐标公式，无需按字母分支；水平段终点都是右栏内居中。
+  返回动画镜像执行，其余字母波浪展开。
+- **两栏页面**：Projects / Works / About 三个新路由（`src/pages/{projects,
+  works,about}/index.astro`）使用 `NotesShell` 的 `is-page` 变体——左中右
+  三栏简化为「内容 + 右栏字母导航」两栏；左栏容器保留为空，供无缝切换时
+  由共享模块填入 Notes 侧栏。
+- **右栏导航**：新增 `src/components/common/PanelRail.astro`——悬停 / 键盘
+  展开右栏菜单；Projects / Works 为 Selected / Timeline / Statistics 子页面
+  入口（`/projects/{selected,timeline,statistics}/` 等占位页），About 暂无。
+  返回主页由常驻右栏的锚点字母承担（点击反向动画收起底板），不再重复放置
+  字母按钮。
+- **右栏宽度统一**：右栏宽度、锚点中心与菜单链接宽度统一以 W（与 M 同宽，
+  最宽，显示宽约 82px）为基准（`getRailRefW()`），A / R 等较窄字母不再整体
+  偏右，四个字母的右栏视觉一致；W 图加载完成前先用兜底值，`window load`
+  后按真实宽度重测并重新定位锚点（调试值暴露为 `window.__izRailRefW`）。
+- **中心锚定修复（A/R 偏右根因）**：GSAP 从 CSS `translate(-50%,-50%)` 推断
+  `xPercent` 时依赖元素 `offsetWidth`（`Math.round(offsetWidth/2) ===
+  Math.round(-x) ? -50 : 0`）。A / R 字母图片较小、加载晚于 W / M，GSAP 首次
+  解析其 transform 时图片未就绪（offsetWidth=0），`xPercent` 被错误推断为 0
+  并缓存，字母失去“以视口中心为锚点”的定位——表现为 A / R 位置整体偏右、
+  甚至超出底板右边缘（yPercent 因 CSS `max-height` 固定高而幸存，仅横轴出
+  问题）。修复：脚本初始化时对所有字母与 iz 显式
+  `gsap.set(el, { xPercent: -50, yPercent: -50, x: 0, y: 0 })`，锚定与图片
+  加载时机解耦。
+- **主页四角视觉还原**：显式锁定中心锚定后，主页展开位的 A / R 会按公式
+  x 作为中心偏移（相对原站“左上角锚定、实际中心 = x + 半宽”的既有视觉
+  左移半宽）。在 `computeLetterPositions()` 中为 A / R 还原既有中心——
+  A 补回半宽（`x = izW/2 + a.w + gap - 30`），R 的负向 x 补回半宽后 r.w
+  恰好消去（`x = -(izW/2 + gap + 24)`）；W / M 的 xPercent 原就正确，公式
+  不变。主页四角恢复原站视觉，面板右栏锚点保持统一后的正确位置。
+- **W 进入 Notes 统一拉取**：从其他页面回主页只 `pushState('/')` 不重载
+  首页，底板内 shell 会残留上一页面（如 About）的内容；此前 W 分支直接
+  使用首页预渲染的 Notes 内容，导致回主页后再点 W 显示的是残留页面。
+  现改为所有字母统一在动画开始时 `fetch` 目标页并原位替换（W 拉取
+  `/notes/`，内容与首页预渲染一致，无视觉差异），再点 W 始终显示 Notes。
+- **子页面无缝切换**：Projects / Works 主页面与 Selected / Timeline /
+  Statistics 子页面之间通过 `fetch` 原位替换底板内容（`notes.ts` 拦截
+  两栏页面的本页面子路由），不整页刷新、不出现加载进度条；指向 Notes 的
+  链接仍整页跳转以保证右栏锚点字母与路由一致。
+- **跨页无缝替换**：抽取 `src/scripts/panel-nav.ts`（`loadPageIntoPanel` /
+  `initToc` / `initCodeCopy` / 字母-路径映射），`notes.ts` 与 `home.ts` 共用。
+  主页点击 A / R / M 后，底板动画第一段（右栏竖条，左/中栏不可见）期间
+  fetch 目标页并原位替换 shell 内容，第二段淡入时已是目标页内容，随后
+  `pushState` 同步 URL——与 W → Notes 的原站行为一致；Notes 内部（Home /
+  文章 / 归档 / 标签）仍走同一无缝替换，两栏页面指向 Notes 的链接整页
+  跳转以保证右栏锚点字母与路由一致。
+- **回程**：面板内点击当前字母或右栏 Home / 字母按钮，反向动画收起底板并
+  恢复主页展开态（`pushState` 回 `/`），刷新即回到干净首页。
+- **验证**：`npm run typecheck`、`npm run build` 通过；`/projects/`、
+  `/works/`、`/about/` 与全部 Notes 路由均可构建并返回正确 HTML。
+
 ## 验证方式汇总
 
 - TypeScript 检查：`npm run typecheck`

@@ -1,10 +1,18 @@
 /**
- * Notes 交互：
+ * Notes / 面板页面交互：
  * - 系列树展开（粗指针点击切换；悬停 / 聚焦同步 aria-expanded）
- * - 文章大纲滚动高亮
- * - Notes 内部无缝导航：拦截 /notes/ 链接，fetch 目标页并原位替换底板内容，
+ * - 文章大纲滚动高亮（共享模块 initToc）
+ * - 面板内部无缝导航：拦截 /notes/ 链接，fetch 目标页并原位替换底板内容，
  *   pushState 同步 URL；popstate 恢复；直接刷新由服务端渲染恢复。
+ *   两栏页面（Projects / Works / About）与 Notes 之间的切换走同一机制。
  */
+import {
+  initCodeCopy,
+  initToc,
+  isPanelPath,
+  loadPageIntoPanel,
+  NOTES_STATES,
+} from './panel-nav';
 
 const shellEl = document.getElementById('notesShell');
 const notesBase = import.meta.env.BASE_URL.replace(/\/$/, '') + '/notes';
@@ -71,7 +79,7 @@ function deactivateAll(): void {
 }
 
 // 悬停期间固定系列窗口顶边：窗口高度随展开/收起变化时不再重新垂直居中，
-// 否则内容会在静止的指针下方滑动，导致连续激活下一个系列（“一连串上滑”）。
+// 否则内容会在静止的指针下方滑动，导致连续激活下一个系列（"一连串上滑"）。
 let unpinTimer: number | undefined;
 
 function pinSeriesWindow(ev?: PointerEvent): void {
@@ -159,189 +167,39 @@ document.addEventListener('click', (e) => {
   target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
 });
 
-// ---------- 大纲滚动高亮 ----------
-let tocObserver: IntersectionObserver | null = null;
-let activeHeadingId = '';
-
-function setActiveHeading(id: string): void {
-  if (!id || id === activeHeadingId) return;
-  activeHeadingId = id;
-  document.querySelector<HTMLAnchorElement>('.notes-toc a.active')?.classList.remove('active');
-  document
-    .querySelector<HTMLAnchorElement>(`.notes-toc a[href="#${CSS.escape(id)}"]`)
-    ?.classList.add('active');
-}
-
-function initToc(): void {
-  tocObserver?.disconnect();
-  tocObserver = null;
-  activeHeadingId = '';
-  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.notes-toc a'));
-  if (links.length === 0 || !('IntersectionObserver' in window)) return;
-  const headings = links
-    .map((a) => document.getElementById(a.getAttribute('href')?.slice(1) ?? ''))
-    .filter((el): el is HTMLElement => el !== null);
-  if (headings.length === 0) return;
-  tocObserver = new IntersectionObserver(
-    (entries) => {
-      const visible = entries
-        .filter((entry) => entry.isIntersecting)
-        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-      const current = visible[0];
-      if (!current) return;
-      setActiveHeading(current.target.id);
-    },
-    { rootMargin: '-15% 0px -70% 0px' }
-  );
-  headings.forEach((h) => tocObserver?.observe(h));
-}
-
-// ---------- 代码块复制按钮 ----------
-const siteBase = import.meta.env.BASE_URL.replace(/\/$/, '');
-
-function attachCopyButton(container: HTMLElement, label: string, getText: () => string): void {
-  if (container.querySelector(':scope > .code-copy')) return;
-  const btn = document.createElement('button');
-  btn.type = 'button';
-  btn.className = 'code-copy';
-  btn.title = label;
-  btn.setAttribute('aria-label', label);
-  const icon = document.createElement('img');
-  icon.src = `${siteBase}/media/icons/copy.svg`;
-  icon.alt = '';
-  icon.width = 15;
-  icon.height = 15;
-  btn.appendChild(icon);
-  btn.addEventListener('click', () => {
-    const text = getText();
-    const done = () => {
-      btn.classList.add('copied');
-      icon.src = `${siteBase}/media/icons/circled-check.svg`;
-      setTimeout(() => {
-        btn.classList.remove('copied');
-        icon.src = `${siteBase}/media/icons/copy.svg`;
-      }, 1400);
-    };
-    if (navigator.clipboard?.writeText) {
-      navigator.clipboard.writeText(text).then(done, () => fallbackCopy(text, done));
-    } else {
-      fallbackCopy(text, done);
-    }
-  });
-  container.appendChild(btn);
-}
-
-function initCodeCopy(): void {
-  // 代码块：复制代码文本
-  document.querySelectorAll<HTMLElement>('.article-body pre').forEach((pre) => {
-    attachCopyButton(pre, '复制代码', () => pre.querySelector('code')?.innerText ?? pre.innerText);
-  });
-  // 行间公式：复制 LaTeX 源码（data-latex 由 rehype-math-latex 注入）
-  document.querySelectorAll<HTMLElement>('.article-body .math-block').forEach((block) => {
-    attachCopyButton(block, '复制公式', () => block.getAttribute('data-latex') ?? block.innerText);
-  });
-}
-
-function fallbackCopy(text: string, done: () => void): void {
-  const ta = document.createElement('textarea');
-  ta.value = text;
-  ta.setAttribute('readonly', '');
-  ta.style.position = 'fixed';
-  ta.style.opacity = '0';
-  document.body.appendChild(ta);
-  ta.select();
-  try {
-    document.execCommand('copy');
-  } catch {
-    /* 复制失败不阻断交互 */
-  }
-  ta.remove();
-  done();
-}
-
-// ---------- Notes 内部无缝导航 ----------
-async function loadState(url: string, push: boolean): Promise<void> {
-  if (!shellEl) return;
-  try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const html = await res.text();
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-    const next = doc.getElementById('notesShell');
-    if (!next) return;
-    const hash = url.includes('#') ? url.slice(url.indexOf('#')) : '';
-    const currentMain = shellEl.querySelector<HTMLElement>('[data-notes-region="main"]');
-    const nextMain = next.querySelector<HTMLElement>('[data-notes-region="main"]');
-    const currentLeft = shellEl.querySelector<HTMLElement>('[data-notes-region="left"]');
-    const nextLeft = next.querySelector<HTMLElement>('[data-notes-region="left"]');
-    const currentRail = shellEl.querySelector<HTMLElement>('[data-notes-region="rail"]');
-    const nextRail = next.querySelector<HTMLElement>('[data-notes-region="rail"]');
-    if (!currentMain || !nextMain || !currentLeft || !nextLeft || !currentRail || !nextRail) return;
-
-    const currentState = shellEl.dataset.notesState ?? '';
-    const nextState = next.dataset.notesState ?? '';
-
-    // Home / Archive / Tags 共用左栏，切换时不替换；跨 Article 边界才更新左栏
-    const bothShared = currentState !== 'article' && nextState !== 'article';
-    const leftWillSwap = !bothShared;
-
-    currentMain.classList.add('notes-swap-out');
-    if (leftWillSwap) currentLeft.classList.add('notes-left-fade');
-    await new Promise((resolve) => setTimeout(resolve, 160));
-
-    currentMain.innerHTML = nextMain.innerHTML;
-    currentRail.innerHTML = nextRail.innerHTML;
-
-    if (leftWillSwap) {
-      currentLeft.innerHTML = nextLeft.innerHTML;
-      currentLeft.scrollTop = 0;
-      void currentLeft.offsetWidth; // 强制重排，让移除 fade 类后执行淡入过渡
-      currentLeft.classList.remove('notes-left-fade');
-    }
-
-    shellEl.dataset.notesState = nextState;
-    currentMain.scrollTop = 0;
-    currentMain.classList.remove('notes-swap-out');
-
-    // 进入文章时，中栏“卡片放大 + 正文淡入”，形成无缝扩张感
-    if (nextState === 'article') {
-      currentMain.classList.add('notes-swap-in');
-      currentMain.addEventListener(
-        'animationend',
-        () => currentMain.classList.remove('notes-swap-in'),
-        { once: true }
-      );
-    }
-
-    if (doc.title) document.title = doc.title;
-    if (push) history.pushState({}, '', url);
-    initToc();
-    initCodeCopy();
-    if (hash) {
-      const target = document.getElementById(hash.slice(1));
-      if (target) target.scrollIntoView({ block: 'start' });
-    }
-  } catch {
-    window.location.href = url;
-  }
-}
+// ---------- 面板内部无缝导航 ----------
+// Notes 状态：拦截 /notes/ 系链接原位替换（Home / 文章 / 归档 / 标签互切）。
+// 两栏页面（Projects / Works / About）：拦截本页面子路由（/projects/ 系，
+// 如 Selected / Timeline / Statistics），锚点字母不变，同样原位无缝替换；
+// 指向 Notes 的链接整页跳转（右栏锚点字母与路由一致）。
+const panelBase = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 if (shellEl && 'fetch' in window) {
   document.addEventListener('click', (e) => {
     const link = (e.target as HTMLElement).closest<HTMLAnchorElement>('a');
     if (!link) return;
     const href = link.getAttribute('href') ?? '';
-    if (!(href === notesBase || href.startsWith(notesBase + '/'))) return;
     if (link.target === '_blank' || link.hasAttribute('download')) return;
-    e.preventDefault();
-    void loadState(href, true);
+    const state = shellEl.dataset.notesState ?? '';
+    if ((NOTES_STATES as readonly string[]).includes(state)) {
+      if (href === notesBase || href.startsWith(notesBase + '/')) {
+        e.preventDefault();
+        void loadPageIntoPanel(href, true);
+      }
+      return;
+    }
+    const pageBase = panelBase + '/' + state + '/';
+    if (href === pageBase || href.startsWith(pageBase)) {
+      e.preventDefault();
+      void loadPageIntoPanel(href, true);
+    }
   });
   window.addEventListener('popstate', () => {
     const path = location.pathname;
-    if (path === notesBase || path === notesBase + '/' || path.startsWith(notesBase + '/')) {
-      void loadState(location.pathname + location.search, false);
+    if (isPanelPath(path)) {
+      void loadPageIntoPanel(location.pathname + location.search, false);
     } else {
-      // 离开 Notes 回首页：整页加载，保证首页状态干净
+      // 离开面板回首页：整页加载，保证首页状态干净
       location.reload();
     }
   });

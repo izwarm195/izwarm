@@ -1,17 +1,34 @@
 ---
 import NotesRail from './NotesRail.astro';
+import PanelRail from '../common/PanelRail.astro';
+
+/**
+ * 面板内容容器：Notes 三栏工作台 / 两栏页面共用。
+ * - Notes 状态（home / article / archive / tags）：左中右三栏，左栏由 slot 注入
+ * - 页面状态（projects / works / about）：两栏（内容 + 右栏字母导航），
+ *   左栏容器保留为空（SPA 跨页替换时由 panel-nav 填入 Notes 侧栏内容）
+ * - data-notes-region 区域约定供 fetch 替换与交互委托使用
+ */
+const NOTES_STATES = ['home', 'article', 'archive', 'tags'];
 
 interface Props {
-  active: 'home' | 'article' | 'archive' | 'tags';
+  active: string;
 }
 
 const { active } = Astro.props;
+const isPage = !NOTES_STATES.includes(active);
 ---
 
-<div class="notes-shell" id="notesShell" data-notes-state={active}>
+<div
+  class:list={['notes-shell', { 'is-page': isPage }]}
+  id="notesShell"
+  data-notes-state={active}
+>
   <aside class="notes-col notes-left" data-notes-region="left"><slot name="left" /></aside>
   <main class="notes-col notes-main" data-notes-region="main"><slot /></main>
-  <div data-notes-region="rail"><NotesRail active={active} /></div>
+  <div data-notes-region="rail">
+    {isPage ? <PanelRail active={active} /> : <NotesRail active={active} />}
+  </div>
 </div>
 
 <script>

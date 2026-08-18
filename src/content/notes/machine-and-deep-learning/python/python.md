@@ -4,7 +4,7 @@ slug: "machine-and-deep-learning/python/python"
 description: "Numpy"
 publishDate: "2026-07-26"
 createdAt: "2026-07-26T00:00:00Z"
-updatedDate: "2026-08-14T01:36:05+08:00"
+updatedDate: "2026-08-18T01:22:20+08:00"
 tags: ["machine-learning","python","moc"]
 series: ["Machine & Deep Learning","Python"]
 ---
@@ -21,4 +21,5 @@ Numpy
 
     Other
   - Numpy, Scipy 复数总结
+  - [Python 杂记](/notes/machine-and-deep-learning/python/python-杂记/)
 

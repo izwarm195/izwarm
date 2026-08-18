@@ -7,10 +7,13 @@
  * - GSAP 由 CDN 全局脚本改为 npm 包导入（版本同为 3.12.5）。
  */
 import { gsap } from 'gsap';
+import { currentPageKey, loadPageIntoPanel, PAGE_TARGETS } from './panel-nav';
 
 declare global {
   interface Window {
     izwarmSetTheme?: (theme: 'dark' | 'light') => void;
+    /** 右栏宽度基准（调试用）：W 图显示宽度，所有字母右栏统一使用 */
+    __izRailRefW?: number;
     __izSizes?: {
       izW: number;
       izH: number;
@@ -50,7 +53,32 @@ function setPanelMotion(axis: 'horizontal' | 'vertical' | null, direction: 1 | -
 }
 
 const LETTER_KEYS = ['w', 'a', 'r', 'm'] as const;
-const OTHER_KEYS = ['a', 'r', 'm'] as const;
+
+// 右栏统一宽度基准：W 与 M 同宽（最宽，显示宽约 82px），A / R 较窄。
+// 右栏宽度、锚点中心与菜单链接宽度都用该基准，保证四个字母的右栏视觉一致，
+// 窄字母不再整体偏右。图片未加载完成时 rect 宽为 0，取不到时用兜底值；
+// window load 后图片就绪，会按真实宽度重新定位（见底部 load 监听）
+let railRefW = 66;
+function getRailRefW(): number {
+  const wRef = document.getElementById('letter-w');
+  const w = wRef?.getBoundingClientRect().width;
+  if (w && w > 0) railRefW = w;
+  return railRefW;
+}
+
+// 显式锁定字母的中心锚定（xPercent / yPercent = -50）。
+// GSAP 从 CSS translate(-50%,-50%) 推断 xPercent 时依赖元素 offsetWidth：
+// 若字母图片尚未加载（offsetWidth=0），matrix 的 x 为 0，会被错误推断为 0 并缓存，
+// 字母从此失去“以视口中心为锚点”的定位（A/R 图较小加载较晚，先于 M/W 出问题）。
+// 显式设置让锚定与图片加载时机无关；yPercent 因 CSS max-height 固定高而幸存。
+LETTER_KEYS.forEach(function (k) {
+  const el = document.getElementById('letter-' + k);
+  if (el) gsap.set(el, { xPercent: -50, yPercent: -50, x: 0, y: 0 });
+});
+{
+  const izEl = document.getElementById('letter-iz');
+  if (izEl) gsap.set(izEl, { xPercent: -50, yPercent: -50, x: 0, y: 0 });
+}
 
 const bgVideo = document.getElementById('bgVideo') as HTMLVideoElement | null;
 const bgVideoLight = document.getElementById('bgVideoLight') as HTMLVideoElement | null;
@@ -104,7 +132,6 @@ if (bgVideo && bgVideoLight) {
 // ===== 主逻辑 =====
 const landing = document.getElementById('landing') as HTMLElement | null;
 const soundToggle = document.getElementById('soundToggle') as HTMLElement | null;
-const mask = document.getElementById('transitionMask') as HTMLElement | null;
 const iconOnEl = document.getElementById('soundIconOn') as HTMLElement | null;
 const iconOffEl = document.getElementById('soundIconOff') as HTMLElement | null;
 const bgmA = document.getElementById('bgmA') as HTMLAudioElement | null;
@@ -250,13 +277,16 @@ if (loadingOverlay && introText) {
 
 let expanded = false;
 let isAnimating = false;
-let panelOpen = false; // Notes 底板是否已铺开（含动画完成 or 直接访问）
+let panelOpen = false; // 底板是否已铺开（含动画完成 or 直接访问）
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-// 直接访问 Notes 路由：底板初始已打开，屏蔽背景点击，避免触发主页动画
+// 当前面板字母（w/a/r/m）：直接访问由 URL 推断，slide 转场后由目标页决定
+let currentKey: 'w' | 'a' | 'r' | 'm' = currentPageKey();
+
+// 直接访问面板路由：底板初始已打开，屏蔽背景点击，避免触发主页动画
 if (notesPanel?.classList.contains('active')) {
   panelOpen = true;
-  panelOpenInit();
+  panelOpenInit(currentKey);
 }
 
 // ===== 工具函数 =====
@@ -324,8 +354,13 @@ function computeLetterPositions(): {
 
   const positions: PositionMap = {
     w: { x: -(izW / 2 + sizes.w.w / 2 + gap + 3), y: -(izH / 2 + sizes.w.h / 2 + gap), label: 'label-w' },
-    a: { x: izW / 2 + sizes.a.w / 2 + gap - 30, y: -(izH / 2 + sizes.a.h / 2 + gap), label: 'label-a' },
-    r: { x: -(izW / 2 + sizes.r.w / 2 + gap + 24), y: izH / 2 + sizes.r.h / 2 + gap, label: 'label-r' },
+    // A / R 在 x 上还原“左上角锚定”的既有中心：原站（字母图片加载晚，GSAP 把
+    // xPercent 错误推断为 0，左上角锚定）下字母实际中心 = 公式 x + 宽/2。
+    // 显式锁定中心锚定后，A 补回半宽（x = izW/2 + a.w + gap - 30）；
+    // R 的 x 为负，补回半宽后 r.w 恰好消去（x = -(izW/2 + gap + 24)）。
+    // W / M 的 xPercent 原就正确，公式不变。
+    a: { x: izW / 2 + sizes.a.w + gap - 30, y: -(izH / 2 + sizes.a.h / 2 + gap), label: 'label-a' },
+    r: { x: -(izW / 2 + gap + 24), y: izH / 2 + sizes.r.h / 2 + gap, label: 'label-r' },
     m: { x: izW / 2 + sizes.m.w / 2 + gap, y: izH / 2 + sizes.m.h / 2 + gap, label: 'label-m' },
   };
   return { positions, sizes, izW, izH, gap };
@@ -397,24 +432,23 @@ function setLetterPressed(key: string, pressed: boolean): void {
   refreshLetterFx(key);
 }
 
-// 直接访问 Notes 路由：把字母 W 定位到右下角（与滑动转场终点一致），保留为交互锚点
-function panelOpenInit(): void {
+// 直接访问面板路由：把当前字母定位到右栏（与滑动转场终点一致），保留为交互锚点
+function panelOpenInit(key: 'w' | 'a' | 'r' | 'm'): void {
   if (!notesPanel) return;
   notesPanel.classList.add('is-settled');
-  const wEl = document.getElementById('letter-w') as HTMLElement | null;
-  if (!wEl) return;
+  const el = document.getElementById('letter-' + key) as HTMLElement | null;
+  if (!el) return;
   const { vw, margin } = getViewMetrics();
-  const wRect = wEl.getBoundingClientRect();
-  const wW = wRect.width;
-  const wH = wRect.height;
-  setRailVars(wW, wH);
-  // W 在右栏内水平 + 垂直居中，右边缘距底板右缘 rail-gap
-  gsap.set(wEl, {
-    x: vw / 2 - margin - RAIL_GAP - wW / 2,
+  const r = el.getBoundingClientRect();
+  const wH = r.height;
+  setRailVars(getRailRefW(), wH);
+  // 字母在右栏内水平 + 垂直居中（右栏宽度统一），右边缘距底板右缘 rail-gap
+  gsap.set(el, {
+    x: vw / 2 - margin - RAIL_GAP - getRailRefW() / 2,
     y: 0,
     opacity: 1,
   });
-  wEl.style.pointerEvents = 'auto';
+  el.style.pointerEvents = 'auto';
 }
 
 function expandLogo(): void {
@@ -530,81 +564,59 @@ function positionLabel(letterEl: HTMLElement | null, labelEl: HTMLElement | null
   }
 }
 
-function collapseAndNavigate(target: string): void {
-  if (isAnimating || !mask) return;
-  isAnimating = true;
-  const dur = reduceMotion ? 0.3 : 0.6;
-
-  collapseLetters(dur);
-
-  gsap.to(mask, {
-    opacity: 1,
-    duration: 0.15,
-    delay: dur * 0.5,
-    onComplete: function () {
-      const core = mask.querySelector('.core') as HTMLElement | null;
-      if (!core) {
-        navigateTo(target);
-        return;
-      }
-      core.style.transform = 'scale(1)';
-      gsap.to(core, {
-        scale: 400,
-        duration: reduceMotion ? 0.3 : 0.7,
-        ease: 'power4.in',
-        onComplete: function () {
-          navigateTo(target);
-        },
-      });
-    },
-  });
-}
-
-// W → Notes：三段式滑动（竖直下坠 → 水平右移 → 竖直下移）+ 磨砂底板延展
-function slideWToNotes(): void {
+// 字母 → 面板：三段式滑动（竖直移动 → 水平右移）+ 磨砂底板延展。
+// W/A 起点在 iz 上方（先下坠到中央），R/M 起点在 iz 下方（先上移到中央）——
+// 同一套坐标公式自动对称；水平段所有字母一致，终点在右栏内水平 + 垂直居中。
+function slideLetterToPanel(key: 'w' | 'a' | 'r' | 'm'): void {
   if (isAnimating || panelOpen) return;
-  const wEl = document.getElementById('letter-w') as HTMLElement | null;
-  if (!wEl || !notesPanel) {
-    navigateTo('notes');
+  const el = document.getElementById('letter-' + key) as HTMLElement | null;
+  if (!el || !notesPanel) {
+    navigateTo(PAGE_TARGETS[key]);
     return;
   }
   isAnimating = true;
   panelOpen = true; // 进入底板打开流程（含动画中），期间忽略背景点击
 
   if (reduceMotion) {
-    navigateTo('notes');
+    navigateTo(PAGE_TARGETS[key]);
     return;
   }
 
   const { vw, vh, cx, cy, margin } = getViewMetrics();
 
   // 其余字母、标签、iz 淡出
-  OTHER_KEYS.forEach(function (key) {
-    const el = document.getElementById('letter-' + key);
-    if (el) {
-      el.style.pointerEvents = 'none'; // 隐藏后不可点击，避免误触跳转
-      gsap.to(el, { opacity: 0, duration: 0.35, ease: 'power2.in', filter: 'blur(4px)' });
+  LETTER_KEYS.forEach(function (k) {
+    if (k === key) return;
+    const other = document.getElementById('letter-' + k);
+    if (other) {
+      other.style.pointerEvents = 'none'; // 隐藏后不可点击，避免误触跳转
+      gsap.to(other, { opacity: 0, duration: 0.35, ease: 'power2.in', filter: 'blur(4px)' });
     }
   });
-  LETTER_KEYS.forEach(function (key) {
-    const label = document.getElementById('label-' + key);
+  LETTER_KEYS.forEach(function (k) {
+    const label = document.getElementById('label-' + k);
     if (label) label.classList.remove('show');
   });
   gsap.to('#letter-iz', { opacity: 0, duration: 0.35, ease: 'power2.in' });
 
-  const startWx = Number(gsap.getProperty(wEl, 'x'));
-  const startWy = Number(gsap.getProperty(wEl, 'y'));
-  const wRect = wEl.getBoundingClientRect();
-  const wW = wRect.width;
-  const wH = wRect.height;
-  setRailVars(wW, wH);
+  const startWx = Number(gsap.getProperty(el, 'x'));
+  const startWy = Number(gsap.getProperty(el, 'y'));
+  const r = el.getBoundingClientRect();
+  const wH = r.height;
+  setRailVars(getRailRefW(), wH);
 
-  const railWidth = wW + RAIL_GAP * 2;
-  // 终点：W 在右栏内水平 + 垂直居中，右边缘距底板右缘 rail-gap
-  const endWx = vw / 2 - margin - RAIL_GAP - wW / 2;
+  // 动画开始即发起目标页拉取（所有字母统一）。动画第一段（is-rail-seed）
+  // 左/中栏不可见，替换在第二段淡入前完成，视觉无缝；动画结束再同步 URL。
+  // 注意：W 也必须拉取——从其他页面回主页只 pushState('/') 不重载首页，
+  // 底板内 shell 可能残留上一页面（如 About）的内容，不能依赖首页预渲染的 Notes
+  const pageLoad = loadPageIntoPanel(PAGE_TARGETS[key], false);
+
+  const railWidth = getRailRefW() + RAIL_GAP * 2;
+  // 终点：字母在右栏内水平 + 垂直居中（右栏宽度统一），右边缘距底板右缘 rail-gap
+  const endWx = vw / 2 - margin - RAIL_GAP - getRailRefW() / 2;
   const endWy = 0;
 
-  // 起点：右栏宽度竖条，以 W 的展开位为中心（W 原地不动，竖条只显示右栏）
+  // 起点：右栏宽度竖条，以字母的展开位为中心（字母原地不动，竖条只显示右栏）
   const p: PanelState = {
     wx: startWx,
     wy: startWy,
@@ -614,19 +626,22 @@ function slideWToNotes(): void {
     b: cy + startWy + wH / 2 + PANEL_RING,
   };
 
-  applyPanel(wEl, notesPanel, p);
+  applyPanel(el, notesPanel, p);
   notesPanel.classList.add('active', 'is-rail-seed');
 
   const tl = gsap.timeline({
     onUpdate: function () {
-      applyPanel(wEl, notesPanel, p);
+      applyPanel(el, notesPanel, p);
     },
   });
 
-  // 第一段：W 竖直下移到中央，右栏竖条上下铺满（仍只显示右栏）
-  tl.call(() => setPanelMotion('vertical', 1));
+  // 垂直方向：W/A 下坠（阴影向下），R/M 上移（阴影向上）
+  const vDir: 1 | -1 = key === 'r' || key === 'm' ? -1 : 1;
+
+  // 第一段：字母竖直移到中央，右栏竖条上下铺满（仍只显示右栏）
+  tl.call(() => setPanelMotion('vertical', vDir));
   tl.to(p, { wy: endWy, t: margin, b: vh - margin, duration: 0.5, ease: 'power2.inOut' });
-  // 第二段：右栏与 W 一起右移，左/中栏顺势展开
+  // 第二段：右栏与字母一起右移，左/中栏顺势展开
   tl.call(() => {
     notesPanel.classList.remove('is-rail-seed');
     notesPanel.classList.add('is-opening-left');
@@ -636,25 +651,29 @@ function slideWToNotes(): void {
   tl.call(() => {
     notesPanel.classList.remove('is-opening-left');
     setPanelMotion(null);
-    history.pushState({ page: 'notes' }, '', siteBase + '/notes/');
     notesPanel.classList.add('is-settled'); // 动画结束，悬停菜单才生效
     isAnimating = false;
+    currentKey = key;
+    // 内容已由动画开始时发起的拉取原位替换，动画结束再同步 URL
+    void pageLoad.then(function () {
+      history.pushState({ page: key }, '', siteBase + PAGE_TARGETS[key]);
+    });
   });
 }
 
-// W → 首页：原路返回动画（水平左移 → 竖直上移回展开位），字母波浪展开，恢复主页展开态
-function slideWToHome(): void {
+// 字母 → 首页：原路返回动画（水平左移 → 竖直移回展开位），其余字母波浪展开，恢复主页展开态
+function slideLetterToHome(key: 'w' | 'a' | 'r' | 'm'): void {
   if (isAnimating || !panelOpen) return;
-  const wEl = document.getElementById('letter-w') as HTMLElement | null;
-  if (!wEl || !notesPanel) return;
+  const el = document.getElementById('letter-' + key) as HTMLElement | null;
+  if (!el || !notesPanel) return;
   const data = computeLetterPositions();
   if (!data) {
     window.location.href = siteBase + '/';
     return;
   }
   const pos = data.positions;
-  const startWx = pos.w.x;
-  const startWy = pos.w.y;
+  const startWx = pos[key].x;
+  const startWy = pos[key].y;
   isAnimating = true;
 
   if (reduceMotion) {
@@ -663,15 +682,14 @@ function slideWToHome(): void {
   }
 
   const { vw, vh, cx, cy, margin } = getViewMetrics();
-  const wRect = wEl.getBoundingClientRect();
-  const wW = wRect.width;
-  const wH = wRect.height;
-  setRailVars(wW, wH);
+  const r = el.getBoundingClientRect();
+  const wH = r.height;
+  setRailVars(getRailRefW(), wH);
 
-  const railWidth = wW + RAIL_GAP * 2;
+  const railWidth = getRailRefW() + RAIL_GAP * 2;
   const panelRight = vw - margin;
-  // 起点：W 在右栏内水平 + 垂直居中
-  const endWx = vw / 2 - margin - RAIL_GAP - wW / 2;
+  // 起点：字母在右栏内水平 + 垂直居中（右栏宽度统一）
+  const endWx = vw / 2 - margin - RAIL_GAP - getRailRefW() / 2;
   const endWy = 0;
 
   const notesShell = notesPanel.querySelector<HTMLElement>('.notes-shell');
@@ -691,14 +709,14 @@ function slideWToHome(): void {
     b: vh - margin,
   };
 
-  applyPanel(wEl, notesPanel, p);
+  applyPanel(el, notesPanel, p);
 
   history.pushState(null, '', siteBase + '/');
 
   const tl = gsap.timeline({
     delay: notesShell?.querySelector('.article') ? 0.15 : 0.08,
     onUpdate: function () {
-      applyPanel(wEl, notesPanel, p);
+      applyPanel(el, notesPanel, p);
     },
   });
 
@@ -708,8 +726,8 @@ function slideWToHome(): void {
     notesShell?.classList.add('is-collapsing');
     setPanelMotion('horizontal', -1);
   });
-  // 第一段（正向第二段的反向）：W 水平左移回展开位横坐标，右栏竖条带着 W 一起左移，
-  // 底板收缩到以 W 展开位为中心的竖条
+  // 第一段（正向第二段的反向）：字母水平左移回展开位横坐标，右栏竖条带着字母一起左移，
+  // 底板收缩到以字母展开位为中心的竖条
   tl.to(p, {
     wx: startWx,
     l: cx + startWx - railWidth / 2,
@@ -721,8 +739,10 @@ function slideWToHome(): void {
   tl.add(function () {
     gsap.to('#letter-iz', { opacity: 1, duration: 0.5, ease: 'power2.out' });
   }, '-=0.2');
-  // 第二段（正向第一段的反向）：竖条竖直上收，W 回到展开位纵坐标
-  tl.call(() => setPanelMotion('vertical', -1));
+  // 第二段（正向第一段的反向）：竖条竖直移回，字母回到展开位纵坐标
+  // W/A 回程向上收（阴影向上），R/M 回程向下落（阴影向下）
+  const vDir: 1 | -1 = key === 'r' || key === 'm' ? 1 : -1;
+  tl.call(() => setPanelMotion('vertical', vDir));
   tl.to(p, {
     wy: startWy,
     t: cy + startWy - wH / 2 - PANEL_RING,
@@ -731,7 +751,7 @@ function slideWToHome(): void {
     ease: 'power2.inOut',
   });
 
-  // 与 W 第二段同步：a/r/m 展开并停留
+  // 与第二段同步：其余字母展开并停留
   const wave = gsap.timeline({
     delay: 0.68,
     onStart: function () {
@@ -741,12 +761,13 @@ function slideWToHome(): void {
       }
     },
   });
-  OTHER_KEYS.forEach(function (key, i) {
-    const el = document.getElementById('letter-' + key);
-    if (!el) return;
-    const q = pos[key];
+  const others = LETTER_KEYS.filter((k) => k !== key);
+  others.forEach(function (k, i) {
+    const other = document.getElementById('letter-' + k);
+    if (!other) return;
+    const q = pos[k];
     wave.fromTo(
-      el,
+      other,
       { x: 0, y: 0, opacity: 0, filter: 'blur(4px)' },
       {
         x: q.x,
@@ -755,7 +776,7 @@ function slideWToHome(): void {
         filter: 'blur(0px)',
         duration: 0.45,
         ease: 'power3.out',
-        onComplete: () => flashLetterFx(key),
+        onComplete: () => flashLetterFx(k),
       },
       i * 0.05
     );
@@ -816,24 +837,18 @@ landing?.addEventListener('click', function (e) {
   }
 });
 
-const targetMap: Record<string, string> = { a: 'projects', r: 'works', m: 'about' };
-
 LETTER_KEYS.forEach(function (key) {
   const el = document.getElementById('letter-' + key);
   if (!el) return;
   el.addEventListener('click', function (ev) {
     ev.stopPropagation();
-    // 底板打开时，点击原 W 返回首页
-    if (key === 'w' && panelOpen) {
-      slideWToHome();
+    // 底板打开时，点击当前页面字母返回首页展开态
+    if (panelOpen) {
+      if (key === currentKey) slideLetterToHome(key);
       return;
     }
     if (!expanded || isAnimating) return;
-    if (key === 'w') {
-      slideWToNotes();
-    } else {
-      collapseAndNavigate(targetMap[key]);
-    }
+    slideLetterToPanel(key);
   });
   // 悬停：字母 + 标签轻微发光；按下：瞬时变主题青，松开恢复
   el.addEventListener('pointerenter', function () {
@@ -943,7 +958,7 @@ window.izwarmSetTheme = function (theme: 'dark' | 'light') {
 
 window.addEventListener('resize', function () {
   if (panelOpen) {
-    // 底板打开时：重算 W 在右栏内的居中位，并让底板重新铺满
+    // 底板打开时：重算当前字母在右栏内的居中位，并让底板重新铺满
     const { vw, vh, margin } = getViewMetrics();
     if (notesPanel) {
       notesPanel.style.left = margin + 'px';
@@ -951,11 +966,11 @@ window.addEventListener('resize', function () {
       notesPanel.style.width = vw - margin * 2 + 'px';
       notesPanel.style.height = vh - margin * 2 + 'px';
     }
-    const wEl = document.getElementById('letter-w') as HTMLElement | null;
-    if (wEl) {
-      const wRect = wEl.getBoundingClientRect();
-      setRailVars(wRect.width, wRect.height);
-      gsap.set(wEl, { x: vw / 2 - margin - RAIL_GAP - wRect.width / 2, y: 0 });
+    const el = document.getElementById('letter-' + currentKey) as HTMLElement | null;
+    if (el) {
+      const r = el.getBoundingClientRect();
+      setRailVars(getRailRefW(), r.height);
+      gsap.set(el, { x: vw / 2 - margin - RAIL_GAP - getRailRefW() / 2, y: 0 });
     }
     return;
   }
@@ -966,4 +981,17 @@ window.addEventListener('resize', function () {
     if (el) gsap.set(el, { x: positions[key].x, y: positions[key].y });
     positionLabel(el, document.getElementById(positions[key].label), key);
   });
+});
+
+// 图片加载完成后重测右栏基准（W 图就绪前 rect 宽为 0，只能先用兜底值）；
+// 若面板已打开（直接访问面板路由），按真实宽度重新定位锚点字母
+window.addEventListener('load', function () {
+  window.__izRailRefW = getRailRefW();
+  if (!panelOpen || !notesPanel || isAnimating) return;
+  const el = document.getElementById('letter-' + currentKey) as HTMLElement | null;
+  if (!el) return;
+  const r = el.getBoundingClientRect();
+  setRailVars(getRailRefW(), r.height);
+  const { vw, margin } = getViewMetrics();
+  gsap.set(el, { x: vw / 2 - margin - RAIL_GAP - getRailRefW() / 2, y: 0 });
 });

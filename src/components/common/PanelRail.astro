@@ -1,0 +1,38 @@
+---
+import { url } from '../../lib/notes';
+
+/**
+ * 两栏页面（Projects / Works / About）右栏导航：
+ * - 返回主页由常驻的锚点字母承担（home.ts 拦截点击，反向动画收起底板），
+ *   右栏不再重复放字母按钮
+ * - Projects / Works：Selected / Timeline / Statistics 子页面入口（整页跳转）
+ * - About：暂无导航（空菜单，仅保留锚点字母）
+ */
+interface Props {
+  active: 'projects' | 'works' | 'about';
+}
+
+const { active } = Astro.props;
+
+// About 暂无子页面；Projects / Works 共用三个入口（后续可各自扩展）
+const items =
+  active === 'about'
+    ? []
+    : [
+        { label: 'Selected', href: url(`/${active}/selected/`) },
+        { label: 'Timeline', href: url(`/${active}/timeline/`) },
+        { label: 'Statistics', href: url(`/${active}/statistics/`) },
+      ];
+---
+
+<nav class="notes-rail" aria-label="页面导航">
+  <ul class="notes-rail-menu">
+    {items.map((item) => (
+      <li>
+        <a class="w-shape notes-rail-link" href={item.href}>
+          {item.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
