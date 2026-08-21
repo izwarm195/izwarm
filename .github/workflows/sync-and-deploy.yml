@@ -57,6 +57,28 @@ jobs:
         with:
           path: dist
 
+      - name: Re-sync notes (root base for virtual host)
+        run: node scripts/sync-obsidian.mjs obsidian-vault
+        env:
+          ASTRO_BASE: ''
+
+      - name: Build site (virtual host)
+        env:
+          ASTRO_BASE: ''
+        run: npx astro build --outDir dist-host
+
+      - name: Deploy to virtual host
+        continue-on-error: true # FTP 失败不阻断 GitHub Pages 部署（步骤变黄提醒）
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist-host/
+          server-dir: /wwwroot/   # ← 替换为你 FileZilla 看到的实际网站根目录（必须保留末尾 /）
+          log-level: verbose
+          timeout: 180000
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
