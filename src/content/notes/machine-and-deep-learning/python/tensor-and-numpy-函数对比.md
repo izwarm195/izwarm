@@ -3,8 +3,8 @@ title: "Tensor & Numpy 函数对比"
 slug: "machine-and-deep-learning/python/tensor-and-numpy-函数对比"
 description: "Numpy 函数汇总 (/notes/machine and deep learning/python/numpy 函数汇总/)"
 publishDate: "2026-08-17"
-createdAt: "2026-08-17T15:33:31.672Z"
-updatedDate: "2026-08-18T01:22:20+08:00"
+createdAt: "2026-08-17T00:00:00Z"
+updatedDate: "2026-09-03T19:12:16+08:00"
 tags: ["python","machine-learning","PyTorch"]
 series: ["Machine & Deep Learning","Python"]
 ---
@@ -72,14 +72,14 @@ series: ["Machine & Deep Learning","Python"]
 
 ### **五、拼接与堆叠**
 
-| NumPy | PyTorch | 备注 |
-|---|---|---|
-| `np.concatenate` | `torch.cat` | |
-| `np.stack` | `torch.stack` | |
-| `np.column_stack` | `torch.column_stack` | |
-| `np.hstack` | `torch.hstack` | |
-| `np.vstack` | `torch.vstack` | |
-| `np.dstack` | `torch.dstack` | |
+| NumPy             | PyTorch              | 备注  |
+| ----------------- | -------------------- | --- |
+| `np.concatenate`  | `torch.cat`          |     |
+| `np.stack`        | `torch.stack`        |     |
+| `np.column_stack` | `torch.column_stack` |     |
+| `np.hstack`       | `torch.hstack`       |     |
+| `np.vstack`       | `torch.vstack`       |     |
+| `np.dstack`       | `torch.dstack`       |     |
 
 ### **六、拆分**
 
@@ -340,4 +340,3 @@ PyTorch 把分布采样统一封装到 `torch.distributions` 模块，实例化�
 | `np.newaxis` | `torch.newaxis`（即 `None`）/ `torch.unsqueeze` | |
 | `np.finfo` / `np.iinfo` | `torch.finfo` / `torch.iinfo` | 查询 dtype 的机器精度、数值范围 |
 
-需要的话，我可以把这份对照直接整理成一份 Markdown 笔记文件（保留原文档的 YAML frontmatter 风格）导出给你。

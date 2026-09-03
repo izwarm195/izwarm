@@ -4,7 +4,7 @@ slug: "english/words-summary/数学英语词汇/stage-5-geometry"
 description: "1. collinear 共线的"
 publishDate: "2026-08-03"
 createdAt: "2026-08-03T00:00:00Z"
-updatedDate: "2026-08-13T14:57:43+08:00"
+updatedDate: "2026-08-22T00:25:12+08:00"
 tags: ["english","vocabulary","math"]
 series: ["English","Words Summary","数学英语词汇"]
 ---
@@ -16,7 +16,7 @@ series: ["English","Words Summary","数学英语词汇"]
 1. collinear 共线的
 2. coplanar 共面的
 3. midpoint 中点
-4. bisect 平分
+4. **bisect** 平分
 5. bisector 二等分线
 6. transversal 截线
 7. corresponding angles 同位角
@@ -35,16 +35,17 @@ series: ["English","Words Summary","数学英语词汇"]
 3. scalene triangle 不等边三角形
 4. right triangle 直角三角形
 5. hypotenuse 斜边
-6. leg 直角边
-7. Pythagorean theorem 勾股定理
-8. altitude 高
-9. median 中线
-10. centroid 重心
-11. incenter 内心
-12. circumcenter 外心
-13. SSS / SAS / ASA / AAS 全等判定条件
-14. similarity 相似
-15. triangle inequality 三角不等式
+6. 
+7. leg 直角边
+8. Pythagorean theorem 勾股定理
+9. altitude 高
+10. median 中线
+11. centroid 重心
+12. incenter 内心
+13. circumcenter 外心
+14. SSS / SAS / ASA / AAS 全等判定条件
+15. similarity 相似
+16. triangle inequality 三角不等式
 
 ## Quadrilaterals & Polygons 四边形与多边形
 

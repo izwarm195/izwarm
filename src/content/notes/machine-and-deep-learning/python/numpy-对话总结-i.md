@@ -4,7 +4,7 @@ slug: "machine-and-deep-learning/python/numpy-对话总结-i"
 description: "常用创建方式："
 publishDate: "2026-07-29"
 createdAt: "2026-07-29T00:00:00Z"
-updatedDate: "2026-08-05T15:40:42+08:00"
+updatedDate: "2026-09-03T19:12:16+08:00"
 tags: ["machine-learning","python"]
 series: ["Machine & Deep Learning","Python"]
 ---
