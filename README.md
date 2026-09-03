@@ -176,10 +176,8 @@ npx astro build --outDir dist-host
 | `logo.png` | 完整 Logo |
 | `iz.png` | 字母 iz |
 | `w.png` / `a.png` / `r.png` / `m.png` | 字母 w / a / r / m |
-| `Obsidian-Loop-Dark.mp4` | 深色主题背景视频 |
-| `Obsidian-Loop-Light.mp4` | 浅色主题背景视频 |
-| `video-cover-dark.png` | 深色视频封面（poster） |
-| `video-cover-light.png` | 浅色视频封面（poster） |
+| `Obsidian-Loop-Dark.mp4` | 深色背景视频（唯一背景视频） |
+| `video-cover-dark.jpg` | 深色视频封面（poster） |
 | `ambient-loop.mp3` | 背景音乐（页面两个音频元素共用同一文件） |
 | `Web_expand.mp3` | 展开音效 |
 | `Web_dexpand.mp3` | 收回音效 |
@@ -267,7 +265,7 @@ Statistics 三个子页面入口，About 暂无导航。左栏容器保留为空
 - `src/content/notes/example-series/` 下有 3 篇带 `order`、封面、中文标签的示例文章，
   用于验证三级系列、大纲、标签与归档；运行 `npm run sync:notes` 会以白名单目录
   的真实内容重新生成整个 `src/content/notes/`（示例会被替换）。
-- 头像读取 `public/media/profile.png`（`src/config/media.ts` 的 `profile` 字段），
+- 头像读取 `public/media/profile.jpg`（`src/config/media.ts` 的 `profile` 字段），
   请将头像文件以该文件名放入 `public/media/`。
 
 ## 后续扩展

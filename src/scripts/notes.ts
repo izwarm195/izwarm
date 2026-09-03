@@ -1,6 +1,6 @@
 /**
  * Notes / 面板页面交互：
- * - 系列树展开（粗指针点击切换；悬停 / 聚焦同步 aria-expanded）
+ * - 系列树展开（真实指针移动采样激活分支，布局重排不换枝；聚焦同步 aria-expanded）
  * - 文章大纲滚动高亮（共享模块 initToc）
  * - 面板内部无缝导航：拦截 /notes/ 链接，fetch 目标页并原位替换底板内容，
  *   pushState 同步 URL；popstate 恢复；直接刷新由服务端渲染恢复。
@@ -51,44 +51,54 @@ const railRegion = document.querySelector<HTMLElement>('[data-notes-region="rail
 railRegion?.addEventListener('pointerenter', openMenu);
 railRegion?.addEventListener('pointerleave', closeMenu);
 
-// ---------- 系列树：原地手风琴展开（整窗不移动，悬停/聚焦激活分支、收起同级） ----------
+// ---------- 系列树：指针移动驱动的手风琴（布局重排不会连锁换枝/整窗收起） ----------
 const seriesWindow = document.getElementById('seriesWindow');
 let seriesTimer: number | undefined;
+let unpinTimer: number | undefined;
+let activeNode: HTMLElement | null = null;
+let sampleRaf = 0;
+let lastX = -1;
+let lastY = -1;
 
-function setNodeActive(node: HTMLElement): void {
-  const level = node.parentElement;
-  if (level) {
-    level.querySelectorAll(':scope > .series-node.active').forEach((sibling) => {
-      if (sibling !== node) sibling.classList.remove('active');
-    });
-  }
-  node.classList.add('active');
+function setNodeExpanded(node: HTMLElement, expanded: boolean): void {
+  node.classList.toggle('active', expanded);
   const btn = node.querySelector<HTMLButtonElement>('.series-node-btn');
-  if (btn) btn.setAttribute('aria-expanded', 'true');
+  if (btn) btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+}
+
+/** 展开 node 到根的整条祖先链，链外的同级分支全部收起 */
+function activatePath(node: HTMLElement): void {
+  if (!seriesWindow) return;
+  const keep = new Set<HTMLElement>();
+  for (let el: HTMLElement | null = node; el && el !== seriesWindow; el = el.parentElement) {
+    if (el.classList.contains('series-node')) keep.add(el);
+  }
+  seriesWindow.querySelectorAll<HTMLElement>('.series-node.active').forEach((n) => {
+    if (!keep.has(n)) setNodeExpanded(n, false);
+  });
+  keep.forEach((n) => setNodeExpanded(n, true));
+  activeNode = node;
 }
 
 function deactivateAll(): void {
   if (!seriesWindow) return;
-  seriesWindow.querySelectorAll('.series-node.active').forEach((node) => {
-    node.classList.remove('active');
-    const btn = node.querySelector<HTMLButtonElement>('.series-node-btn');
-    if (btn) btn.setAttribute('aria-expanded', 'false');
+  seriesWindow.querySelectorAll<HTMLElement>('.series-node.active').forEach((node) => {
+    setNodeExpanded(node, false);
   });
+  activeNode = null;
   // 等收起过渡结束后再解除固定，窗口平滑回到垂直居中
   scheduleUnpin();
 }
 
 // 悬停期间固定系列窗口顶边：窗口高度随展开/收起变化时不再重新垂直居中，
-// 否则内容会在静止的指针下方滑动，导致连续激活下一个系列（"一连串上滑"）。
-let unpinTimer: number | undefined;
-
+// 否则内容会在静止的指针下方滑动，导致误激活下一个系列（"一连串上滑"）。
 function pinSeriesWindow(ev?: PointerEvent): void {
-  if (!seriesWindow || seriesWindow.dataset.pinned === '1') return;
   if (ev?.pointerType === 'touch') return;
   if (unpinTimer !== undefined) {
     window.clearTimeout(unpinTimer);
     unpinTimer = undefined;
   }
+  if (!seriesWindow || seriesWindow.dataset.pinned === '1') return;
   const container = seriesWindow.parentElement;
   if (!container) return;
   const cRect = container.getBoundingClientRect();
@@ -107,6 +117,7 @@ function unpinSeriesWindow(): void {
 }
 
 function scheduleUnpin(): void {
+  if (!seriesWindow) return;
   if (unpinTimer !== undefined) window.clearTimeout(unpinTimer);
   unpinTimer = window.setTimeout(() => {
     unpinTimer = undefined;
@@ -114,14 +125,23 @@ function scheduleUnpin(): void {
   }, 420);
 }
 
-// 从一个系列滑到另一个系列时，若下一个分支更矮，窗口会瞬间收缩导致鼠标短暂离开；
-// 延后收起并允许重新进入任意系列节点时取消，避免整个系列栏直接收起。
+/** 指针是否仍在窗口附近（含刚收起的收缩量）：窗口缩小时浏览器会触发伪 leave，据此拦截整窗收起 */
+function isPointerNearWindow(): boolean {
+  if (!seriesWindow || lastX < 0) return false;
+  const r = seriesWindow.getBoundingClientRect();
+  const pad = 140;
+  return lastX >= r.left - pad && lastX <= r.right + pad && lastY >= r.top - pad && lastY <= r.bottom + pad;
+}
+
+/** 离开后延后收起，期间再次进入任意系列节点即取消 */
 function scheduleDeactivate(): void {
   if (seriesTimer !== undefined) window.clearTimeout(seriesTimer);
   seriesTimer = window.setTimeout(() => {
     seriesTimer = undefined;
+    // 内容收缩造成的“假离开”不整窗收起；只有指针真正离开窗口附近才全部收起
+    if (isPointerNearWindow()) return;
     deactivateAll();
-  }, 220);
+  }, 260);
 }
 
 function cancelDeactivate(): void {
@@ -131,24 +151,53 @@ function cancelDeactivate(): void {
   }
 }
 
+// 激活只发生在真实指针移动（pointermove / pointerenter 采样）时：
+// 兄弟分支收展引起的布局重排不会产生 pointermove，从上一个子系列滑向
+// 下一个系列时因此不会出现“一排节点连续被误激活→整窗收起”的连锁反应。
+function sampleAndActivate(x: number, y: number): void {
+  lastX = x;
+  lastY = y;
+  const el = document.elementFromPoint(x, y);
+  const node = el ? el.closest<HTMLElement>('.series-node') : null;
+  if (node && node !== activeNode) {
+    cancelDeactivate();
+    activatePath(node);
+  }
+}
+
+function onSeriesPointerMove(e: PointerEvent): void {
+  if (e.pointerType === 'touch') return;
+  cancelDeactivate();
+  lastX = e.clientX;
+  lastY = e.clientY;
+  if (sampleRaf) return;
+  sampleRaf = requestAnimationFrame(() => {
+    sampleRaf = 0;
+    sampleAndActivate(lastX, lastY);
+  });
+}
+
 if (seriesWindow) {
-  seriesWindow.addEventListener('pointerenter', (e) => pinSeriesWindow(e));
-  document.addEventListener('mouseover', (e) => {
-    const node = (e.target as HTMLElement).closest<HTMLElement>('.series-node');
-    if (node) {
-      cancelDeactivate();
-      setNodeActive(node);
-    }
+  seriesWindow.addEventListener('pointerenter', (e) => {
+    if (e.pointerType === 'touch') return;
+    pinSeriesWindow(e);
+    cancelDeactivate();
+    sampleAndActivate(e.clientX, e.clientY);
+  });
+  seriesWindow.addEventListener('pointermove', onSeriesPointerMove);
+  seriesWindow.addEventListener('pointerleave', (e) => {
+    lastX = e.clientX;
+    lastY = e.clientY;
+    scheduleDeactivate();
   });
   seriesWindow.addEventListener('focusin', (e) => {
     const node = (e.target as HTMLElement).closest<HTMLElement>('.series-node');
     if (node) {
       pinSeriesWindow();
       cancelDeactivate();
-      setNodeActive(node);
+      activatePath(node);
     }
   });
-  seriesWindow.addEventListener('mouseleave', scheduleDeactivate);
   seriesWindow.addEventListener('focusout', (e) => {
     if (!seriesWindow.contains(e.relatedTarget as Node | null)) scheduleDeactivate();
   });

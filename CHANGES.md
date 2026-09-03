@@ -507,6 +507,61 @@
 - **验证**：`npm run typecheck`、`npm run build` 通过；`/projects/`、
   `/works/`、`/about/` 与全部 Notes 路由均可构建并返回正确 HTML。
 
+## 36. 热力图改由“每日提交数”驱动（第二阶段：迭代优化）
+
+- **数据源**：`src/config/commit-activity.json` 记录 `YYYY-MM-DD → 当日提交数`，
+  由 `scripts/sync-obsidian.mjs` 在同步时用 `git -C vault log --format=%aI -- <白名单根目录>`
+  按天统计生成（本地与 CI 一致，CI 需 `fetch-depth: 0` 完整历史，工作流已满足）。
+  vault 无 git 历史时不覆盖已有文件；日历年份 = 文章年份 ∪ 提交年份。
+- **渲染**：`NotesCalendar.astro` 的颜色档位、tooltip 文案改为提交数
+  （1 次 = 1 级，≥4 次封顶 4 级；tooltip 形如 `2026-08-26 · 4 次提交 · 1 篇`）；
+  有文章的日期仍可点击跳转归档对应锚点（无提交日以浅描边标识可点），
+  仅有提交、无文章的日期只展示热力不设链接。
+- **影响**：旧数据中 2026-07 的文章多为导入笔记（vault 首个提交 08-03），
+  这些天提交数为 0，热力按新语义显示为空但保留锚点跳转。
+- **验证**：`npm run build` 后检查日历单元格 `data-count` 与 `title`。
+
+## 37. Archive 日期去重：同一天只展示一次日期
+
+- **修改**：`ArchiveList.astro` 每条日期只在该天第一条记录上渲染
+  `<time>` 并挂 `id` 锚点，同日其余记录只列标题与标签。
+- **原因**：原实现同一日期多篇时重复打印日期、且 `id` 重复（非法 HTML）。
+- **影响**：视觉上时间线更紧凑；日历跳转锚点仍唯一指向当天首条。
+- **验证**：构建产物中 `<time datetime>` 无重复、`archive-entry` 的 id 唯一。
+
+## 38. 首屏提速：删浅色背景视频 + 加载门放宽 + 大图压缩
+
+- **删浅色视频**：`Obsidian-Loop-Light.mp4`（5.8MB）与 `video-cover-light.png`
+  （2.6MB）从未被使用（站点固定 `data-theme="dark"`），从 `public/media/`、
+  `media.ts`、`Landing.astro`、`home.ts` 全部移除；仅保留深色视频单元素。
+- **加载门放宽**：`home.ts` 的 `loadingTarget()` 不再等整段视频缓冲完
+  （原按 `buffered/duration`，慢网可能拖到 6MB 全量下载），改为 `canplay`
+  即放行；也不再等 BGM 就绪。BGM 双声道元素改 `preload="none"`，首次用户
+  交互才真正加载（自动播放限制下首屏下载纯属浪费）。`izwarmSetTheme`
+  改为作用于 `documentElement`（原错误地设置 `body` 属性，CSS 不生效）。
+- **大图压缩**：`video-cover-dark.png`（2.79MB）→ `video-cover-dark.jpg`
+  （约 250KB）；`profile.png`（0.9MB，实际显示 96px）→ `profile.jpg`
+  （192px，约 7KB）。首屏媒体合计约减少 10MB 下载量。
+- **验证**：构建产物中无任何 Light 视频引用；`dist/media` 只含深色视频与
+  jpg 封面/头像；首页 / Notes 页正常渲染。
+
+## 39. Notes 系列树悬浮框：不再整窗收起 / 跳位
+
+- **修改**（`src/styles/notes.css` + `src/scripts/notes.ts`）：
+  - 子分支只由 JS `.active`（或键盘 `:focus-within`）展开，移除
+    `:hover` 展开规则——悬停态会随兄弟分支收展在静止指针下连锁变化，
+    是“从上一个子系列移到下一个系列时整窗收起、到处跳”的根源；
+  - 激活改由真实 `pointermove` / `pointerenter` 采样 `elementFromPoint`
+    驱动：布局重排不会产生 pointermove，因此不会连锁误激活；
+  - `activatePath()` 只展开指针所在节点到根的祖先链，链外同级分支收起；
+  - `scheduleDeactivate` 增加“指针是否仍在窗口附近”判定（含刚收起的
+    收缩量 140px），内容收缩导致的伪 `pointerleave` 不再整窗收起；
+  - `pinSeriesWindow()` 在重新进入时取消待执行的 unpin，避免收起后
+    420ms 窗口在指针仍停留时重新垂直居中（“跳到别的地方”）。
+- **影响**：展开/收起仍保留手风琴语义与过渡动画；交互更稳。
+- **验证**：`npm run typecheck`、`npm run build` 通过；悬停逐级展开、
+  滑过多个系列不再触发整体收起与位移（浏览器人工复核）。
+
 ## 验证方式汇总
 
 - TypeScript 检查：`npm run typecheck`

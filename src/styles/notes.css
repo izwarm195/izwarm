@@ -256,6 +256,13 @@ html {
 .notes-cal-day[data-count='0'] {
   opacity: 0.35;
 }
+/* 当天无提交但仍有文章：保持可点击（跳归档）但按提交热力显示为空，
+   用浅描边区分于普通空日，避免“看不见的链接” */
+a.notes-cal-day[data-count='0'] {
+  opacity: 1;
+  background: var(--bg-obsidian-soft);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+}
 .notes-cal-day[data-count='1'] {
   background: rgba(120, 122, 130, 0.45);
 }
@@ -331,7 +338,8 @@ html {
   min-height: 0;
   padding-left: 12px;
 }
-.series-node:hover > .series-node-children,
+/* 子分支只由 JS 的 .active（或键盘 :focus-within）展开，不再跟随 :hover：
+   悬停态会随布局重排（兄弟分支收展）在静止指针下连锁变化，是“整窗收起/跳位”的根源 */
 .series-node:focus-within > .series-node-children,
 .series-node.active > .series-node-children {
   grid-template-rows: 1fr;

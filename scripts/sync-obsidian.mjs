@@ -16,9 +16,12 @@ import matter from 'gray-matter';
 
 const ROOTS = ['CPP', 'English', 'Machine & Deep Learning', 'Signals/Signals & Systems'];
 const SKIP_DIRS = new Set(['.obsidian', '.trash', 'Templates', 'Daily', 'Journal', 'Canvas', 'Private', 'Attachments', '_QuickAdd']);
-const VAULT = process.argv[2] || process.env.OBSIDIAN_VAULT || 'D:\\搞学术\\大二暑\\Obsidian';
+const _posArg = process.argv.slice(2).find((a) => !a.startsWith('--'));
+const VAULT = _posArg || process.env.OBSIDIAN_VAULT || 'D:\\搞学术\\大二暑\\Obsidian';
 const OUT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../src/content/notes');
 const MANIFEST = path.resolve(path.dirname(OUT), '../config/created-dates.json');
+// 每日提交数（热力图数据源）：由 vault git 历史生成，YYYY-MM-DD → 当日提交数
+const ACTIVITY = path.resolve(path.dirname(MANIFEST), 'commit-activity.json');
 // 子路径部署（GitHub Pages 的 /izwarm/）时，站内链接带上 base 前缀；本地为空
 const SITE_BASE = (process.env.ASTRO_BASE ?? '').replace(/\/$/, '');
 
@@ -117,6 +120,33 @@ function gitDate(vault, rel, first) {
   } catch {
     return null;
   }
+}
+
+/**
+ * 每日提交数：统计 vault 历史中触及任一白名单根目录的提交，按作者日期计天。
+ * 返回值 Map<YYYY-MM-DD, number>；vault 不是 git 仓库时返回空 Map。
+ */
+function vaultCommitActivity(vault, roots) {
+  const days = new Map();
+  try {
+    const args = ['-C', vault, 'log', '--format=%aI', '--', ...roots];
+    const out = execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 }).trim();
+    for (const line of out ? out.split('\n') : []) {
+      const day = line.slice(0, 10);
+      if (/^\d{4}-\d{2}-\d{2}$/.test(day)) days.set(day, (days.get(day) ?? 0) + 1);
+    }
+  } catch {
+    /* 忽略：vault 无 git 历史时热力图数据为空 */
+  }
+  return days;
+}
+
+async function writeActivity(vault, roots) {
+  const days = vaultCommitActivity(vault, roots);
+  if (days.size === 0) return; // vault 不可用时不覆盖已有数据
+  const sorted = [...days.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+  await fs.mkdir(path.dirname(ACTIVITY), { recursive: true });
+  await fs.writeFile(ACTIVITY, JSON.stringify(Object.fromEntries(sorted), null, 2) + '\n', 'utf8');
 }
 
 function firstParagraph(body) {
@@ -494,6 +524,10 @@ async function main() {
     }
   }
 
+  // 每日提交数（热力图）：本地与 CI 都从 vault 完整历史重算；
+  // CI 会 checkout fetch-depth: 0，本步在 vault 可用时总是可写（构建产物不入库）
+  await writeActivity(VAULT, ROOTS);
+
   // 本地同步时刷新创建时间清单（CI 环境跳过，避免用检出时间覆盖）
   if (!process.env.CI) {
     await fs.mkdir(path.dirname(MANIFEST), { recursive: true });
@@ -695,5 +729,11 @@ function selftest() {
   console.log('selftest ok');
 }
 
+async function activityOnly() {
+  await writeActivity(VAULT, ROOTS);
+  console.log(`activity: ${ACTIVITY}`);
+}
+
 if (process.argv.includes('--selftest')) selftest();
+else if (process.argv.includes('--activity-only')) activityOnly();
 else main();

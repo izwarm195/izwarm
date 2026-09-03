@@ -27,22 +27,28 @@ const archive = getArchiveData(notes);
           <p class="archive-year-count">{entries.length} 篇</p>
         </header>
         <ol class="archive-timeline">
-          {entries.map(({ date, note }) => (
-            <li class="archive-entry" id={date}>
-              <div class="archive-date">
-                <time datetime={date}>{date.slice(5)}</time>
-                <span class="archive-date-dot" aria-hidden="true"></span>
-              </div>
-              <a class="archive-title" href={noteUrl(note)}>{note.data.title}</a>
-              <ul class="archive-tags">
-                {note.data.tags.map((tag) => (
-                  <li>
-                    <a href={url(`/notes/tags/${encodeURIComponent(tag)}/`)}>#{tag}</a>
-                  </li>
-                ))}
-              </ul>
-            </li>
-          ))}
+          {entries.map(({ date, note }, i) => {
+            // 同一天的多篇文章只展示一次日期（锚点挂在当天第一条上，供日历跳转）
+            const firstOfDate = i === 0 || date !== entries[i - 1].date;
+            return (
+              <li class="archive-entry" id={firstOfDate ? date : undefined}>
+                <div class="archive-date">
+                  {firstOfDate && <time datetime={date}>{date.slice(5)}</time>}
+                  <span class="archive-date-dot" aria-hidden="true"></span>
+                </div>
+                <a class="archive-title" href={noteUrl(note)}>
+                  {note.data.title}
+                </a>
+                <ul class="archive-tags">
+                  {note.data.tags.map((tag) => (
+                    <li>
+                      <a href={url(`/notes/tags/${encodeURIComponent(tag)}/`)}>#{tag}</a>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            );
+          })}
         </ol>
       </section>
     );

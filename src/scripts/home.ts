@@ -81,11 +81,10 @@ LETTER_KEYS.forEach(function (k) {
 }
 
 const bgVideo = document.getElementById('bgVideo') as HTMLVideoElement | null;
-const bgVideoLight = document.getElementById('bgVideoLight') as HTMLVideoElement | null;
 const sfxExpand = document.getElementById('sfxExpand') as HTMLAudioElement | null;
 const sfxCollapse = document.getElementById('sfxCollapse') as HTMLAudioElement | null;
 
-// ===== 视频播放可靠性（原逻辑不变） =====
+// ===== 视频播放可靠性 =====
 function startVideo(v: HTMLVideoElement): void {
   if (v.dataset.started) return;
   v.dataset.started = '1';
@@ -93,37 +92,32 @@ function startVideo(v: HTMLVideoElement): void {
   v.play().catch(function () {});
 }
 
-if (bgVideo && bgVideoLight) {
-  [bgVideo, bgVideoLight].forEach(function (v) {
-    if (v.readyState >= 2) {
-      startVideo(v);
+if (bgVideo) {
+  if (bgVideo.readyState >= 2) {
+    startVideo(bgVideo);
+  }
+  bgVideo.addEventListener('loadeddata', function () {
+    startVideo(bgVideo);
+  });
+  bgVideo.addEventListener('canplay', function () {
+    startVideo(bgVideo);
+  });
+  bgVideo.addEventListener('pause', function () {
+    if (!bgVideo.ended && document.visibilityState === 'visible') {
+      bgVideo.play().catch(function () {});
     }
-    v.addEventListener('loadeddata', function () {
-      startVideo(v);
-    });
-    v.addEventListener('canplay', function () {
-      startVideo(v);
-    });
-    v.addEventListener('pause', function () {
-      if (!v.ended && document.visibilityState === 'visible') {
-        v.play().catch(function () {});
-      }
-    });
   });
 
   setTimeout(function () {
-    [bgVideo, bgVideoLight].forEach(function (v) {
-      if (v.paused && v.readyState >= 1) {
-        startVideo(v);
-      }
-    });
+    if (bgVideo.paused && bgVideo.readyState >= 1) {
+      startVideo(bgVideo);
+    }
   }, 1500);
 
   document.addEventListener(
     'click',
     function vidOnce() {
       if (bgVideo.paused) bgVideo.play().catch(function () {});
-      if (bgVideoLight.paused) bgVideoLight.play().catch(function () {});
     },
     { once: true }
   );
@@ -205,26 +199,16 @@ function setLoadingProgress(p: number): void {
   }
 }
 
-// 加载目标：视频按已缓冲比例、音频按可播放状态；两者就绪即为 1
+// 加载目标：视频能起播（canplay）即视为就绪。
+// 不再等待整段视频缓冲完（原按 buffered 比例可能拖到 6MB 全量下载），
+// 也不等 BGM（自动播放策略下首屏本来就播不了音乐，preload=none 之后不会提前下载）。
 function loadingTarget(): number {
-  let v = 0;
-  if (bgVideo) {
-    if (bgVideo.readyState >= 4) v = 1;
-    else if (bgVideo.buffered.length && bgVideo.duration && isFinite(bgVideo.duration)) {
-      v = Math.min(1, bgVideo.buffered.end(bgVideo.buffered.length - 1) / bgVideo.duration);
-    } else if (bgVideo.readyState >= 2) {
-      v = 0.55;
-    }
-  } else {
-    v = 1;
-  }
-  const a =
-    (bgmA?.readyState ?? 0) >= 3 && (bgmB?.readyState ?? 0) >= 3
-      ? 1
-      : (bgmA?.readyState ?? 0) >= 2 && (bgmB?.readyState ?? 0) >= 2
-        ? 0.5
-        : 0;
-  return 0.65 * v + 0.35 * a;
+  if (!bgVideo) return 1;
+  if (bgVideo.error) return 1;
+  if (bgVideo.readyState >= 3) return 1;
+  if (bgVideo.readyState >= 2) return 0.85;
+  if (bgVideo.readyState >= 1) return 0.6;
+  return 0.4;
 }
 
 function finishLoading(): void {
@@ -950,10 +934,9 @@ if (bgmA && bgmB && soundToggle) {
   });
 }
 
+// 主题调试钩子：只切 CSS 变量（站点默认固定深色；浅色只换配色，不再切换背景视频）
 window.izwarmSetTheme = function (theme: 'dark' | 'light') {
-  document.body.setAttribute('data-theme', theme);
-  if (bgVideo) bgVideo.style.display = theme === 'dark' ? 'block' : 'none';
-  if (bgVideoLight) bgVideoLight.style.display = theme === 'light' ? 'block' : 'none';
+  document.documentElement.setAttribute('data-theme', theme);
 };
 
 window.addEventListener('resize', function () {

@@ -230,27 +230,33 @@ export function countWords(text: string): number {
 export interface CalendarDay {
   date: string;
   month: number;
-  count: number;
+  /** 当日文章数（决定该日是否可点击跳转归档） */
+  notes: number;
+  /** 当日提交数（决定热力强度，数据来自同步脚本生成的 commit-activity.json） */
+  commits: number;
 }
 export interface CalendarData {
   year: number;
   days: CalendarDay[];
 }
 
-export function getCalendarData(notes: Note[], year: number): CalendarData {
-  const counts = new Map<string, number>();
+/** 每日提交数映射：YYYY-MM-DD → 当日 commit 数 */
+export type CommitActivity = Record<string, number>;
+
+export function getCalendarData(notes: Note[], year: number, activity: CommitActivity): CalendarData {
+  const noteCounts = new Map<string, number>();
   for (const note of notes) {
     const d = note.data.publishDate;
     if (d.getUTCFullYear() !== year) continue;
     const key = formatDate(d);
-    counts.set(key, (counts.get(key) ?? 0) + 1);
+    noteCounts.set(key, (noteCounts.get(key) ?? 0) + 1);
   }
   const days: CalendarDay[] = [];
   for (let m = 0; m < 12; m++) {
     const dim = new Date(Date.UTC(year, m + 1, 0)).getUTCDate();
     for (let day = 1; day <= dim; day++) {
       const key = `${year}-${String(m + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-      days.push({ date: key, month: m, count: counts.get(key) ?? 0 });
+      days.push({ date: key, month: m, notes: noteCounts.get(key) ?? 0, commits: activity[key] ?? 0 });
     }
   }
   return { year, days };
@@ -268,6 +274,16 @@ export function getLatestYear(notes: Note[]): number {
 /** 有文章的所有年份（降序） */
 export function getYears(notes: Note[]): number[] {
   return [...new Set(notes.map((note) => note.data.publishDate.getUTCFullYear()))].sort((a, b) => b - a);
+}
+
+/** 有提交记录的所有年份（降序） */
+export function getActivityYears(activity: CommitActivity): number[] {
+  return [...new Set(Object.keys(activity).map((key) => Number(key.slice(0, 4))))].sort((a, b) => b - a);
+}
+
+/** 日历年份 = 文章年份 ∪ 提交年份（降序去重） */
+export function getCalendarYears(notes: Note[], activity: CommitActivity): number[] {
+  return [...new Set([...getYears(notes), ...getActivityYears(activity)])].sort((a, b) => b - a);
 }
 
 /** 统一日期格式化（UTC，避免时区偏移），返回 YYYY-MM-DD */

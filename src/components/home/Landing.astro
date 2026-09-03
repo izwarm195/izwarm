@@ -26,20 +26,7 @@ const { open = false, active = 'home' } = Astro.props;
       preload="auto"
       poster={media.darkPoster}
     >
-      <source src={media.darkVideo} type="video/mp4" data-theme="dark" />
-    </video>
-    <video
-      class="bg-video"
-      id="bgVideoLight"
-      autoplay
-      muted
-      loop
-      playsinline
-      preload="auto"
-      poster={media.lightPoster}
-      style="display:none;"
-    >
-      <source src={media.lightVideo} type="video/mp4" data-theme="light" />
+      <source src={media.darkVideo} type="video/mp4" />
     </video>
   </div>
 
@@ -107,8 +94,10 @@ const { open = false, active = 'home' } = Astro.props;
   </svg>
 </div>
 
-<audio id="bgmA" src={media.ambientAudio} preload="auto"></audio>
-<audio id="bgmB" src={media.ambientAudio} preload="auto"></audio>
+<!-- BGM 双声道无缝交替（preload none：浏览器自动播放限制下首屏下载纯属浪费，
+     首次用户交互时才真正加载播放） -->
+<audio id="bgmA" src={media.ambientAudio} preload="none"></audio>
+<audio id="bgmB" src={media.ambientAudio} preload="none"></audio>
 
 <audio id="sfxExpand" src={media.expandAudio} preload="auto"></audio>
 <audio id="sfxCollapse" src={media.collapseAudio} preload="auto"></audio>

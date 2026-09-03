@@ -94,7 +94,7 @@ series:
   - 第一层
   - 第二层
 order: 1
-cover: /media/video-cover-dark.png
+cover: /media/video-cover-dark.jpg
 ---
 ```
 

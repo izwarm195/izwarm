@@ -1,20 +1,31 @@
 ---
-import { getCalendarData, getYears, url } from '../../lib/notes';
-import type { Note } from '../../lib/notes';
+import { getCalendarData, getCalendarYears, url } from '../../lib/notes';
+import type { CommitActivity, Note } from '../../lib/notes';
+import activity from '../../config/commit-activity.json';
 
 interface Props {
   notes: Note[];
 }
 
 const { notes } = Astro.props;
-const years = getYears(notes);
+const act = activity as CommitActivity;
+const years = getCalendarYears(notes, act);
 const requested = Number(Astro.url.searchParams.get('year'));
 const year = years.includes(requested) ? requested : (years[0] ?? new Date().getUTCFullYear());
-const calendar = getCalendarData(notes, year);
+const calendar = getCalendarData(notes, year, act);
 const base = Astro.url.pathname;
+
+/** 提交数 → 热力档位（1 次 = 1 级，4 次以上封顶 4 级；GitHub 风格 5 档中的浅色档简化） */
+function calLevel(n: number): number {
+  if (n <= 0) return 0;
+  if (n === 1) return 1;
+  if (n === 2) return 2;
+  if (n <= 4) return 3;
+  return 4;
+}
 ---
 
-<section class="notes-calendar" aria-label={`${year} 年文章日历`}>
+<section class="notes-calendar" aria-label={`${year} 年提交日历`}>
   <div class="notes-calendar-head">
     <h2 class="notes-section-label">{year} 年</h2>
     {years.length > 1 && (
@@ -32,18 +43,25 @@ const base = Astro.url.pathname;
     )}
   </div>
   <div class="notes-calendar-grid">
-    {calendar.days.map((day) =>
-      day.count > 0 ? (
-        <a
-          class="notes-cal-day"
-          data-count={Math.min(day.count, 4)}
-          href={`${url('/notes/archive/')}#${day.date}`}
-          title={`${day.date} · ${day.count} 篇`}
-          aria-label={`${day.date}，${day.count} 篇文章`}
-        ></a>
-      ) : (
-        <span class="notes-cal-day" data-count="0" aria-hidden="true"></span>
-      )
-    )}
+    {calendar.days.map((day) => {
+      const level = calLevel(day.commits);
+      const tip = `${day.date} · ${day.commits} 次提交${day.notes > 0 ? ` · ${day.notes} 篇` : ''}`;
+      if (day.notes === 0 && day.commits === 0) {
+        return <span class="notes-cal-day" data-count="0" aria-hidden="true"></span>;
+      }
+      // 有文章的日期仍可点击跳转到归档对应锚点；仅有提交的日期只展示热力
+      if (day.notes > 0) {
+        return (
+          <a
+            class="notes-cal-day"
+            data-count={level}
+            href={`${url('/notes/archive/')}#${day.date}`}
+            title={tip}
+            aria-label={tip}
+          ></a>
+        );
+      }
+      return <span class="notes-cal-day" data-count={level} title={tip} aria-label={tip}></span>;
+    })}
   </div>
 </section>
