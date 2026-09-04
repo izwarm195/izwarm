@@ -562,6 +562,19 @@
 - **验证**：`npm run typecheck`、`npm run build` 通过；悬停逐级展开、
   滑过多个系列不再触发整体收起与位移（浏览器人工复核）。
 
+## 40. 横向滚动条美化：代码块 / 表格 / 公式统一为半透明圆边灰色细条
+
+- **修改**：`notes.css` 为 `.article-body pre`（代码块）、`table`、`.katex-display`
+  （公式块）统一定制滚动条——WebKit/Blink 下轨道透明、滑块半透明灰色圆边
+  （`rgba(154,158,168,…)`，10px 高度、上下 2px 空隙、悬停/按下变亮）；
+  Firefox 用 `scrollbar-width: thin` + 同色 `scrollbar-color`（track 透明）。
+  移除原有仅公式块生效的 5px 青色 webkit 细条。
+- **原因**：此前代码块 / 表格只有 Firefox 的 `thin`，Chrome / Edge 显示系统
+  默认滚动条（深灰粗条、深色卡片上很突兀）。
+- **影响**：仅横向溢出区域的滚动条外观变化；日历等刻意隐藏滚动条的容器不受影响。
+- **验证**：`npm run build` 通过；长代码行 / 宽公式 / 宽表格横向拖动可见半透明
+  圆边灰条（浏览器人工复核）。
+
 ## 验证方式汇总
 
 - TypeScript 检查：`npm run typecheck`
