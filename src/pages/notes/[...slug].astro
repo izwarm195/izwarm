@@ -17,7 +17,9 @@ const { note } = Astro.props as { note: Note };
 const { Content, headings } = await note.render();
 const notes = await getPublishedNotes();
 const siblings = getSiblingNotes(notes, note);
-const toc = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 4);
+// 大纲包含一级标题：正文里的 `#` 标题是笔记自己的层级（如教材章），
+// 排除 depth 1 会让"通篇只用 # 分节"的笔记（如 numpy 综合案例）大纲全空。
+const toc = headings.filter((heading) => heading.depth >= 1 && heading.depth <= 4);
 const words = countWords(note.body ?? '');
 ---
 

@@ -232,7 +232,9 @@ export interface CalendarDay {
   month: number;
   /** 当日文章数（决定该日是否可点击跳转归档） */
   notes: number;
-  /** 当日提交数（决定热力强度，数据来自同步脚本生成的 commit-activity.json） */
+  /** 当日创建或修改过的笔记数：来自笔记真实时间（frontmatter updated_at / 创建时间） */
+  touched: number;
+  /** 当日提交数（vault git 历史，来自同步脚本生成的 commit-activity.json） */
   commits: number;
 }
 export interface CalendarData {
@@ -245,18 +247,32 @@ export type CommitActivity = Record<string, number>;
 
 export function getCalendarData(notes: Note[], year: number, activity: CommitActivity): CalendarData {
   const noteCounts = new Map<string, number>();
+  /** 当天有"写入"的笔记数：创建时间 ∪ 修改时间（同一篇同日只记一次） */
+  const touchedCounts = new Map<string, number>();
+  const bump = (map: Map<string, number>, key: string): void => {
+    map.set(key, (map.get(key) ?? 0) + 1);
+  };
   for (const note of notes) {
-    const d = note.data.publishDate;
-    if (d.getUTCFullYear() !== year) continue;
-    const key = formatDate(d);
-    noteCounts.set(key, (noteCounts.get(key) ?? 0) + 1);
+    const published = note.data.publishDate;
+    if (published.getUTCFullYear() === year) bump(noteCounts, formatDate(published));
+    const days = new Set<string>();
+    for (const d of [note.data.createdAt, note.data.updatedDate]) {
+      if (d && d.getUTCFullYear() === year) days.add(formatDate(d));
+    }
+    for (const day of days) bump(touchedCounts, day);
   }
   const days: CalendarDay[] = [];
   for (let m = 0; m < 12; m++) {
     const dim = new Date(Date.UTC(year, m + 1, 0)).getUTCDate();
     for (let day = 1; day <= dim; day++) {
       const key = `${year}-${String(m + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-      days.push({ date: key, month: m, notes: noteCounts.get(key) ?? 0, commits: activity[key] ?? 0 });
+      days.push({
+        date: key,
+        month: m,
+        notes: noteCounts.get(key) ?? 0,
+        touched: touchedCounts.get(key) ?? 0,
+        commits: activity[key] ?? 0,
+      });
     }
   }
   return { year, days };
