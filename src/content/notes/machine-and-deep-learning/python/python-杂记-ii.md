@@ -3,8 +3,8 @@ title: "Python 杂记 II"
 slug: "machine-and-deep-learning/python/python-杂记-ii"
 description: "assert 是 Python 的 断言语句 ，用于在代码里声明\"这里某个条件必须成立\"，如果条件不成立就立刻抛异常终止程序。"
 publishDate: "2026-08-27"
-createdAt: "2026-08-27T14:20:30.743Z"
-updatedDate: "2026-09-03T19:12:16+08:00"
+createdAt: "2026-08-27T00:00:00Z"
+updatedDate: "2026-08-30T09:28:08"
 tags: ["python","machine-learning"]
 series: ["Machine & Deep Learning","Python"]
 ---

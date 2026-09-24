@@ -1,15 +1,16 @@
 ---
 title: "NNDL 26-09-03 Logistic回归练习"
 slug: "machine-and-deep-learning/nndl/nndl-26-09-03-logistic回归练习"
-description: "import torch"
-publishDate: "2026-09-03T19:12:16+08:00"
-createdAt: "2026-09-03T10:07:02.798Z"
-updatedDate: "2026-09-03T20:03:43+08:00"
+description: "视频记录在 https://www.bilibili.com/video/BV113to6uEJc"
+publishDate: "2026-09-03"
+createdAt: "2026-09-03T00:00:00Z"
+updatedDate: "2026-09-09T21:37:02"
 tags: ["NNDL","PyTorch","python","machine-learning"]
 series: ["Machine & Deep Learning","NNDL"]
 ---
 
 # 完整代码（用时约 60 min）
+视频记录在 https://www.bilibili.com/video/BV113to6uEJc
 
 ```python
 import torch
@@ -170,3 +171,135 @@ Runner 里写 `self.model = model`，存的是 `Linear_LR` 这个类。于是 `s
 
   一句话收尾：**这次练习最大的收获不是代码本身，而是"状态归属（类 vs 实例、梯度放哪）、评估流程（签名+独立前向）、以及模型的几何含义（分界面方程）"三件事**——这三样在以后写任何模型和画任何边界时都通用。
 
+# 推广：Logistic + n 次多项式
+```python
+import torch
+from nndl import Op
+from nndl.data import make_moons
+import matplotlib.pyplot as plt
+plt.rcParams['font.sans-serif'] = ['Microsoft YaHei', 'SimHei']
+plt.rcParams['axes.unicode_minus'] = False
+
+deg = 15
+
+# ---------------- model ----------------
+class Linear_LR(Op):
+    def __init__(self, input_size):
+        super().__init__()
+        self.params = {
+            'w': torch.zeros(input_size, 1),
+            'b': torch.zeros(1)
+        }
+        self.grads = {}
+
+    def forward(self, X):
+        self.inputs = X
+        self.outputs = torch.sigmoid(
+            self.inputs @ self.params['w'] + self.params['b']
+        )
+        return self.outputs
+
+    def backward(self, y):
+        N = y.shape[0]
+        self.grads['w'] = -1 / N * (self.inputs.T @ (y - self.outputs))
+        self.grads['b'] = -1 / N * (y - self.outputs).sum()
+
+# ---------------- poly：x1、x2 的 1..deg 次单项式，[N, M]；常数项由 b 承担 ----------------
+def poly_basis(X, deg=3):
+    cols = []
+    for a in range(deg, -1, -1):
+        for b in range(deg - a + 1):
+            if a ** 0 and b ** 0:
+                continue
+            cols.append(X[:, 0] ** a * X[:, 1] ** b)
+    return torch.stack(cols, dim=1)
+
+# ---------------- data ----------------
+X, y = make_moons(n_samples=1000, shuffle=True, noise=0.2)
+X_train, X_dev = X[:799], X[799:999]
+y_train = y[:799].reshape(-1, 1)
+y_dev   = y[799:999].reshape(-1, 1)
+
+# 只用训练集统计做 z-score（防泄漏），再升次多项式特征（注意：默认按 deg，但当前实际是二次 z-score）
+mu, sd = X_train.mean(0), X_train.std(0) + 1e-8
+X_train = poly_basis((X_train - mu) / sd, deg)
+X_dev   = poly_basis((X_dev - mu) / sd, deg)
+
+# ---------------- optimizer ----------------
+class optimizer():
+    def __init__(self, model, lr):
+        self.model = model
+        self.init_lr = lr
+
+    def step(self):
+        for key in self.model.params.keys():
+            self.model.params[key] = self.model.params[key] - self.init_lr * self.model.grads[key]
+
+# ---------------- metric ----------------
+def accuracy(labels, preds):
+    preds = (preds >= 0.5).float()
+    return (labels == preds).float().mean().item()
+
+# ---------------- Runner ----------------
+class Runner():
+    def __init__(self, model, optimizer, metric, lr=0.01):
+        self.model_cls = model
+        self.opt_cls = optimizer
+        self.lr = lr
+        self.metric = metric
+        self.model = None
+        self.optimizer = None
+        self.history = {
+            'train_score': [],
+            'dev_score': []
+        }
+
+    def train(self, train_set, dev_set, num_epochs):
+        X, y = train_set
+        if self.model is None:
+            self.model = self.model_cls(X.shape[1])     # 首次按特征维数把类变实例
+            self.optimizer = self.opt_cls(self.model, self.lr)
+        X_dev, y_dev = dev_set
+        for epoch in range(num_epochs):
+            logits = self.model(X)
+            self.model.backward(y)
+            self.optimizer.step()
+            self.history['train_score'].append(self.metric(y, logits))
+            dev_logits = self.model(X_dev)
+            self.history['dev_score'].append(self.metric(y_dev, dev_logits))
+
+# ---------------- train ----------------
+runner = Runner(Linear_LR, optimizer, accuracy)
+runner.train([X_train, y_train], [X_dev, y_dev], 2000)
+print(f"final: train {runner.history['train_score'][-1]:.4f}  dev {runner.history['dev_score'][-1]:.4f}")
+
+# ---------------- 可视化：训练/验证曲线 + 决策边界 ----------------
+fig, axes = plt.subplots(1, 2, figsize=(13, 5.5))
+
+# 左：accuracy 随 epoch 的变化
+for name, s in [('train', runner.history['train_score']),
+                ('dev',   runner.history['dev_score'])]:
+    axes[0].plot(s, label=name)
+axes[0].set_xlabel('epoch'); axes[0].set_ylabel('accuracy')
+axes[0].set_title('Accuracy over epochs')
+axes[0].legend(); axes[0].grid(alpha=0.3)
+
+# 右：原始坐标铺网格 -> 同一 mu/sd 归一化 -> poly_basis -> 模型预测概率
+xs = torch.linspace(X[:, 0].min() - 0.1, X[:, 0].max() + 0.1, 300)
+ys = torch.linspace(X[:, 1].min() - 0.1, X[:, 1].max() + 0.1, 300)
+GX, GY = torch.meshgrid(xs, ys, indexing='xy')
+grid_raw = torch.stack([GX.flatten(), GY.flatten()], dim=1)
+grid_feat = poly_basis((grid_raw - mu) / sd, deg)
+p = runner.model(grid_feat).reshape(GX.shape).numpy()
+
+cf = axes[1].contourf(GX.numpy(), GY.numpy(), p, levels=50, cmap='RdBu', alpha=0.45)
+cs = axes[1].contour(GX.numpy(), GY.numpy(), p, levels=[0.5], colors='black', linewidths=2)
+axes[1].scatter(X[:, 0].numpy(), X[:, 1].numpy(), c=y.numpy(),
+                cmap='RdBu', s=12, marker='.', edgecolor='none')
+axes[1].set_xlabel('x'); axes[1].set_ylabel('y')
+axes[1].set_title(f' {deg}-degree polynomial')
+axes[1].grid(alpha=0.3)
+fig.colorbar(cf, ax=axes[1], label='P(y=1)')
+fig.tight_layout()
+plt.show()
+```

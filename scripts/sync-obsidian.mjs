@@ -77,15 +77,40 @@ function slugify(s) {
     .replace(/^-+|-+$/g, '');
 }
 
-function parseDateStr(s) {
+/**
+ * 时间戳 → ISO。
+ *
+ * Time Things 插件的 "modifiedKeyFormat" 若写成 `YY-MM-DD[T]HH:mm:ss`，`YY` 不会被
+ * 替换（它只替换 MM/DD/HH/mm/ss），笔记里留下的是字面量：`updated_at: YY-09-16T23:18:58`。
+ * 这类值必须按上下文补全年份，不能整条丢弃 —— 否则笔记的真实编辑时间全部丢失，
+ * 只剩"vault 批量备份提交"的日期，热力图看起来就像一直没更新。
+ */
+function parseDateStr(s, yearHint) {
   if (!s) return null;
-  const t = String(s).match(/^\s*(\d{2})-(\d{2})-(\d{2})[T\s](\d{2}):(\d{2}):(\d{2})$/);
+  const raw = String(s).trim();
+  const t = raw.match(/^(\d{2})-(\d{2})-(\d{2})[T\s](\d{2}):(\d{2}):(\d{2})$/);
   if (t) return `20${t[1]}-${t[2]}-${t[3]}T${t[4]}:${t[5]}:${t[6]}`;
-  const d = String(s).match(/^\s*(\d{2})-(\d{2})-(\d{2})$/);
+  // 年份占位符（YY / YYYY 等未替换的字母）
+  const p = raw.match(/^([A-Za-z]{2,4})-(\d{2})-(\d{2})(?:[T\s](\d{2}):(\d{2}):(\d{2}))?$/);
+  if (p) {
+    const [, , mm, dd, hh, mi, ss] = p;
+    const year = placeholderYear(yearHint, mm, dd, hh);
+    return hh ? `${year}-${mm}-${dd}T${hh}:${mi}:${ss}` : `${year}-${mm}-${dd}`;
+  }
+  const d = raw.match(/^(\d{2})-(\d{2})-(\d{2})$/);
   if (d) return `20${d[1]}-${d[2]}-${d[3]}`;
-  const m = String(s).match(/^\s*(\d{2})-(\d{2})$/);
+  const m = raw.match(/^(\d{2})-(\d{2})$/);
   if (m) return `20${m[1]}-${m[2]}-01`;
   return null;
+}
+
+/** 占位符年份：优先用上下文年份，否则用当前年；算出未来日期（跨年瞬间）则退一年 */
+function placeholderYear(yearHint, mm, dd, hh) {
+  const hint = Number(yearHint);
+  let year = Number.isFinite(hint) && hint > 2000 ? hint : new Date().getUTCFullYear();
+  const probe = Date.parse(`${year}-${mm}-${dd}T${hh ?? '00'}:00:00Z`);
+  if (Number.isFinite(probe) && probe - Date.now() > 36 * 3600 * 1000) year -= 1;
+  return year;
 }
 
 function deriveSlug(category, vaultRelDir, title) {
@@ -143,10 +168,16 @@ function vaultCommitActivity(vault, roots) {
 
 async function writeActivity(vault, roots) {
   const days = vaultCommitActivity(vault, roots);
-  if (days.size === 0) return; // vault 不可用时不覆盖已有数据
+  if (days.size === 0) {
+    // vault 不可用/无 git 历史时保留旧数据，但必须出声：静默保留正是
+    // "热力图一直没更新"最难排查的形态
+    console.warn(`warn: ${vault} 无可用 git 历史，热力图提交数据未刷新（保留原文件）`);
+    return;
+  }
   const sorted = [...days.entries()].sort((a, b) => a[0].localeCompare(b[0]));
   await fs.mkdir(path.dirname(ACTIVITY), { recursive: true });
   await fs.writeFile(ACTIVITY, JSON.stringify(Object.fromEntries(sorted), null, 2) + '\n', 'utf8');
+  console.log(`activity: ${sorted.length} 天 → ${path.relative(process.cwd(), ACTIVITY)}`);
 }
 
 function firstParagraph(body) {
@@ -456,8 +487,6 @@ const CATEGORY_TAG = { CPP: 'cpp', English: 'english', 'Machine & Deep Learning'
 
 async function main() {
   const summary = { published: 0, skipped: 0, errors: [] };
-  await fs.rm(OUT, { recursive: true, force: true });
-  await fs.mkdir(OUT, { recursive: true });
 
   // 读取创建时间清单（本地同步时刷新；CI 直接使用，保证无日期笔记有真实创建时间）
   let createdDates = {};
@@ -508,14 +537,19 @@ async function main() {
         createdDates[relPosix] ||
         gitDate(VAULT, file.rel, true) ||
         (await fs.stat(file.full)).birthtime.toISOString().slice(0, 10);
-      // 创建时间（含时刻）：frontmatter → 清单 → 文件创建时间 → git → publishDate
+      // 创建时间（含时刻）：frontmatter → 清单 → 本机文件创建时间 → git 首次提交 → publishDate
+      // CI 里 birthtime 是 checkout 时间而非写作时间，必须让位给 git 首次提交日期，
+      // 否则每次构建都会把新笔记算成"今天创建"，热力图/归档日期全被拉到当天。
       const createdAt =
         parseDateStr(data.createdAt || data.created) ||
         (createdDates[relPosix] ? createdDates[relPosix] + 'T00:00:00Z' : null) ||
-        birthtimeIso ||
+        (process.env.CI ? null : birthtimeIso) ||
         gitDate(VAULT, file.rel, true) ||
         date;
-      const updated = parseDateStr(data.updated_at) || gitDate(VAULT, file.rel, false) || date;
+      // 更新时间只认 frontmatter 里的真实编辑时间（Time Things 的 updated_at）。
+      // 不再回退到 git 末次提交：vault 是批量备份提交，回退会让几乎所有笔记都显示
+      // "更新于 <最后一次备份日>"，热力图也会在备份日堆出与写作无关的高峰。
+      const updated = parseDateStr(data.updated_at) || undefined;
       const tags = [
         ...(Array.isArray(data.tags) ? data.tags.map((t) => String(t).replace(/^#/, '')) : []),
         CATEGORY_TAG[category],
@@ -527,6 +561,17 @@ async function main() {
   // 每日提交数（热力图）：本地与 CI 都从 vault 完整历史重算；
   // CI 会 checkout fetch-depth: 0，本步在 vault 可用时总是可写（构建产物不入库）
   await writeActivity(VAULT, ROOTS);
+
+  // 安全闸：vault 路径写错/未检出时一个候选都没有，此时绝不能清空已同步内容
+  // （否则构建出空站点，且本地内容不可恢复）
+  if (candidates.length === 0) {
+    console.warn(`warn: 未在 ${VAULT} 找到任何可发布笔记，保留现有 ${OUT}，未做任何写入`);
+    return;
+  }
+
+  // 候选确认后才清空输出目录（同时清掉被改名/取消发布的旧 slug）
+  await fs.rm(OUT, { recursive: true, force: true });
+  await fs.mkdir(OUT, { recursive: true });
 
   // 本地同步时刷新创建时间清单（CI 环境跳过，避免用检出时间覆盖）
   if (!process.env.CI) {
@@ -583,7 +628,18 @@ function selftest() {
   assert(deriveTitle('WD 26-08-03.md', {}) === 'WD 26-08-03', 'title keep fallback');
   assert(parseDateStr('26-08-09T19:00:32') === '2026-08-09T19:00:32', 'date time');
   assert(parseDateStr('26-07-09') === '2026-07-09', 'date');
-  assert(parseDateStr('YY-08-09T19:00:32') === null, 'broken template date ignored');
+  // Time Things 格式串未替换时留下字面量 YY-：按上下文年份补全（回归：曾整条丢弃）
+  assert(
+    parseDateStr('YY-08-09T19:00:32', 2026) === '2026-08-09T19:00:32',
+    'YY placeholder year from context',
+    parseDateStr('YY-08-09T19:00:32', 2026),
+    '2026-08-09T19:00:32'
+  );
+  assert(
+    parseDateStr('YY-09-15T19:42:56') === `${new Date().getUTCFullYear()}-09-15T19:42:56`,
+    'YY placeholder falls back to current year'
+  );
+  assert(parseDateStr('04-07-09') === '2004-07-09', 'numeric two-digit year untouched');
   assert(deriveSlug('CPP', 'Summaries', 'const-correctness') === 'cpp/summaries/const-correctness', 'slug path');
   const idx = new Map([['const-correctness', 'cpp/summaries/const-correctness']]);
   assert(

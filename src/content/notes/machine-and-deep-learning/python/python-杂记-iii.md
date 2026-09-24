@@ -2,9 +2,9 @@
 title: "Python 杂记 III"
 slug: "machine-and-deep-learning/python/python-杂记-iii"
 description: "当你执行 plt.xlabel('X', fontsize 14) 时，Python 抛出了以下报错："
-publishDate: "2026-09-03T19:12:16+08:00"
-createdAt: "2026-08-30T03:18:50.657Z"
-updatedDate: "2026-09-03T19:12:16+08:00"
+publishDate: "2026-08-30"
+createdAt: "2026-08-30T00:00:00Z"
+updatedDate: "2026-09-03T18:06:19"
 tags: ["machine-learning"]
 series: ["Machine & Deep Learning","Python"]
 ---

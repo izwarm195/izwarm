@@ -3,8 +3,8 @@ title: "Numpy, Scipy 复数总结"
 slug: "machine-and-deep-learning/python/numpy-scipy-复数总结"
 description: "NumPy 和 SciPy 原生支持复数， complex64 、 complex128 就是复数类型。"
 publishDate: "2026-08-13"
-createdAt: "2026-08-13T06:56:48.107Z"
-updatedDate: "2026-09-03T19:12:16+08:00"
+createdAt: "2026-08-13T00:00:00Z"
+updatedDate: "2026-08-13T15:05:21"
 tags: ["python","machine-learning","signals","audio"]
 series: ["Machine & Deep Learning","Python"]
 ---

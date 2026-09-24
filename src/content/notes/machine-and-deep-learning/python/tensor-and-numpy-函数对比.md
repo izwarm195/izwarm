@@ -4,7 +4,7 @@ slug: "machine-and-deep-learning/python/tensor-and-numpy-函数对比"
 description: "Numpy 函数汇总 (/notes/machine and deep learning/python/numpy 函数汇总/)"
 publishDate: "2026-08-17"
 createdAt: "2026-08-17T00:00:00Z"
-updatedDate: "2026-09-03T19:12:16+08:00"
+updatedDate: "2026-08-30T09:21:40"
 tags: ["python","machine-learning","PyTorch"]
 series: ["Machine & Deep Learning","Python"]
 ---

@@ -1,10 +1,10 @@
 ---
-title: "Python 杂记"
-slug: "machine-and-deep-learning/python/python-杂记"
+title: "Python 杂记 I"
+slug: "machine-and-deep-learning/python/python-杂记-i"
 description: "import numpy as np"
 publishDate: "2026-08-17"
 createdAt: "2026-08-17T00:00:00Z"
-updatedDate: "2026-08-30T11:20:15+08:00"
+updatedDate: "2026-08-30T11:17:23"
 tags: ["machine-learning"]
 series: ["Machine & Deep Learning","Python"]
 ---

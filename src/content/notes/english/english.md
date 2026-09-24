@@ -4,7 +4,7 @@ slug: "english/english"
 description: "WS 26 08 03 数学英语词汇 (/notes/english/words summary/数学英语词汇/数学英语词汇/)"
 publishDate: "2026-08-03"
 createdAt: "2026-08-03T00:00:00Z"
-updatedDate: "2026-08-14T01:36:05+08:00"
+updatedDate: "2026-08-13T16:18:20"
 tags: ["english","moc"]
 series: ["English"]
 ---

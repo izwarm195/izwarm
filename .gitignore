@@ -21,3 +21,4 @@ Thumbs.db
 
 # 本地工具数据
 .dshwolf/
+.tabbit-tmp/

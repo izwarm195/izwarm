@@ -4,7 +4,7 @@ slug: "machine-and-deep-learning/python/numpy-函数汇总"
 description: "Pytorch Tensor 张量操作和 Numpy 数组十分类似，具体详见"
 publishDate: "2026-07-01"
 createdAt: "2026-07-26T00:00:00Z"
-updatedDate: "2026-09-03T19:12:16+08:00"
+updatedDate: "2026-08-17T23:33:26"
 tags: ["machine-learning","python"]
 series: ["Machine & Deep Learning","Python"]
 ---

@@ -4,7 +4,7 @@ slug: "english/words-summary/数学英语词汇/stage-5-geometry"
 description: "1. collinear 共线的"
 publishDate: "2026-08-03"
 createdAt: "2026-08-03T00:00:00Z"
-updatedDate: "2026-08-22T00:25:12+08:00"
+updatedDate: "2026-08-21T15:04:19"
 tags: ["english","vocabulary","math"]
 series: ["English","Words Summary","数学英语词汇"]
 ---
