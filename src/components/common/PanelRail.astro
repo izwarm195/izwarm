@@ -1,5 +1,6 @@
 ---
 import { url } from '../../lib/notes';
+import { media } from '../../config/media';
 
 /**
  * 两栏页面（Projects / Works / About）右栏导航：
@@ -23,6 +24,10 @@ const items =
         { label: 'Timeline', href: url(`/${active}/timeline/`) },
         { label: 'Statistics', href: url(`/${active}/statistics/`) },
       ];
+
+// 手机端底部工具栏里的「返回首页」按钮：用当前栏目自己的锚点字母
+// （桌面端它常驻在右栏，点它同样回主页展开态），所以 .rail-home 在宽屏隐藏。
+const homeLetter = { projects: media.logoA, works: media.logoR, about: media.logoM } as const;
 ---
 
 <nav class="notes-rail" aria-label="页面导航">
@@ -35,4 +40,7 @@ const items =
       </li>
     ))}
   </ul>
+  <a class="rail-home" href={url('/')} aria-label="返回 izwarm 首页" title="返回首页">
+    <img src={homeLetter[active]} alt="" width="82" height="50" />
+  </a>
 </nav>

@@ -2,15 +2,19 @@
  * Notes / 面板页面交互：
  * - 系列树展开（真实指针移动采样激活分支，布局重排不换枝；聚焦同步 aria-expanded）
  * - 文章大纲滚动高亮（共享模块 initToc）
- * - 面板内部无缝导航：拦截 /notes/ 链接，fetch 目标页并原位替换底板内容，
+ * - 面板内部无缝导航：拦截 /notes/ 链接，点击即切换布局并显示文章骨架（底板立刻出现），
+ *   目标页 fetch 完成后原位替换（悬停预取让多数点击直接命中缓存），
  *   pushState 同步 URL；popstate 恢复；直接刷新由服务端渲染恢复。
  *   两栏页面（Projects / Works / About）与 Notes 之间的切换走同一机制。
  */
 import {
   initCodeCopy,
   initToc,
+  isNarrowLayout,
   isPanelPath,
   loadPageIntoPanel,
+  prefetchPage,
+  syncArticleFolds,
   NOTES_STATES,
 } from './panel-nav';
 
@@ -203,6 +207,28 @@ if (seriesWindow) {
   });
 }
 
+// 触屏没有 hover：桌面端靠指针移动驱动的系列树，在手机上改为点击展开/收起。
+// 只挂在 hover 能力为 none 的设备上，鼠标 / 触控笔下的行为完全不变。
+if (seriesWindow && window.matchMedia('(hover: none)').matches) {
+  seriesWindow.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement | null)?.closest<HTMLButtonElement>('.series-node-btn');
+    if (!btn) return;
+    const node = btn.closest<HTMLElement>('.series-node');
+    if (!node) return;
+    e.preventDefault();
+    cancelDeactivate();
+    if (node.classList.contains('active')) {
+      setNodeExpanded(node, false);
+      activeNode = null;
+      // Android 上点击会让按钮获得焦点，:focus-within 还撑着展开态，必须一并放开
+      btn.blur();
+      scheduleUnpin();
+    } else {
+      activatePath(node);
+    }
+  });
+}
+
 // ---------- 大纲：点击平滑滚动（并避免默认锚点跳转回顶） ----------
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -223,26 +249,49 @@ document.addEventListener('click', (e) => {
 // 指向 Notes 的链接整页跳转（右栏锚点字母与路由一致）。
 const panelBase = import.meta.env.BASE_URL.replace(/\/$/, '');
 
+/** 链接是否由面板接管；返回需要 fetch 的站内路径，否则 null（交给浏览器整页处理） */
+function panelTargetFor(link: HTMLAnchorElement): string | null {
+  const href = link.getAttribute('href') ?? '';
+  if (!href || link.target === '_blank' || link.hasAttribute('download')) return null;
+  if (href.startsWith('#') || href.startsWith('?')) return null; // 页内锚点 / 年份切换走整页
+  const state = shellEl?.dataset.notesState ?? '';
+  if ((NOTES_STATES as readonly string[]).includes(state)) {
+    return href === notesBase || href.startsWith(notesBase + '/') ? href : null;
+  }
+  const pageBase = panelBase + '/' + state + '/';
+  return href === pageBase || href.startsWith(pageBase) ? href : null;
+}
+
 if (shellEl && 'fetch' in window) {
   document.addEventListener('click', (e) => {
     const link = (e.target as HTMLElement).closest<HTMLAnchorElement>('a');
     if (!link) return;
-    const href = link.getAttribute('href') ?? '';
-    if (link.target === '_blank' || link.hasAttribute('download')) return;
-    const state = shellEl.dataset.notesState ?? '';
-    if ((NOTES_STATES as readonly string[]).includes(state)) {
-      if (href === notesBase || href.startsWith(notesBase + '/')) {
-        e.preventDefault();
-        void loadPageIntoPanel(href, true);
-      }
-      return;
-    }
-    const pageBase = panelBase + '/' + state + '/';
-    if (href === pageBase || href.startsWith(pageBase)) {
-      e.preventDefault();
-      void loadPageIntoPanel(href, true);
-    }
+    const target = panelTargetFor(link);
+    if (!target) return;
+    e.preventDefault();
+    // 立刻切布局 + 摆骨架（底板先出现），正文随后填入
+    void loadPageIntoPanel(target, true, { immediate: true, title: link.textContent?.trim() ?? '' });
   });
+
+  // 悬停预取：指针在链接上停留约 90ms 就开始取目标页，
+  // 点击时多数已命中缓存 → 直接换成正文，不再出现骨架。
+  let prefetchTimer: number | undefined;
+  let hoveredLink: HTMLAnchorElement | null = null;
+  document.addEventListener(
+    'pointerover',
+    (e) => {
+      const link = (e.target as HTMLElement | null)?.closest?.('a') ?? null;
+      if (link === hoveredLink) return;
+      hoveredLink = link as HTMLAnchorElement | null;
+      if (prefetchTimer !== undefined) window.clearTimeout(prefetchTimer);
+      prefetchTimer = undefined;
+      const target = link ? panelTargetFor(link as HTMLAnchorElement) : null;
+      if (!target) return;
+      prefetchTimer = window.setTimeout(() => prefetchPage(target), 90);
+    },
+    true
+  );
+
   window.addEventListener('popstate', () => {
     const path = location.pathname;
     if (isPanelPath(path)) {
@@ -254,5 +303,19 @@ if (shellEl && 'fetch' in window) {
   });
 }
 
+// ---------- 文章侧栏的折叠面板（大纲 / 同系列） ----------
+// 桌面端保持改造前的行为：始终展开，点标题也不折叠（preventDefault 会取消
+// summary 的默认展开/收起，键盘 Enter 触发的是同一条合成 click，一并覆盖）；
+// 手机端默认收起，由用户点标题展开。
+document.addEventListener(
+  'click',
+  (e) => {
+    const head = (e.target as HTMLElement | null)?.closest?.('summary.notes-fold-head');
+    if (head && !isNarrowLayout()) e.preventDefault();
+  },
+  true
+);
+
 initCodeCopy();
 initToc();
+syncArticleFolds();

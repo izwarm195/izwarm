@@ -11,9 +11,17 @@ interface Props {
 const { note, siblings, toc } = Astro.props;
 ---
 
+{/*
+  两侧栏都用原生 <details>：
+  - 桌面端固定展开：.notes-fold-head 无标记、外观与原来的 h2 标题一致，
+    点击由脚本取消折叠（见 scripts/notes.ts），电脑端体验不变；
+  - 手机端由脚本收起为可点开的折叠面板，正文不再被长目录推到屏幕之外。
+*/}
 <div class="notes-article-side">
-  <section class="notes-toc-wrap" aria-label="文章大纲">
-    <h2 class="notes-section-label">大纲</h2>
+  <details class="notes-toc-wrap notes-fold" open>
+    <summary class="notes-fold-head">
+      <h2 class="notes-section-label">大纲</h2>
+    </summary>
     {toc.length === 0 ? (
       <p class="notes-empty">本文没有可用的标题。</p>
     ) : (
@@ -25,10 +33,12 @@ const { note, siblings, toc } = Astro.props;
         ))}
       </ol>
     )}
-  </section>
+  </details>
 
-  <section class="notes-siblings-wrap" aria-label="同系列文章">
-    <h2 class="notes-section-label">同系列</h2>
+  <details class="notes-siblings-wrap notes-fold" open>
+    <summary class="notes-fold-head">
+      <h2 class="notes-section-label">同系列</h2>
+    </summary>
     {siblings.length === 0 ? (
       <p class="notes-empty">暂无同系列文章。</p>
     ) : (
@@ -46,5 +56,5 @@ const { note, siblings, toc } = Astro.props;
         ))}
       </ul>
     )}
-  </section>
+  </details>
 </div>

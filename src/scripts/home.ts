@@ -32,6 +32,18 @@ const RAIL_GAP = 20; // 与 CSS --rail-gap 一致：W 距底板右/上边缘的�
 const PANEL_RING = 10; // 初始小底板比 W 大出的一圈
 const siteBase = import.meta.env.BASE_URL.replace(/\/$/, ''); // 子路径部署（ASTRO_BASE）时前缀
 
+/** 窄屏断点，与 home.css / notes.css 的 @media (max-width: 900px) 保持一致 */
+const MOBILE_MAX = 900;
+
+/**
+ * 手机布局：右栏不是一条竖直窄栏，而是底部工具栏。
+ * 三段式「竖直条 → 右移铺开」的转场没有落点，字母也无处驻留（会压在正文上），
+ * 因此窄屏走 openPanelMobile 的简化路径；桌面端逻辑完全不变。
+ */
+function isMobileLayout(): boolean {
+  return window.innerWidth <= MOBILE_MAX;
+}
+
 function setRailVars(wW: number, wH: number): void {
   const shell = document.querySelector<HTMLElement>('.notes-shell');
   if (shell) {
@@ -138,7 +150,11 @@ const loadingProgress = document.getElementById('loadingProgress') as SVGPathEle
 const loadingFrameSvg = document.getElementById('loadingFrameSvg') as SVGSVGElement | null;
 const introText = document.getElementById('introText') as HTMLElement | null;
 const introOriginalHtml = introText?.innerHTML ?? '';
-const LOADING_MIN_MS = 1200; // 最短展示时间，避免一闪而过
+// 窄屏把这段开场仪式缩短：背景视频 5.8MB，蜂窝网络下等 canplay 太久，
+// 而 <video poster> 已经保证首屏不空白，所以元数据就绪即放行。
+const LOADING_MOBILE = isMobileLayout();
+const LOADING_MIN_MS = LOADING_MOBILE ? 700 : 1200; // 最短展示时间，避免一闪而过
+const LOADING_MAX_MS = LOADING_MOBILE ? 3000 : 20000; // 兜底上限
 const loadingStartedAt = performance.now();
 let loadingShown = 0;
 let loadingFinished = false;
@@ -205,6 +221,10 @@ function setLoadingProgress(p: number): void {
 function loadingTarget(): number {
   if (!bgVideo) return 1;
   if (bgVideo.error) return 1;
+  if (LOADING_MOBILE) {
+    if (bgVideo.readyState >= 2) return 1;
+    return bgVideo.readyState >= 1 ? 0.85 : 0.45;
+  }
   if (bgVideo.readyState >= 3) return 1;
   if (bgVideo.readyState >= 2) return 0.85;
   if (bgVideo.readyState >= 1) return 0.6;
@@ -255,13 +275,15 @@ if (loadingOverlay && introText) {
     requestAnimationFrame(tickLoading);
   }, 320);
   bgVideo?.addEventListener('error', finishLoading);
-  // 兜底：异常情况下最多 20s 强制结束，避免一直卡在加载页
-  window.setTimeout(finishLoading, 20000);
+  // 兜底：异常情况下最多等 LOADING_MAX_MS，避免一直卡在加载页
+  window.setTimeout(finishLoading, LOADING_MAX_MS);
 }
 
 let expanded = false;
 let isAnimating = false;
 let panelOpen = false; // 底板是否已铺开（含动画完成 or 直接访问）
+/** 底板是在窄屏布局下打开的：用于跨断点（横竖屏 / 窗口拉宽）判断是否需要重载 */
+let openedOnMobile = false;
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // 当前面板字母（w/a/r/m）：直接访问由 URL 推断，slide 转场后由目标页决定
@@ -270,6 +292,7 @@ let currentKey: 'w' | 'a' | 'r' | 'm' = currentPageKey();
 // 直接访问面板路由：底板初始已打开，屏蔽背景点击，避免触发主页动画
 if (notesPanel?.classList.contains('active')) {
   panelOpen = true;
+  openedOnMobile = isMobileLayout();
   panelOpenInit(currentKey);
 }
 
@@ -281,7 +304,9 @@ function clamp(val: number, min: number, max: number): number {
 function getViewMetrics(): { vw: number; vh: number; cx: number; cy: number; margin: number } {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
-  return { vw, vh, cx: vw / 2, cy: vh / 2, margin: clamp(vw * 0.025, 20, 44) };
+  // 手机端底板是「贴左/右/上留一道窄边 + 底边齐屏」（见 home.css 窄屏区块），
+  // 对应的 margin 就是那一道窄边：10px。
+  return { vw, vh, cx: vw / 2, cy: vh / 2, margin: isMobileLayout() ? 10 : clamp(vw * 0.025, 20, 44) };
 }
 
 function navigateTo(target: string): void {
@@ -426,6 +451,9 @@ function panelOpenInit(key: 'w' | 'a' | 'r' | 'm'): void {
   const r = el.getBoundingClientRect();
   const wH = r.height;
   setRailVars(getRailRefW(), wH);
+  // 窄屏：右栏是底部工具栏，字母没有驻留位（留在屏幕中间会压住正文）。
+  // 返回首页由工具栏里的 .rail-home 字母按钮承担，这里让字母保持隐藏。
+  if (isMobileLayout()) return;
   // 字母在右栏内水平 + 垂直居中（右栏宽度统一），右边缘距底板右缘 rail-gap
   gsap.set(el, {
     x: vw / 2 - margin - RAIL_GAP - getRailRefW() / 2,
@@ -532,6 +560,17 @@ function collapseAll(): void {
 function positionLabel(letterEl: HTMLElement | null, labelEl: HTMLElement | null, key: string): void {
   if (!labelEl || !letterEl) return;
   const r = letterEl.getBoundingClientRect();
+  // 窄屏：原来的固定偏移（左移 50~90px / 右移 50~80px）会把标签推出屏幕，
+  // 改成在字母正上/正下方居中，并把中心夹在屏内，字号交给 .corner-label。
+  if (isMobileLayout()) {
+    const vw = window.innerWidth;
+    const above = key === 'w' || key === 'a'; // W/A 在上排，R/M 在下排
+    const cx = clamp(r.left + r.width / 2, 38, vw - 38);
+    labelEl.style.cssText =
+      `left:${cx}px;top:${above ? r.top - 6 : r.bottom + 6}px;` +
+      `transform:translate(-50%,${above ? '-100%' : '0'});text-align:center`;
+    return;
+  }
   switch (key) {
     case 'w':
       labelEl.style.cssText = `left:${r.left - 50}px;top:${r.top}px;transform:translate(0%,-100%);text-align:left`;
@@ -548,6 +587,40 @@ function positionLabel(letterEl: HTMLElement | null, labelEl: HTMLElement | null
   }
 }
 
+/**
+ * 窄屏打开底板：右栏在手机上是底部工具栏，「竖直条 → 右移铺开」那套转场没有落点，
+ * 字母也没有可驻留的位置（留在屏幕中部会压在正文上）。所以这里改成
+ * 「字母与小字淡出 + 底板整屏淡入」，几何完全交给 CSS（见 home.css 窄屏区块），
+ * 返回首页交给工具栏里的 .rail-home 字母按钮。桌面端三段式动画不受影响。
+ */
+function openPanelMobile(key: 'w' | 'a' | 'r' | 'm'): void {
+  if (!notesPanel) {
+    navigateTo(PAGE_TARGETS[key]);
+    return;
+  }
+  isAnimating = true;
+  panelOpen = true;
+  openedOnMobile = true;
+  currentKey = key;
+  if (sfxExpand) {
+    sfxExpand.currentTime = 0;
+    sfxExpand.play().catch(function () {});
+  }
+  landing?.classList.add('expanded'); // 底板打开态：大 Logo 与中心小字退场
+  // autoAlpha：同时置 visibility:hidden，字母不再拦截触摸
+  gsap.to('#logoStage', { autoAlpha: 0, duration: 0.24, ease: 'power1.out' });
+  gsap.to('#introText', { autoAlpha: 0, duration: 0.18, ease: 'power1.out' });
+
+  // 动画开始即拉取目标页（与桌面端一致：换页在底板淡入期间完成）
+  const pageLoad = loadPageIntoPanel(PAGE_TARGETS[key], false);
+  notesPanel.classList.add('active', 'is-settled');
+  isAnimating = false;
+
+  void pageLoad.then(function () {
+    history.pushState({ page: key }, '', siteBase + PAGE_TARGETS[key]);
+  });
+}
+
 // 字母 → 面板：三段式滑动（竖直移动 → 水平右移）+ 磨砂底板延展。
 // W/A 起点在 iz 上方（先下坠到中央），R/M 起点在 iz 下方（先上移到中央）——
 // 同一套坐标公式自动对称；水平段所有字母一致，终点在右栏内水平 + 垂直居中。
@@ -556,6 +629,11 @@ function slideLetterToPanel(key: 'w' | 'a' | 'r' | 'm'): void {
   const el = document.getElementById('letter-' + key) as HTMLElement | null;
   if (!el || !notesPanel) {
     navigateTo(PAGE_TARGETS[key]);
+    return;
+  }
+  // 窄屏：右栏是底部工具栏，三段式滑动没有落点，字母也无处驻留（见 openPanelMobile）
+  if (isMobileLayout()) {
+    openPanelMobile(key);
     return;
   }
   isAnimating = true;
@@ -835,7 +913,9 @@ LETTER_KEYS.forEach(function (key) {
     slideLetterToPanel(key);
   });
   // 悬停：字母 + 标签轻微发光；按下：瞬时变主题青，松开恢复
-  el.addEventListener('pointerenter', function () {
+  // （触摸没有"悬停"这回事，触摸指针不接触发发光，避免点完一直亮着）
+  el.addEventListener('pointerenter', function (e) {
+    if (e.pointerType === 'touch') return;
     if (letterFxCanGlow()) setLetterGlow(key, true);
   });
   el.addEventListener('pointerleave', function () {
@@ -941,6 +1021,15 @@ window.izwarmSetTheme = function (theme: 'dark' | 'light') {
 
 window.addEventListener('resize', function () {
   if (panelOpen) {
+    // 跨断点（横竖屏、桌面窗口拉窄/拉宽）：底板几何与字母去留完全不同，
+    // 按当前 URL 整页重载，让服务端渲染出对应的那一套（URL 已由 pushState 同步）
+    if (isMobileLayout() !== openedOnMobile) {
+      location.reload();
+      return;
+    }
+    // 窄屏底板由 CSS 铺满（左右上留一道窄边、底边齐屏），不写内联几何，
+    // 地址栏收放与横竖屏切换就都由 CSS 自动跟随
+    if (isMobileLayout()) return;
     // 底板打开时：重算当前字母在右栏内的居中位，并让底板重新铺满
     const { vw, vh, margin } = getViewMetrics();
     if (notesPanel) {
@@ -971,6 +1060,7 @@ window.addEventListener('resize', function () {
 window.addEventListener('load', function () {
   window.__izRailRefW = getRailRefW();
   if (!panelOpen || !notesPanel || isAnimating) return;
+  if (isMobileLayout()) return; // 窄屏没有驻留字母，右栏基准也用不上
   const el = document.getElementById('letter-' + currentKey) as HTMLElement | null;
   if (!el) return;
   const r = el.getBoundingClientRect();

@@ -1,5 +1,7 @@
 /* 主题变量（深色 / 浅色）——与原站 :root 规则一致 */
 :root {
+  /* 让浏览器用深色绘制画布与滚动条拖尾，移动端首屏/回弹区不会闪白 */
+  color-scheme: dark;
   --bg-obsidian: #05050a;
   --bg-obsidian-soft: #0c0c14;
   --text-primary: #eceef2;
@@ -11,6 +13,7 @@
 }
 
 [data-theme='light'] {
+  color-scheme: light;
   --bg-obsidian: #f3f3f5;
   --bg-obsidian-soft: #e8e9ec;
   --text-primary: #14151a;

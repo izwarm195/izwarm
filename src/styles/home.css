@@ -393,3 +393,51 @@
   opacity: 0;
   transition: opacity 0.25s ease;
 }
+
+/* ============================================================
+   手机端（≤900px）
+   桌面端规则一条都不改：以下规则全部只在窄屏生效。
+   底板改为「贴左/右/上各留一道 10px 视频窄边 + 底边贴齐屏幕」——
+   半透明磨砂依然盖在背景视频上，左下直角也仍是 W 的标志性圆角，
+   但正文一行能排到 20 字以上（原来 20px 玻璃边距 + 卡内边距只剩 270px）。
+   ============================================================ */
+@media (max-width: 900px) {
+  .notes-panel.active {
+    left: calc(10px + env(safe-area-inset-left, 0px));
+    right: calc(10px + env(safe-area-inset-right, 0px));
+    top: 10px;
+    bottom: 0;
+    width: auto;
+    height: auto;
+    border-radius: 18px 18px 18px 0;
+  }
+
+  /* 从字母进底板：整屏淡入。三段式滑动是右栏专属，而手机上右栏是底部工具栏 */
+  .notes-panel {
+    transition: opacity 300ms ease;
+  }
+
+  /* 大 Logo：logo.png 高 50px 时宽 358.7px，窄于此的屏幕会顶出边界 */
+  .logo-full {
+    max-width: 86vw;
+  }
+
+  /* 声音开关：让开状态栏 / 刘海，触屏下放大到 44px */
+  .sound-toggle {
+    top: calc(env(safe-area-inset-top, 0px) + 12px);
+    right: calc(env(safe-area-inset-right, 0px) + 12px);
+    width: 44px;
+    height: 44px;
+  }
+  .sound-toggle svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  /* 中心小字：两行英文在 360px 宽下要收一收字号与字距 */
+  .intro-text {
+    max-width: 88vw;
+    font-size: 11px;
+    letter-spacing: 0.13em;
+  }
+}

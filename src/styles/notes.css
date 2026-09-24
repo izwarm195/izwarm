@@ -93,6 +93,82 @@ html {
   }
 }
 
+/* ---- 加载骨架：点击后文章底板立刻出现，正文随后填入 ---- */
+.notes-skeleton {
+  --skeleton-base: rgba(255, 255, 255, 0.065);
+  --skeleton-shine: rgba(255, 255, 255, 0.14);
+}
+/* 骨架卡沿用 .article 的底板/圆角/阴影，只是内容换成占位条 */
+.notes-skeleton-title {
+  opacity: 0.85;
+}
+.notes-skeleton-chips {
+  display: flex;
+  gap: 10px 18px;
+  margin-bottom: 26px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.notes-skeleton-chips span {
+  height: 10px;
+  width: 64px;
+  border-radius: 5px;
+  background: var(--skeleton-base);
+  animation: notes-skeleton-pulse 1.4s ease-in-out infinite;
+}
+.notes-skeleton-chips span:nth-child(2) {
+  width: 52px;
+  animation-delay: 0.12s;
+}
+.notes-skeleton-chips span:nth-child(3) {
+  width: 78px;
+  animation-delay: 0.24s;
+}
+.notes-skeleton-body {
+  display: grid;
+  gap: 12px;
+}
+.notes-skeleton-line {
+  display: block;
+  height: 11px;
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 0%,
+    var(--skeleton-shine) 45%,
+    var(--skeleton-base) 90%
+  );
+  background-size: 220% 100%;
+  animation: notes-skeleton-sweep 1.7s linear infinite;
+}
+.notes-skeleton-hint {
+  margin-top: 22px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+}
+.notes-skeleton-standalone {
+  padding: 28px 4px;
+  animation: notes-skeleton-pulse 1.4s ease-in-out infinite;
+}
+@keyframes notes-skeleton-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes notes-skeleton-sweep {
+  from {
+    background-position: 130% 0;
+  }
+  to {
+    background-position: -130% 0;
+  }
+}
+
 /* 长文章返回首页：先快速淡出内容，再收缩底板，避免大正文逐帧重排 */
 .notes-shell.is-preparing-collapse .notes-main,
 .notes-shell.is-preparing-collapse .notes-left {
@@ -427,6 +503,11 @@ a.notes-cal-day[data-count='0'] {
 .notes-rail-link[aria-current='page'] {
   color: var(--text-primary);
   border-color: var(--metal-highlight);
+}
+/* 手机端底部工具栏里的「返回首页」字母按钮（见文件末尾的窄屏区块）。
+   桌面端的右栏里，返回首页本来就由常驻的 W/A/R/M 字母承担，所以这里隐藏。 */
+.rail-home {
+  display: none;
 }
 /* ---- 文章：深色阅读卡（与大底板同风格但更深；正文白字，遵循 Obsidian 字体） ---- */
 .article {
@@ -820,6 +901,21 @@ a.notes-cal-day[data-count='0'] {
 }
 
 /* ---- 文章侧栏：大纲 + 同系列 ---- */
+/* 两侧栏都是原生 <details>：桌面端固定展开（.notes-fold-head 无标记、点击不折叠，
+   外观与原来的 h2 标题完全一致），手机端由 JS 收起为可点开的折叠面板。 */
+.notes-fold-head {
+  display: block;
+  list-style: none;
+  cursor: default;
+  user-select: none;
+}
+.notes-fold-head::-webkit-details-marker {
+  display: none;
+}
+.notes-fold-head .notes-section-label {
+  margin-bottom: 12px;
+}
+
 .notes-article-side {
   display: flex;
   flex-direction: column;
@@ -853,11 +949,19 @@ a.notes-cal-day[data-count='0'] {
   color: var(--text-primary);
   border-left-color: var(--metal-highlight);
 }
-.notes-toc a[data-depth='3'] {
+/* 一级标题（正文 `#`）作为大纲的顶层：略作强调，二三级逐级缩进 */
+.notes-toc a[data-depth='1'] {
+  color: var(--text-primary);
+  border-left-color: var(--edge-line);
+}
+.notes-toc a[data-depth='2'] {
   padding-left: 22px;
 }
-.notes-toc a[data-depth='4'] {
+.notes-toc a[data-depth='3'] {
   padding-left: 32px;
+}
+.notes-toc a[data-depth='4'] {
+  padding-left: 42px;
 }
 .notes-siblings {
   list-style: none;
@@ -1103,64 +1207,17 @@ a.notes-cal-day[data-count='0'] {
     animation: none;
   }
   .notes-shell *,
-  .notes-rail * {
+  .notes-rail *,
+  .notes-panel {
     animation: none !important;
     transition: none !important;
     scroll-behavior: auto !important;
   }
 }
 
-/* ---- 响应式 ---- */
-@media (max-width: 900px) {
-  .notes-shell {
-    display: block;
-    height: 100%;
-    overflow-y: auto;
-  }
-  .notes-col {
-    overflow: visible;
-  }
-  .notes-left {
-    border-right: 0;
-    border-bottom: 1px solid var(--edge-line);
-  }
-  .notes-main {
-    padding: 24px 18px 120px;
-  }
-  .notes-rail {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 40;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    border-left: 0;
-    border-top: 1px solid var(--edge-line);
-    background: color-mix(in srgb, var(--bg-obsidian) 90%, transparent);
-    backdrop-filter: blur(10px);
-    padding: 8px 12px;
-    min-height: 52px;
-  }
-  .notes-rail-menu {
-    position: static;
-    transform: none;
-    visibility: visible;
-    flex-direction: row;
-    gap: 10px;
-    align-items: center;
-  }
-  .notes-rail-link {
-    opacity: 1;
-    transform: none;
-    width: auto;
-    min-width: 72px;
-  }
-  .notes-rail-menu li:nth-child(n) .notes-rail-link {
-    transition-delay: 0s;
-  }
-}
+/* ---- 响应式 ----
+   窄屏（≤900px）的全部规则集中在文件末尾的「手机端」区块里，
+   那里在桌面规则之后，才能可靠地覆盖本文件上方的桌面样式。 */
 
 /* ---- 两栏页面（Projects / Works / About）：内容 + 右栏字母导航 ---- */
 .notes-shell.is-page {
@@ -1198,9 +1255,347 @@ a.notes-cal-day[data-count='0'] {
   color: var(--text-dim);
 }
 
+/* ============================================================
+   手机端（≤900px）
+   桌面端（>900px）的规则一条都没动：下面每一条都只在窄屏生效。
+   手机上是「单列阅读」：内容在前、侧栏在后，底部一条固定工具栏；
+   文章页例外 —— 大纲/同系列折叠成两行置于顶部，正文不再被长目录推到屏外。
+   ============================================================ */
 @media (max-width: 900px) {
-  .notes-shell.is-page {
-    grid-template-columns: minmax(0, 1fr);
+  /* ---------- 单列骨架 ---------- */
+  .notes-shell {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior-y: contain;
+  }
+  .notes-col {
+    overflow: visible;
+    flex: none; /* 关键：列不再被 flex 压扁，否则内容会溢出到相邻列上 */
+    width: 100%;
+  }
+  [data-notes-region='rail'] {
+    order: 3;
+  }
+  .notes-main {
+    order: 1;
+    /* 卡片自己承担左右内边距，这里只留底部工具栏的净空
+       （工具栏 = 44 行高 + 上下 7px 内边距 + 1px 描边 + 安全区） */
+    padding: 0 0 calc(80px + env(safe-area-inset-bottom, 0px));
+  }
+  .notes-left {
+    order: 2;
+    border-right: 0;
+    border-top: 1px solid var(--edge-line);
+    padding: 24px 18px calc(92px + env(safe-area-inset-bottom, 0px));
+  }
+  /* 文章页：折叠的大纲/同系列置顶，正文紧随其后 */
+  .notes-shell[data-notes-state='article'] .notes-left {
+    order: 0;
+    border-top: 0;
+    border-bottom: 1px solid var(--edge-line);
+    padding: calc(10px + env(safe-area-inset-top, 0px)) 12px 4px;
+  }
+  .notes-sidebar {
+    gap: 24px;
+  }
+
+  /* ---------- 阅读面：去掉「卡片套卡片」，正文铺满底板 ---------- */
+  .article,
+  .page-panel {
+    width: 100%;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    /* 只保留底板那一层 backdrop-filter：手机上叠两层模糊很贵 */
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(18, 20, 25, 0.8);
+    padding: calc(20px + env(safe-area-inset-top, 0px)) 18px 26px;
+  }
+  .article-cover {
+    max-height: 200px;
+    margin-bottom: 18px;
+  }
+  .article h1,
+  .page-panel h1 {
+    font-size: clamp(22px, 6.2vw, 26px);
+  }
+  .article-meta {
+    gap: 8px 14px;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    font-size: 13px;
+  }
+  /* 手机上一行排到 20 字上下最舒服 */
+  .article-body {
+    font-size: 17px;
+    line-height: 1.8;
+    scroll-padding-top: 12px;
+  }
+  .article-body h1 {
+    font-size: 1.55em;
+    scroll-margin-top: 14px;
+  }
+  .article-body h2 {
+    font-size: 1.22em;
+    scroll-margin-top: 14px;
+  }
+  .article-body h3 {
+    font-size: 1.1em;
+    scroll-margin-top: 14px;
+  }
+  .article-body h4,
+  .article-body h5,
+  .article-body h6 {
+    scroll-margin-top: 14px;
+  }
+  .article-body pre {
+    margin: 1em 0;
+    padding: 14px;
+    font-size: 0.86em;
+    -webkit-overflow-scrolling: touch;
+  }
+  .article-body blockquote {
+    margin: 1em 0;
+    padding: 0.7em 0.95em;
+  }
+  .article-body th,
+  .article-body td {
+    min-width: 6em;
+    padding: 0.5em 0.65em;
+  }
+  .article-body img {
+    margin: 1.1em auto;
+  }
+  .article-body .katex-display {
+    margin: 1.05em 0;
+    padding: 12px 10px;
+  }
+
+  /* ---------- 触屏可点项：一律 ≥44px ---------- */
+  .notes-toc a {
+    padding: 11px 8px 11px 14px;
+    font-size: 14px;
+  }
+  .notes-toc a[data-depth='2'] {
+    padding-left: 26px;
+  }
+  .notes-toc a[data-depth='3'] {
+    padding-left: 38px;
+  }
+  .notes-toc a[data-depth='4'] {
+    padding-left: 50px;
+  }
+  .notes-siblings a {
+    padding: 12px 10px;
+    font-size: 14px;
+  }
+  .notes-profile {
+    gap: 10px;
+  }
+  .notes-avatar {
+    width: 84px;
+    height: 84px;
+  }
+  .notes-social a {
+    width: 46px;
+    height: 46px;
+  }
+  .notes-social svg,
+  .notes-social-icon {
+    width: 20px;
+    height: 20px;
+  }
+  .notes-social-icon.icon-netease {
+    width: 22px;
+    height: 22px;
+  }
+  .notes-stat {
+    padding: 12px 10px;
+  }
+  .tags-cloud {
+    gap: 8px;
+  }
+  .tags-cloud a {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+  .notes-calendar-years a {
+    padding: 7px 11px;
+    font-size: 12px;
+  }
+  /* 热力图：格子放大到 ~10px，超宽部分横向滑动 */
+  .notes-calendar-grid {
+    min-width: 560px;
+    gap: 3px;
+  }
+  .archive-year-head,
+  .archive-entry {
+    --tl-date-col: 62px;
+  }
+  .archive-year-text {
+    font-size: 21px;
+  }
+  .archive-year-count {
+    font-size: 12px;
+  }
+  .archive-entry {
+    padding: 7px 0;
+  }
+  .archive-date {
+    padding-right: 10px;
+    font-size: 12px;
+  }
+  .archive-title {
+    display: block;
+    padding: 5px 0;
+    font-size: 16px;
+  }
+  .notes-empty {
+    padding: 18px;
+    font-size: 14px;
+  }
+  .notes-skeleton-standalone {
+    padding: 28px 18px;
+  }
+
+  /* ---------- 系列树：整块铺满，行高拉到可点 ---------- */
+  .notes-series {
+    display: block;
+  }
+  .series-window {
+    width: 100%;
+    max-width: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(18, 20, 25, 0.8);
+    padding: calc(12px + env(safe-area-inset-top, 0px)) 10px 20px;
+  }
+  .series-node-btn {
+    padding: 15px 12px;
+    font-size: 15px;
+  }
+  .series-note {
+    padding: 12px 10px 12px 18px;
+    font-size: 14px;
+  }
+  .series-children-inner {
+    padding-left: 8px;
+  }
+
+  /* ---------- 大纲 / 同系列：原生折叠（桌面端始终展开、点了也不折叠） ---------- */
+  .notes-shell[data-notes-state='article'] .notes-article-side {
+    gap: 0;
+  }
+  .notes-fold-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 44px;
+    padding: 0 8px;
+    cursor: pointer;
+  }
+  .notes-fold-head .notes-section-label {
+    margin-bottom: 0;
+  }
+  .notes-fold-head::after {
+    content: '›';
+    flex: none;
+    font-size: 16px;
+    line-height: 1;
+    color: var(--text-dim);
+    transform: rotate(90deg);
+    transition: transform 0.2s ease;
+  }
+  details.notes-fold:not([open]) > .notes-fold-head::after {
+    transform: rotate(0deg);
+  }
+  .notes-fold[open] {
+    padding-bottom: 6px;
+  }
+  /* 折叠面板整体在页面里滚动，不再各自内部滚动 */
+  .notes-toc-wrap,
+  .notes-siblings-wrap {
+    max-height: none;
+    overflow: visible;
+  }
+
+  /* ---------- 底部工具栏 ---------- */
+  .notes-rail {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: 0;
+    height: auto;
+    z-index: 40;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-left: 0;
+    border-top: 1px solid var(--edge-line);
+    background: color-mix(in srgb, var(--bg-obsidian) 86%, transparent);
+    backdrop-filter: blur(14px) saturate(1.08);
+    -webkit-backdrop-filter: blur(14px) saturate(1.08);
+    padding: 7px 10px calc(7px + env(safe-area-inset-bottom, 0px));
+  }
+  .notes-rail-menu {
+    position: static;
+    transform: none;
+    visibility: visible;
+    flex: 1 1 auto;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+  }
+  .notes-rail-menu li {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .notes-rail-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    padding: 0 6px;
+    font-size: 13px;
+    opacity: 1;
+    transform: none;
+  }
+  .notes-rail-menu li:nth-child(n) .notes-rail-link {
+    transition-delay: 0s;
+  }
+  /* 返回首页：手机端由当前栏目的那个字母承担（桌面端它常驻在右栏，点它同样回首页） */
+  .rail-home {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    min-height: 44px;
+  }
+  .rail-home img {
+    display: block;
+    height: 32px;
+    width: auto;
+  }
+}
+
+/* 触屏没有 hover：复制按钮不能靠悬停才出现 */
+@media (hover: none) {
+  .article-body .code-copy {
+    opacity: 1;
   }
 }
 

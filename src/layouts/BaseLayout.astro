@@ -15,7 +15,10 @@ const { title = site.title } = Astro.props;
 <html lang={site.lang} data-theme="dark">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- viewport-fit=cover：让底板铺到刘海/圆角区域，再用 env(safe-area-inset-*) 让内容避开 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#05050a" />
     <title>{title}</title>
     <link rel="icon" type="image/png" href={`${import.meta.env.BASE_URL}favicon/favicon.png`} />
   </head>

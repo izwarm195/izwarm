@@ -1,5 +1,6 @@
 ---
 import { url } from '../../lib/notes';
+import { media } from '../../config/media';
 
 interface Props {
   active: 'home' | 'article' | 'archive' | 'tags';
@@ -12,6 +13,9 @@ const items = [
   { label: 'Tags', href: url('/notes/tags/'), key: 'tags' },
   { label: 'Archive', href: url('/notes/archive/'), key: 'archive' },
 ];
+
+// 手机端底部工具栏里的「返回首页」按钮：沿用 W —— 它在桌面端就是 Notes 的锚点字母，
+// 点它回主页展开态。桌面端这一栏由常驻的 W 承担，所以 .rail-home 在宽屏隐藏。
 ---
 
 <nav class="notes-rail" aria-label="Notes 导航">
@@ -28,4 +32,7 @@ const items = [
       </li>
     ))}
   </ul>
+  <a class="rail-home" href={url('/')} aria-label="返回 izwarm 首页" title="返回首页">
+    <img src={media.logoW} alt="" width="82" height="50" />
+  </a>
 </nav>
