@@ -944,7 +944,9 @@ window.addEventListener('pointerup', function () {
 if (bgmA && bgmB && soundToggle) {
   let activeBgm: SeamlessAudio = bgmA;
   let standbyBgm: SeamlessAudio = bgmB;
-  let soundOn = true;
+  // 默认静音：首屏不自动播放，也不在首次交互时抢播；只有点右上角喇叭才开始播。
+  // 配合 audio 的 preload="none"，默认状态下 BGM 一个字节都不会下载。
+  let soundOn = false;
   const crossfadeSec = 5.0;
 
   function setupSeamless(bgm: SeamlessAudio): void {
@@ -986,25 +988,18 @@ if (bgmA && bgmB && soundToggle) {
     }
   }
 
-  // 立即尝试（依赖浏览器 MEI，已互动过的用户有效）
-  tryPlayBgm();
+  /** 图标跟随状态：默认关闭，故首屏即为"静音"图标 */
+  function renderSoundIcon(): void {
+    if (iconOnEl) iconOnEl.style.display = soundOn ? 'block' : 'none';
+    if (iconOffEl) iconOffEl.style.display = soundOn ? 'none' : 'block';
+  }
 
-  // 多重交互兜底（新访客第一次操作即播放）
-  ['click', 'touchstart', 'pointerdown', 'keydown'].forEach(function (evtName) {
-    document.addEventListener(
-      evtName,
-      function audioOnce() {
-        tryPlayBgm();
-      },
-      { once: true }
-    );
-  });
+  renderSoundIcon();
 
   soundToggle.addEventListener('click', function (ev) {
     ev.stopPropagation();
     soundOn = !soundOn;
-    if (iconOnEl) iconOnEl.style.display = soundOn ? 'block' : 'none';
-    if (iconOffEl) iconOffEl.style.display = soundOn ? 'none' : 'block';
+    renderSoundIcon();
     if (soundOn) {
       tryPlayBgm();
     } else {
