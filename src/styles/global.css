@@ -55,9 +55,9 @@ body {
 }
 .coffee-modal-body {
   position: relative;
-  /* 卡片原图 710x765。上限 = 原宽 + 左右 padding，让它在屏幕装得下时按原尺寸 1:1 显示
-     （缩放着色会比原尺寸糊一点）；装不下才等比缩小，永远不放大。 */
-  max-width: min(94vw, 726px);
+  /* 上限 = 卡片显示宽 355 + 左右 8px padding。卡片严格按原图 50% 显示，
+     底板就着这个尺寸收，不再按"能放多大放多大"撑开。 */
+  max-width: min(100%, 371px);
   max-height: 90vh;
   padding: 8px;
   background: rgba(26, 28, 33, 0.94);
@@ -65,15 +65,16 @@ body {
   border-radius: 16px 16px 16px 0;
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.62);
 }
-/* 卡片本身已是圆角矩形（四角透明），这里只兜一道同形状的圆角。
-   width/height:auto → 先按原图尺寸排；只有超出 max-width / max-height 时才缩小 */
+/* 卡片原图 710x765，这里严格按 50% 显示（355x382.5）。
+   只有屏幕比它还窄时才继续缩（max-width:100%），并且永远不放大。
+   圆角用 6px：图里烧进去的圆角是原尺寸 12px，缩到 50% 就是 6px，对齐它避免多切一块。 */
 .coffee-modal-img {
   display: block;
-  width: auto;
-  height: auto;
+  width: 355px;
   max-width: 100%;
+  height: auto;
   max-height: calc(90vh - 16px);
-  border-radius: 12px 12px 12px 0;
+  border-radius: 6px 6px 6px 0;
 }
 .coffee-modal-close {
   position: absolute;
