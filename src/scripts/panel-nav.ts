@@ -388,6 +388,10 @@ export async function loadPageIntoPanel(
   if (seq !== navSeq) return;
 
   if (doc.title) document.title = doc.title;
+  // 换页完成：各 [data-notes-region] 的子节点已被整体替换（replaceChildren），
+  // 挂在区域内部节点上的监听会随旧节点一起消失。这里广播一次，让依赖内部节点的
+  // 交互重新绑定（系列树见 notes.ts 的 syncSeriesTree）。
+  document.dispatchEvent(new CustomEvent('izwarm:panel-swap'));
   const hash = url.includes('#') ? url.slice(url.indexOf('#')) : '';
   initToc();
   initCodeCopy();

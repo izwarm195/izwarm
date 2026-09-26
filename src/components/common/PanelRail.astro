@@ -40,7 +40,8 @@ const homeLetter = { projects: media.logoA, works: media.logoR, about: media.log
       </li>
     ))}
   </ul>
-  <a class="rail-home" href={url('/')} aria-label="返回 izwarm 首页" title="返回首页">
+  <!-- ?letters=1：主页加载后直接落到「字母已展开」态 -->
+  <a class="rail-home" href={url('/?letters=1')} aria-label="返回 izwarm 首页" title="返回首页">
     <img src={homeLetter[active]} alt="" width="82" height="50" />
   </a>
 </nav>

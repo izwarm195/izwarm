@@ -56,7 +56,15 @@ railRegion?.addEventListener('pointerenter', openMenu);
 railRegion?.addEventListener('pointerleave', closeMenu);
 
 // ---------- 系列树：指针移动驱动的手风琴（布局重排不会连锁换枝/整窗收起） ----------
-const seriesWindow = document.getElementById('seriesWindow');
+// SPA 换页只替换 [data-notes-region] 的子节点，所以 #seriesWindow 每次都会被重建。
+// 监听必须挂在「当次」的那个节点上，并在每次换页后重新绑定（syncSeriesTree）——
+// 否则从文章/归档切回笔记首页时，新树一个监听都没有，表现为手机上点不开系列栏，
+// 而刷新一次又好（刷新是服务端直出，走的是初始绑定那一次）。
+let seriesWindow: HTMLElement | null = null;
+/** 已经绑过监听的节点；与当前节点相同则不重复绑定 */
+let boundSeriesWindow: HTMLElement | null = null;
+/** 最近一次按下用的指针类型：触屏点击也会让按钮取得焦点，据此跳过 focusin 的激活 */
+let lastPointerType = '';
 let seriesTimer: number | undefined;
 let unpinTimer: number | undefined;
 let activeNode: HTMLElement | null = null;
@@ -181,20 +189,27 @@ function onSeriesPointerMove(e: PointerEvent): void {
   });
 }
 
-if (seriesWindow) {
-  seriesWindow.addEventListener('pointerenter', (e) => {
+/** 把系列树交互挂到当前这个 #seriesWindow 上 */
+function bindSeriesTree(win: HTMLElement): void {
+  win.addEventListener('pointerenter', (e) => {
     if (e.pointerType === 'touch') return;
     pinSeriesWindow(e);
     cancelDeactivate();
     sampleAndActivate(e.clientX, e.clientY);
   });
-  seriesWindow.addEventListener('pointermove', onSeriesPointerMove);
-  seriesWindow.addEventListener('pointerleave', (e) => {
+  win.addEventListener('pointermove', onSeriesPointerMove);
+  win.addEventListener('pointerleave', (e) => {
     lastX = e.clientX;
     lastY = e.clientY;
     scheduleDeactivate();
   });
-  seriesWindow.addEventListener('focusin', (e) => {
+  win.addEventListener('pointerdown', (e) => {
+    lastPointerType = e.pointerType;
+  }, true);
+  win.addEventListener('focusin', (e) => {
+    // 触屏点击也会让按钮取得焦点（Android 必然，部分 iOS 也会）。那一路交给下面的
+    // click 处理，否则「focus 展开 + click 收起」互相抵消，表现就是点了没反应。
+    if (lastPointerType === 'touch') return;
     const node = (e.target as HTMLElement).closest<HTMLElement>('.series-node');
     if (node) {
       pinSeriesWindow();
@@ -202,15 +217,15 @@ if (seriesWindow) {
       activatePath(node);
     }
   });
-  seriesWindow.addEventListener('focusout', (e) => {
-    if (!seriesWindow.contains(e.relatedTarget as Node | null)) scheduleDeactivate();
+  win.addEventListener('focusout', (e) => {
+    if (!win.contains(e.relatedTarget as Node | null)) scheduleDeactivate();
   });
-}
 
-// 触屏没有 hover：桌面端靠指针移动驱动的系列树，在手机上改为点击展开/收起。
-// 只挂在 hover 能力为 none 的设备上，鼠标 / 触控笔下的行为完全不变。
-if (seriesWindow && window.matchMedia('(hover: none)').matches) {
-  seriesWindow.addEventListener('click', (e) => {
+  // 触屏没有 hover：桌面端靠指针移动驱动的系列树，在手机上改为点击展开/收起。
+  // hover 能力在点击时现查而不是绑定时快照：接上鼠标 / iPad 触控板会让 hover
+  // 能力中途改变，快照一旦失真，这个点击分支就永久失效。
+  win.addEventListener('click', (e) => {
+    if (!window.matchMedia('(hover: none)').matches) return;
     const btn = (e.target as HTMLElement | null)?.closest<HTMLButtonElement>('.series-node-btn');
     if (!btn) return;
     const node = btn.closest<HTMLElement>('.series-node');
@@ -228,6 +243,32 @@ if (seriesWindow && window.matchMedia('(hover: none)').matches) {
     }
   });
 }
+
+/**
+ * 重新指向当前的 #seriesWindow：每次 SPA 换页后都要调用。
+ * 旧节点已被替换，跨节点的状态（定时器、激活节点、固定态）全部作废，
+ * 残留下来会作用到刚换上的新树上。
+ */
+function syncSeriesTree(): void {
+  if (seriesTimer !== undefined) {
+    window.clearTimeout(seriesTimer);
+    seriesTimer = undefined;
+  }
+  if (unpinTimer !== undefined) {
+    window.clearTimeout(unpinTimer);
+    unpinTimer = undefined;
+  }
+  activeNode = null;
+  lastX = -1;
+  lastY = -1;
+  seriesWindow = document.getElementById('seriesWindow');
+  if (!seriesWindow || seriesWindow === boundSeriesWindow) return;
+  boundSeriesWindow = seriesWindow;
+  bindSeriesTree(seriesWindow);
+}
+
+document.addEventListener('izwarm:panel-swap', syncSeriesTree);
+syncSeriesTree();
 
 // ---------- 大纲：点击平滑滚动（并避免默认锚点跳转回顶） ----------
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

@@ -1554,11 +1554,15 @@ a.notes-cal-day[data-count='0'] {
     flex: 1 1 auto;
     flex-direction: row;
     align-items: center;
-    gap: 6px;
+    /* 三个按钮等比缩小后不再等分整行：在字母左侧的剩余空间里居中，右侧自然留空 */
+    justify-content: center;
+    gap: 4px;
     min-width: 0;
   }
   .notes-rail-menu li {
-    flex: 1 1 0;
+    /* 等比缩小：44 → 32 高、约 99 → 72 宽（0.73 倍）。仍允许收缩，
+       320px 宽的窄屏上三个按钮 + 字母不会横向溢出 */
+    flex: 0 1 72px;
     min-width: 0;
   }
   .notes-rail-link {
@@ -1567,23 +1571,27 @@ a.notes-cal-day[data-count='0'] {
     justify-content: center;
     width: 100%;
     min-width: 0;
-    min-height: 44px;
+    height: 32px;
+    min-height: 32px;
     padding: 0 6px;
-    font-size: 13px;
+    font-size: 13px; /* 字号不随按钮缩小 */
+    /* W 形圆角按同比例缩（12 → 9），否则小按钮上直角会显得突兀 */
+    border-radius: 9px 9px 9px 0;
     opacity: 1;
     transform: none;
   }
   .notes-rail-menu li:nth-child(n) .notes-rail-link {
     transition-delay: 0s;
   }
-  /* 返回首页：手机端由当前栏目的那个字母承担（桌面端它常驻在右栏，点它同样回首页） */
+  /* 返回首页：手机端由当前栏目的那个字母承担（桌面端它常驻在右栏，点它同样回首页）。
+     盒高与字母一致（32px），上/下沿与三个按钮对齐 */
   .rail-home {
     display: flex;
     flex: none;
     align-items: center;
     justify-content: center;
     width: 52px;
-    min-height: 44px;
+    min-height: 32px;
   }
   .rail-home img {
     display: block;

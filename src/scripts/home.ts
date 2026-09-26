@@ -463,10 +463,10 @@ function panelOpenInit(key: 'w' | 'a' | 'r' | 'm'): void {
   el.style.pointerEvents = 'auto';
 }
 
-function expandLogo(): void {
+function expandLogo(opts: { silent?: boolean } = {}): void {
   if (expanded || isAnimating) return;
-  // 展开音效：重置进度 + 播放
-  if (sfxExpand) {
+  // 展开音效：重置进度 + 播放（程序化展开——如「返回首页」带 ?letters=1 落地——静音）
+  if (sfxExpand && !opts.silent) {
     sfxExpand.currentTime = 0;
     sfxExpand.play().catch(function () {});
   }
@@ -602,10 +602,7 @@ function openPanelMobile(key: 'w' | 'a' | 'r' | 'm'): void {
   panelOpen = true;
   openedOnMobile = true;
   currentKey = key;
-  if (sfxExpand) {
-    sfxExpand.currentTime = 0;
-    sfxExpand.play().catch(function () {});
-  }
+  // 手机端点击字母不播音效（用户明确要求）：底板淡入本身就是反馈，声音在触屏上只觉得吵
   landing?.classList.add('expanded'); // 底板打开态：大 Logo 与中心小字退场
   // autoAlpha：同时置 visibility:hidden，字母不再拦截触摸
   gsap.to('#logoStage', { autoAlpha: 0, duration: 0.24, ease: 'power1.out' });
@@ -1062,4 +1059,14 @@ window.addEventListener('load', function () {
   setRailVars(getRailRefW(), r.height);
   const { vw, margin } = getViewMetrics();
   gsap.set(el, { x: vw / 2 - margin - RAIL_GAP - getRailRefW() / 2, y: 0 });
+});
+
+// 从底栏「返回首页」字母进来（?letters=1）：主页直接落到字母展开态，
+// 不必再点一下背景才看见 w/a/r/m。
+// 放在 load 里而不是 DOMContentLoaded：字母图未就绪时 rect 尺寸不对，展开位会算歪。
+window.addEventListener('load', function () {
+  if (!new URLSearchParams(location.search).has('letters')) return;
+  // 抹掉标记，刷新/回退时不再自动展开（点背景仍可再展开）
+  history.replaceState(null, '', siteBase + '/');
+  expandLogo({ silent: true });
 });

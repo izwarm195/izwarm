@@ -15,10 +15,11 @@ const year = years.includes(requested) ? requested : (years[0] ?? new Date().get
 const calendar = getCalendarData(notes, year, act);
 const base = Astro.url.pathname;
 
-/** 当日活跃量 → 热力档位（1 次 = 1 级，4 次以上封顶 4 级）
- *  活跃量 = 当日提交数 + 当日创建/修改过的笔记数：
- *  只按提交数着色时，"写了笔记但那天没提交（vault 批量备份）"的日子会整片空白，
- *  持续写作看起来就像热力图没更新。 */
+/** 当日发布笔记数 → 热力档位（1 篇 = 1 级，4 篇以上封顶 4 级）
+ *  口径：只按「文章发布时间 + 当日篇数」着色（publishDate 是笔记自己的日期，
+ *  来自文件名日期前缀 / frontmatter / 创建时间清单 / vault 首次提交）。
+ *  不再把 vault 的提交数、编辑次数掺进颜色 —— 那是备份节奏，不是写作量，
+ *  混进来会让人对着热力图怀疑"没同步"。 */
 function calLevel(n: number): number {
   if (n <= 0) return 0;
   if (n === 1) return 1;
@@ -47,29 +48,21 @@ function calLevel(n: number): number {
   </div>
   <div class="notes-calendar-grid">
     {calendar.days.map((day) => {
-      const level = calLevel(day.commits + day.touched);
-      const parts = [
-        day.commits > 0 ? `${day.commits} 次提交` : '',
-        day.touched > 0 ? `${day.touched} 次编辑` : '',
-        day.notes > 0 ? `${day.notes} 篇` : '',
-      ].filter(Boolean);
-      const tip = `${day.date} · ${parts.join(' · ')}`;
-      if (parts.length === 0) {
+      const level = calLevel(day.notes);
+      const tip = `${day.date} · ${day.notes} 篇`;
+      if (day.notes === 0) {
         return <span class="notes-cal-day" data-count="0" aria-hidden="true"></span>;
       }
-      // 有文章的日期仍可点击跳转到归档对应锚点；仅有提交的日期只展示热力
-      if (day.notes > 0) {
-        return (
-          <a
-            class="notes-cal-day"
-            data-count={level}
-            href={`${url('/notes/archive/')}#${day.date}`}
-            title={tip}
-            aria-label={tip}
-          ></a>
-        );
-      }
-      return <span class="notes-cal-day" data-count={level} title={tip} aria-label={tip}></span>;
+      // 有文章的日期可点击跳转到归档对应锚点
+      return (
+        <a
+          class="notes-cal-day"
+          data-count={level}
+          href={`${url('/notes/archive/')}#${day.date}`}
+          title={tip}
+          aria-label={tip}
+        ></a>
+      );
     })}
   </div>
 </section>
