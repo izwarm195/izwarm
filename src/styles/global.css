@@ -55,8 +55,9 @@ body {
 }
 .coffee-modal-body {
   position: relative;
-  /* 卡片是 710x765 的海报，二维码只占其宽度的 ~20%，所以给足展示尺寸 */
-  max-width: min(94vw, 540px);
+  /* 卡片原图 710x765。上限 = 原宽 + 左右 padding，让它在屏幕装得下时按原尺寸 1:1 显示
+     （缩放着色会比原尺寸糊一点）；装不下才等比缩小，永远不放大。 */
+  max-width: min(94vw, 726px);
   max-height: 90vh;
   padding: 8px;
   background: rgba(26, 28, 33, 0.94);
@@ -64,13 +65,14 @@ body {
   border-radius: 16px 16px 16px 0;
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.62);
 }
-/* 卡片本身已是圆角矩形（四角透明），这里只兜一道同形状的圆角 */
+/* 卡片本身已是圆角矩形（四角透明），这里只兜一道同形状的圆角。
+   width/height:auto → 先按原图尺寸排；只有超出 max-width / max-height 时才缩小 */
 .coffee-modal-img {
   display: block;
-  width: 100%;
+  width: auto;
   height: auto;
+  max-width: 100%;
   max-height: calc(90vh - 16px);
-  object-fit: contain;
   border-radius: 12px 12px 12px 0;
 }
 .coffee-modal-close {
