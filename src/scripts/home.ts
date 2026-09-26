@@ -598,6 +598,13 @@ function openPanelMobile(key: 'w' | 'a' | 'r' | 'm'): void {
     navigateTo(PAGE_TARGETS[key]);
     return;
   }
+  // 窄屏底板几何完全由 CSS 铺满，这里必须清掉可能残留的内联几何。
+  // returnHomeFromPanel / restoreHomeExpanded 会把底板收成 0×0（内联样式优先级高于
+  // 样式表），不清就会把内容换进一个 0×0 的底板里 —— 点字母后只剩背景。
+  notesPanel.style.left = '';
+  notesPanel.style.top = '';
+  notesPanel.style.width = '';
+  notesPanel.style.height = '';
   isAnimating = true;
   panelOpen = true;
   openedOnMobile = true;

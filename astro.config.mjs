@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import rehypeMathLatex from './src/lib/rehype-math-latex.mjs';
+import remarkObsidianBreaks from './src/lib/remark-obsidian-breaks.mjs';
 
 // 站点地址：静态构建时用于生成规范链接。
 // 部署到其他域名时只需修改此处。
@@ -18,6 +19,9 @@ export default defineConfig({
           singleDollarTextMath: true,
         },
       ],
+      // 必须在 remark-math 之后：先把 $$…$$ 变成 math 节点，再补换行，
+      // 多行公式才不会被插进 <br>
+      remarkObsidianBreaks,
     ],
     rehypePlugins: [
       rehypeMathLatex,

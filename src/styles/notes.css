@@ -322,17 +322,10 @@ html {
 }
 .notes-cal-row {
   display: grid;
-  /* 第 1 列是月份标签，其余 31 列对应 1~31 号 */
-  grid-template-columns: 11px repeat(31, minmax(0, 1fr));
+  /* 31 列对应 1~31 号，没有月份标签列 */
+  grid-template-columns: repeat(31, minmax(0, 1fr));
   gap: 2px;
   align-items: center;
-}
-.notes-cal-month {
-  font-size: 9px;
-  line-height: 1;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-  color: var(--text-dim);
 }
 .notes-cal-day {
   aspect-ratio: 1;
@@ -1437,11 +1430,7 @@ html {
     gap: 3px;
   }
   .notes-cal-row {
-    grid-template-columns: 14px repeat(31, minmax(0, 1fr));
     gap: 3px;
-  }
-  .notes-cal-month {
-    font-size: 10px;
   }
   .archive-year-head,
   .archive-entry {

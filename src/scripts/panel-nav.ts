@@ -301,7 +301,11 @@ function showSkeleton(shellEl: HTMLElement, state: string, title: string): void 
 }
 
 /** 把解析好的目标页原位替换进底板；返回是否替换成功 */
-async function swapPanel(shellEl: HTMLElement, doc: Document, opts: { grow: boolean }): Promise<boolean> {
+async function swapPanel(
+  shellEl: HTMLElement,
+  doc: Document,
+  opts: { grow: boolean; prevState: string }
+): Promise<boolean> {
   const next = doc.getElementById('notesShell');
   const currentMain = shellEl.querySelector<HTMLElement>('[data-notes-region="main"]');
   const nextMain = next?.querySelector<HTMLElement>('[data-notes-region="main"]');
@@ -311,7 +315,12 @@ async function swapPanel(shellEl: HTMLElement, doc: Document, opts: { grow: bool
   const nextRail = next?.querySelector<HTMLElement>('[data-notes-region="rail"]');
   if (!next || !currentMain || !nextMain || !currentRail || !nextRail) return false;
 
-  const currentState = shellEl.dataset.notesState ?? '';
+  // 必须是「换页前」的状态：showSkeleton 为了切布局会提前把 dataset.notesState 改成
+  // 目标状态，这里再读就会读到目标值，于是 currentState === nextState，
+  // bothShared 误判为真 → 左栏不替换 —— 从文章回笔记时下方栏位仍是文章的大纲/同系列。
+  // 手机上没有 hover 预取（alreadyFetched 恒为 false），showSkeleton 必然执行，
+  // 所以这个 bug 在手机上是「经常」，在桌面上偶尔。
+  const currentState = opts.prevState;
   const nextState = next.dataset.notesState ?? '';
 
   // 左栏是否替换：Notes 的 Home / Archive / Tags 共享左栏，切换时不替换；
@@ -366,6 +375,8 @@ export async function loadPageIntoPanel(
   if (!shellEl) return;
   // 导航序号：长笔记加载期间用户又点了一篇时，先返回的旧响应不得覆盖新页面
   const seq = ++navSeq;
+  // 换页前的真实状态：必须在 showSkeleton 之前取（它会提前改写 dataset.notesState）
+  const prevState = shellEl.dataset.notesState ?? '';
   const alreadyFetched = pageCache.has(url);
   if (opts.immediate && !alreadyFetched) showSkeleton(shellEl, stateFromPath(url), opts.title ?? '');
   if (push) history.pushState({}, '', url);
@@ -380,7 +391,7 @@ export async function loadPageIntoPanel(
   if (seq !== navSeq) return;
 
   const doc = new DOMParser().parseFromString(html, 'text/html');
-  const swapped = await swapPanel(shellEl, doc, { grow: !opts.immediate || alreadyFetched });
+  const swapped = await swapPanel(shellEl, doc, { grow: !opts.immediate || alreadyFetched, prevState });
   if (!swapped) {
     if (seq === navSeq) window.location.href = url;
     return;
