@@ -27,3 +27,70 @@ body {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
+
+/* ---- 爱发电收款卡弹层 ----
+   标记在 BaseLayout（<body> 直下，避开 .notes-panel 的 backdrop-filter 包含块陷阱，
+   否则 position:fixed 只能盖住底板而不是整个视口）；由文章页的「请我喝咖啡」按钮打开。
+   z-index 90：高于常驻界面（底板 1 / 字母 6 / 喇叭 10 / 手机底栏 40），
+   低于只在转场与加载期间出现的遮罩（999 / 1000）。 */
+.coffee-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+/* display:flex 会盖掉 [hidden] 的默认 display:none，必须显式补回来 */
+.coffee-modal[hidden] {
+  display: none;
+}
+.coffee-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 5, 10, 0.74);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.coffee-modal-body {
+  position: relative;
+  /* 卡片是 710x765 的海报，二维码只占其宽度的 ~20%，所以给足展示尺寸 */
+  max-width: min(94vw, 540px);
+  max-height: 90vh;
+  padding: 8px;
+  background: rgba(26, 28, 33, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px 16px 16px 0;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.62);
+}
+/* 卡片本身已是圆角矩形（四角透明），这里只兜一道同形状的圆角 */
+.coffee-modal-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: calc(90vh - 16px);
+  object-fit: contain;
+  border-radius: 12px 12px 12px 0;
+}
+.coffee-modal-close {
+  position: absolute;
+  top: -11px;
+  right: -11px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  font-size: 17px;
+  line-height: 1;
+  color: var(--text-dim);
+  background: rgba(26, 28, 33, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: color 0.18s ease, border-color 0.18s ease;
+}
+.coffee-modal-close:hover,
+.coffee-modal-close:focus-visible {
+  color: #f0f2f5;
+  border-color: rgba(127, 192, 192, 0.5);
+}

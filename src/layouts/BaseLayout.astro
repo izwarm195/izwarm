@@ -3,6 +3,7 @@ import '../styles/tokens.css';
 import '../styles/global.css';
 import 'katex/dist/katex.min.css';
 import { site } from '../config/site';
+import { media } from '../config/media';
 
 interface Props {
   title?: string;
@@ -24,5 +25,26 @@ const { title = site.title } = Astro.props;
   </head>
   <body>
     <slot />
+
+    <!--
+      爱发电收款卡弹层（文章页「请我喝咖啡」按钮打开）。
+      刻意放在 <body> 直下：任何带 backdrop-filter / transform 的祖先都会成为
+      position:fixed 的包含块，塞进底板里就只能盖住底板而不是整个视口。
+      图片用 data-src 延迟到首次打开才加载（342KB），样式见 styles/global.css。
+    -->
+    <div class="coffee-modal" id="coffeeModal" hidden>
+      <div class="coffee-modal-backdrop" data-coffee-close></div>
+      <div class="coffee-modal-body" role="dialog" aria-modal="true" aria-label="请我喝咖啡">
+        <button class="coffee-modal-close" type="button" data-coffee-close aria-label="关闭">×</button>
+        <img
+          class="coffee-modal-img"
+          data-src={media.afdianCard}
+          alt="爱发电 · 扫码支持 izwarm"
+          width="710"
+          height="765"
+          decoding="async"
+        />
+      </div>
+    </div>
   </body>
 </html>

@@ -12,6 +12,10 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 export const MEDIA_BASE = base + '/media';
 
+/** public/media/icons 下的图标（Zest Interface Icons，MIT，见同目录 LICENSE-Zest.txt）。
+ *  图标本身是纯黑描边，页面上靠 CSS filter: invert() 变浅色。 */
+export const icon = (name: string): string => `${MEDIA_BASE}/icons/${name}.svg`;
+
 export const media = {
   avatar: base + '/avatar.svg',
   profile: `${MEDIA_BASE}/profile.jpg`,
@@ -30,4 +34,7 @@ export const media = {
   ambientAudio: `${MEDIA_BASE}/ambient-loop.mp3`,
   expandAudio: `${MEDIA_BASE}/Web_expand.mp3`,
   collapseAudio: `${MEDIA_BASE}/Web_dexpand.mp3`,
+  // 爱发电收款卡：由 afdian-izwarm.jpg 裁掉外围紫框后导出（只保留圆角矩形卡片，
+  // 四角透明）。原图保留在同一目录作为改图来源。
+  afdianCard: `${MEDIA_BASE}/afdian-card.png`,
 } as const;

@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Landing from '../../components/home/Landing.astro';
 import ArticleSidebar from '../../components/notes/ArticleSidebar.astro';
+import ArticleActions from '../../components/notes/ArticleActions.astro';
 import { getCollection } from 'astro:content';
 import { countWords, formatDate, getPublishedNotes, getSiblingNotes, url } from '../../lib/notes';
 import type { Note } from '../../lib/notes';
@@ -28,23 +29,26 @@ const words = countWords(note.body ?? '');
     <Fragment slot="notes-left">
       <ArticleSidebar note={note} siblings={siblings} toc={toc} />
     </Fragment>
-    <article slot="notes-main" class="article">
-      {note.data.cover && <img class="article-cover" src={url(note.data.cover)} alt="" />}
-      <h1>{note.data.title}</h1>
-      <div class="article-meta">
-        <time datetime={formatDate(note.data.publishDate)}>发布于 {formatDate(note.data.publishDate)}</time>
-        {note.data.updatedDate && (
-          <time datetime={formatDate(note.data.updatedDate)}>更新于 {formatDate(note.data.updatedDate)}</time>
-        )}
-        {note.data.series.length > 0 && <span>{note.data.series.join(' / ')}</span>}
-        {note.data.tags.map((tag) => (
-          <a href={url(`/notes/tags/${encodeURIComponent(tag)}/`)}>#{tag}</a>
-        ))}
-        <span>{words} 字数</span>
-      </div>
-      <div class="article-body">
-        <Content />
-      </div>
-    </article>
+    <Fragment slot="notes-main">
+      <article class="article">
+        {note.data.cover && <img class="article-cover" src={url(note.data.cover)} alt="" />}
+        <h1>{note.data.title}</h1>
+        <div class="article-meta">
+          <time datetime={formatDate(note.data.publishDate)}>发布于 {formatDate(note.data.publishDate)}</time>
+          {note.data.updatedDate && (
+            <time datetime={formatDate(note.data.updatedDate)}>更新于 {formatDate(note.data.updatedDate)}</time>
+          )}
+          {note.data.series.length > 0 && <span>{note.data.series.join(' / ')}</span>}
+          {note.data.tags.map((tag) => (
+            <a href={url(`/notes/tags/${encodeURIComponent(tag)}/`)}>#{tag}</a>
+          ))}
+          <span>{words} 字数</span>
+        </div>
+        <div class="article-body">
+          <Content />
+        </div>
+      </article>
+      <ArticleActions />
+    </Fragment>
   </Landing>
 </BaseLayout>

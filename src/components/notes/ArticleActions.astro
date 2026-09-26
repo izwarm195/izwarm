@@ -1,0 +1,28 @@
+---
+/**
+ * 文章底部操作底板：分享链接（复制当前地址）+ 请我喝咖啡（弹出爱发电收款卡）。
+ *
+ * 与 .article 卡片同材质（磨砂 + 左下直角），作为它的兄弟节点另起一块底板，
+ * 而不是嵌进文章卡片里 —— 手机端改造时特意删掉过「卡片套卡片」那一层。
+ *
+ * 两点为什么这么写：
+ * 1. 交互逻辑不在这里：文章页走 SPA 换页时区域内容会被整体替换，组件内的 <script>
+ *    只会在整页加载时执行一次，绑在元素上的监听下一次换页就丢了。所以两个按钮都走
+ *    notes.ts 里的 document 委托（靠 data-article-action 钩子）。
+ * 2. 收款卡弹层也不在这里，而在 BaseLayout：position:fixed 一旦有祖先带
+ *    backdrop-filter（.notes-panel 就有），包含块就会变成那个祖先，弹层的 inset:0
+ *    只能盖住底板而不是整个视口。放到 <body> 直下才真正全屏。其样式在 global.css。
+ */
+import { icon } from '../../config/media';
+---
+
+<section class="article-actions" aria-label="文章操作">
+  <button class="action-btn" type="button" data-article-action="share">
+    <img class="action-icon" src={icon('copy')} alt="" width="16" height="16" />
+    <span class="action-label">分享链接</span>
+  </button>
+  <button class="action-btn" type="button" data-article-action="coffee">
+    <img class="action-icon" src={icon('lightbulb')} alt="" width="16" height="16" />
+    <span class="action-label">请我喝咖啡</span>
+  </button>
+</section>

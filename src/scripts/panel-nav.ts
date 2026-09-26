@@ -103,7 +103,8 @@ export function initToc(): void {
 }
 
 // ---------- 代码块 / 公式复制按钮（替换后重新初始化） ----------
-function fallbackCopy(text: string, done: () => void): void {
+/** execCommand 兜底：Clipboard API 只在安全上下文里存在（虚拟主机是 http） */
+function fallbackCopy(text: string): boolean {
   const ta = document.createElement('textarea');
   ta.value = text;
   ta.setAttribute('readonly', '');
@@ -111,13 +112,30 @@ function fallbackCopy(text: string, done: () => void): void {
   ta.style.opacity = '0';
   document.body.appendChild(ta);
   ta.select();
+  let ok = false;
   try {
-    document.execCommand('copy');
+    ok = document.execCommand('copy');
   } catch {
     /* 复制失败不阻断交互 */
   }
   ta.remove();
-  done();
+  return ok;
+}
+
+/**
+ * 复制文本到剪贴板。
+ * 优先 Clipboard API（要求安全上下文：https 或 localhost）；站点在
+ * http://www.izwarm.top 上是非安全上下文，navigator.clipboard 直接是 undefined，
+ * 所以 execCommand 这条兜底不能删。
+ */
+export function copyText(text: string): Promise<boolean> {
+  if (navigator.clipboard?.writeText) {
+    return navigator.clipboard.writeText(text).then(
+      () => true,
+      () => fallbackCopy(text)
+    );
+  }
+  return Promise.resolve(fallbackCopy(text));
 }
 
 function attachCopyButton(container: HTMLElement, label: string, getText: () => string): void {
@@ -134,7 +152,6 @@ function attachCopyButton(container: HTMLElement, label: string, getText: () => 
   icon.height = 15;
   btn.appendChild(icon);
   btn.addEventListener('click', () => {
-    const text = getText();
     const done = () => {
       btn.classList.add('copied');
       icon.src = `${siteBase}/media/icons/circled-check.svg`;
@@ -143,11 +160,7 @@ function attachCopyButton(container: HTMLElement, label: string, getText: () => 
         icon.src = `${siteBase}/media/icons/copy.svg`;
       }, 1400);
     };
-    if (navigator.clipboard?.writeText) {
-      navigator.clipboard.writeText(text).then(done, () => fallbackCopy(text, done));
-    } else {
-      fallbackCopy(text, done);
-    }
+    void copyText(getText()).then(done);
   });
   container.appendChild(btn);
 }

@@ -8,6 +8,7 @@
  *   两栏页面（Projects / Works / About）与 Notes 之间的切换走同一机制。
  */
 import {
+  copyText,
   initCodeCopy,
   initToc,
   isNarrowLayout,
@@ -346,6 +347,75 @@ if (shellEl && 'fetch' in window) {
     }
   });
 }
+
+// ---------- 文章底部操作底板：分享链接 / 请我喝咖啡 ----------
+// 走 document 委托而不是给按钮单独绑监听：文章页 SPA 换页时区域内容会被整体替换，
+// 绑在元素上的监听下一次换页就丢了（系列树踩过这个坑）。
+let coffeeModalReturnFocus: HTMLElement | null = null;
+
+function coffeeModalEl(): HTMLElement | null {
+  return document.getElementById('coffeeModal');
+}
+
+function openCoffee(): void {
+  const modal = coffeeModalEl();
+  if (!modal || !modal.hidden) return;
+  coffeeModalReturnFocus = document.activeElement as HTMLElement | null;
+  // 收款卡 342KB，延迟到首次打开才加载
+  const img = modal.querySelector<HTMLImageElement>('.coffee-modal-img');
+  if (img && !img.src) {
+    const src = img.dataset.src;
+    if (src) img.src = src;
+  }
+  modal.hidden = false;
+  modal.querySelector<HTMLButtonElement>('.coffee-modal-close')?.focus();
+}
+
+function closeCoffee(): void {
+  const modal = coffeeModalEl();
+  if (!modal || modal.hidden) return;
+  modal.hidden = true;
+  coffeeModalReturnFocus?.focus();
+  coffeeModalReturnFocus = null;
+}
+
+/** 分享用地址：去掉 query 与 hash，只留站点根 + 文章路径 */
+function shareUrl(): string {
+  return location.origin + location.pathname;
+}
+
+document.addEventListener('click', (e) => {
+  const target = e.target as HTMLElement | null;
+  if (target?.closest?.('[data-coffee-close]')) {
+    closeCoffee();
+    return;
+  }
+  const btn = target?.closest?.<HTMLButtonElement>('[data-article-action]');
+  if (!btn) return;
+  const action = btn.getAttribute('data-article-action');
+
+  if (action === 'coffee') {
+    openCoffee();
+    return;
+  }
+  if (action !== 'share') return;
+
+  const label = btn.querySelector<HTMLElement>('.action-label');
+  const original = label?.textContent ?? '';
+  void copyText(shareUrl()).then(() => {
+    btn.classList.add('is-done');
+    if (label) label.textContent = '已复制';
+    window.setTimeout(() => {
+      btn.classList.remove('is-done');
+      if (label) label.textContent = original;
+    }, 1500);
+  });
+});
+
+// Esc 关闭弹层（弹层在文章页里，换页后节点会被替换，所以监听挂在 document 上）
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeCoffee();
+});
 
 // ---------- 文章侧栏的折叠面板（大纲 / 同系列） ----------
 // 桌面端保持改造前的行为：始终展开，点标题也不折叠（preventDefault 会取消

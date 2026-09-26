@@ -772,6 +772,73 @@ html {
   background: rgba(62, 117, 117, 0.26);
 }
 
+/* ---- 文章底部操作底板（分享链接 / 请我喝咖啡）----
+   与 .article 同材质、同宽，但另起一块底板（不嵌进文章卡里，避免卡片套卡片） */
+.article-actions {
+  width: min(100%, 860px);
+  margin: 16px auto 0;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  background: rgba(26, 28, 33, 0.82);
+  backdrop-filter: blur(22px) saturate(1.02) brightness(0.78);
+  -webkit-backdrop-filter: blur(22px) saturate(1.02) brightness(0.78);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px 16px 16px 0; /* 与文章卡一致的左下直角 */
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.32);
+}
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 14px;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1;
+  color: var(--text-dim);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px 10px 10px 0;
+  cursor: pointer;
+  transition: color 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+}
+.action-btn:hover,
+.action-btn:focus-visible {
+  color: #f0f2f5;
+  background: rgba(127, 192, 192, 0.18);
+  border-color: rgba(127, 192, 192, 0.5);
+}
+/* 图标与代码复制按钮同一套处理：黑描边图标反色提亮 */
+.action-btn .action-icon {
+  display: block;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
+  filter: invert(0.72);
+  transition: filter 0.18s ease;
+}
+.action-btn:hover .action-icon,
+.action-btn:focus-visible .action-icon {
+  filter: invert(0.92);
+}
+/* 复制成功：整颗按钮转主题青，并把文案换成「已复制」 */
+.action-btn.is-done {
+  color: #a2d6d6;
+  background: rgba(62, 117, 117, 0.3);
+  border-color: rgba(127, 192, 192, 0.5);
+}
+.action-btn.is-done .action-icon {
+  filter: invert(0.92);
+}
+
+/* ---- 咖啡按钮弹出的爱发电收款卡弹层：标记在 BaseLayout、样式在 global.css ----
+   （放 body 直下才能避开 .notes-panel 的 backdrop-filter 包含块陷阱） */
+
 /* ---- Obsidian 风格 callout 徽标（Zest 线性图标，黑色底 → 反色提亮） ---- */
 .article-body img.callout-badge {
   display: inline-block;
