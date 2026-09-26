@@ -282,11 +282,7 @@ html {
 
 /* ---- 日历 ---- */
 .notes-calendar {
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.notes-calendar::-webkit-scrollbar {
-  display: none;
+  overflow: hidden;
 }
 .notes-calendar-head {
   display: flex;
@@ -316,11 +312,27 @@ html {
   color: var(--text-primary);
   background: var(--bg-obsidian-soft);
 }
+/* 一年 = 12 行（月）× 31 列（日），行内按自然日滑动。
+   不再用 53 列的年份条 + min-width 撑宽：窄侧栏里那套每行右侧会被裁掉，
+   滚动条又是隐藏的，看起来就像"某些天没有热力"。 */
 .notes-calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(53, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 2px;
-  min-width: 420px;
+}
+.notes-cal-row {
+  display: grid;
+  /* 第 1 列是月份标签，其余 31 列对应 1~31 号 */
+  grid-template-columns: 11px repeat(31, minmax(0, 1fr));
+  gap: 2px;
+  align-items: center;
+}
+.notes-cal-month {
+  font-size: 9px;
+  line-height: 1;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-dim);
 }
 .notes-cal-day {
   aspect-ratio: 1;
@@ -331,13 +343,6 @@ html {
 }
 .notes-cal-day[data-count='0'] {
   opacity: 0.35;
-}
-/* 当天无提交但仍有文章：保持可点击（跳归档）但按提交热力显示为空，
-   用浅描边区分于普通空日，避免“看不见的链接” */
-a.notes-cal-day[data-count='0'] {
-  opacity: 1;
-  background: var(--bg-obsidian-soft);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
 }
 .notes-cal-day[data-count='1'] {
   background: rgba(120, 122, 130, 0.45);
@@ -1427,10 +1432,16 @@ a.notes-cal-day[data-count='0'] {
     padding: 7px 11px;
     font-size: 12px;
   }
-  /* 热力图：格子放大到 ~10px，超宽部分横向滑动 */
+  /* 热力图：手机上线宽更宽，格子跟着变大（月份矩阵天然贴合，不需要横向滑动） */
   .notes-calendar-grid {
-    min-width: 560px;
     gap: 3px;
+  }
+  .notes-cal-row {
+    grid-template-columns: 14px repeat(31, minmax(0, 1fr));
+    gap: 3px;
+  }
+  .notes-cal-month {
+    font-size: 10px;
   }
   .archive-year-head,
   .archive-entry {

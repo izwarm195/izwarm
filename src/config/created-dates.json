@@ -19,6 +19,8 @@
   "CPP/Summaries/CS 26-07-21 Libraries.md": "2026-07-21",
   "CPP/Summaries/CS 26-07-21 Multiple Return.md": "2026-07-21",
   "CPP/Summaries/CS 26-07-25 function pointers & lambda.md": "2026-07-25",
+  "CPP/Summaries/CS 26-09-18 二级C++上机综合案例三例.md": "2026-09-18",
+  "CPP/Summaries/CS 26-09-18 二级C++选择题公共基础知识速补.md": "2026-09-18",
   "CPP/Summaries/Summaries.md": "2026-07-10",
   "CPP/Tips/Lambda.md": "2026-07-16",
   "CPP/Tips/Objects on Stack&Heap.md": "2026-07-16",
@@ -57,6 +59,7 @@
   "Machine & Deep Learning/NNDL/NNDL 26-09-08 前馈神经网络练习（第一部分）.md": "2026-09-09",
   "Machine & Deep Learning/NNDL/NNDL 26-09-08 前馈神经网络练习（第二部分）.md": "2026-09-10",
   "Machine & Deep Learning/NNDL/NNDL 26-09-16 卷积神经网络练习.md": "2026-09-16",
+  "Machine & Deep Learning/NNDL/NNDL 26-09-26 循环神经网络练习.md": "2026-09-26",
   "Machine & Deep Learning/Python/Machine & Deep Learning.md": "2026-07-26",
   "Machine & Deep Learning/Python/Numpy 函数汇总.md": "2026-07-26",
   "Machine & Deep Learning/Python/Numpy 对话总结 I.md": "2026-07-29",
@@ -89,5 +92,8 @@
   "Signals/Signals & Systems/Text Book/第六章 离散时间信号与系统时域分析.md": "2026-08-02",
   "Signals/Signals & Systems/Text Book/第四章 连续时间系统实频域分析.md": "2026-08-02",
   "Signals/Signals & Systems/Text Book/附录.md": "2026-08-02",
-  "Signals/Signals & Systems/信号与系统阅读随记.md": "2026-07-31"
+  "Signals/Signals & Systems/信号与系统阅读随记.md": "2026-07-31",
+  "Signals/数字电路与系统/《数字电路与系统》李文渊第2版 习题&解答.md": "2026-09-07",
+  "Signals/数字电路与系统/第2章 数制与码制.md": "2026-09-07",
+  "Signals/数字电路与系统/第3章 逻辑函数及其简化.md": "2026-09-10"
 }

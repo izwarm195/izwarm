@@ -335,10 +335,13 @@ if (shellEl && 'fetch' in window) {
 
   window.addEventListener('popstate', () => {
     const path = location.pathname;
-    if (isPanelPath(path)) {
+    // 底板已被收起时（窄屏「返回首页」字母是就地收起的）不能再往不可见的底板里换内容，
+    // 否则回退后页面看起来是空的
+    const panelVisible = document.getElementById('notesPanel')?.classList.contains('active') ?? false;
+    if (isPanelPath(path) && panelVisible) {
       void loadPageIntoPanel(location.pathname + location.search, false);
     } else {
-      // 离开面板回首页：整页加载，保证首页状态干净
+      // 离开面板回首页 / 底板已收起：整页加载，保证状态干净
       location.reload();
     }
   });

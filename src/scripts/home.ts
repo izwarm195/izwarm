@@ -885,6 +885,43 @@ function restoreHomeExpanded(pos: PositionMap): void {
   isAnimating = false;
 }
 
+/**
+ * 窄屏底部工具栏的「返回首页」字母：就地收起底板，回到主页「字母已展开」态。
+ * 不做整页跳转 —— 那会重新拉一遍几 MB 的背景视频，且首页还要再点一下背景才看见字母。
+ * 返回 false 表示当前不满足就地返回（量不到字母尺寸等），调用方放行默认跳转。
+ */
+function returnHomeFromPanel(): boolean {
+  if (!notesPanel || !panelOpen) return false;
+  const data = computeLetterPositions();
+  // 字母图尚未就绪时 rect 为 0，就地摆位会算歪 —— 交给整页跳转兜底
+  if (!data || data.izW <= 0 || data.izH <= 0) return false;
+  const pos = data.positions;
+
+  panelOpen = false;
+  isAnimating = true;
+  history.pushState(null, '', siteBase + '/');
+
+  // 字母先摆到展开位并把舞台压到隐藏，再整体淡入：全程看不到"未展开"的一帧
+  LETTER_KEYS.forEach(function (key) {
+    const el = document.getElementById('letter-' + key);
+    if (el) gsap.set(el, { x: pos[key].x, y: pos[key].y, opacity: 1, filter: 'blur(0px)' });
+  });
+  gsap.set('#letter-iz', { opacity: 1 });
+  gsap.set('#logoFull', { opacity: 0 });
+  gsap.set('#logoStage', { autoAlpha: 0 });
+  notesPanel.style.pointerEvents = 'none';
+
+  gsap.to('#logoStage', {
+    autoAlpha: 1,
+    duration: 0.3,
+    ease: 'power1.out',
+    onComplete: function () {
+      restoreHomeExpanded(pos);
+    },
+  });
+  return true;
+}
+
 landing?.addEventListener('click', function (e) {
   const target = e.target as HTMLElement;
   if (target.closest('.logo-letter') || target.closest('.sound-toggle')) return;
@@ -928,6 +965,16 @@ LETTER_KEYS.forEach(function (key) {
   el.addEventListener('pointercancel', function () {
     setLetterPressed(key, false);
   });
+});
+
+// 窄屏底部工具栏的「返回首页」字母：拦下默认跳转，就地回主页展开态（见 returnHomeFromPanel）。
+// 桌面端这个元素是 display:none，走不到这里；就地返回失败时放行 href 上的 ?letters=1 兜底。
+document.addEventListener('click', function (e) {
+  const link = (e.target as HTMLElement | null)?.closest?.('.rail-home') as HTMLAnchorElement | null;
+  if (!link) return;
+  if (!isMobileLayout() || !panelOpen) return;
+  if (!returnHomeFromPanel()) return;
+  e.preventDefault();
 });
 
 // 指针在其他位置松开时兜底恢复
@@ -1061,12 +1108,19 @@ window.addEventListener('load', function () {
   gsap.set(el, { x: vw / 2 - margin - RAIL_GAP - getRailRefW() / 2, y: 0 });
 });
 
-// 从底栏「返回首页」字母进来（?letters=1）：主页直接落到字母展开态，
-// 不必再点一下背景才看见 w/a/r/m。
-// 放在 load 里而不是 DOMContentLoaded：字母图未就绪时 rect 尺寸不对，展开位会算歪。
-window.addEventListener('load', function () {
+// 从底栏「返回首页」字母进来（?letters=1，就地返回失败时的整页兜底）：
+// 主页直接落到字母展开态，不必再点一下背景才看见 w/a/r/m。
+function expandFromLettersFlag(): void {
   if (!new URLSearchParams(location.search).has('letters')) return;
   // 抹掉标记，刷新/回退时不再自动展开（点背景仍可再展开）
   history.replaceState(null, '', siteBase + '/');
   expandLogo({ silent: true });
-});
+}
+
+// 放在 load 而非 DOMContentLoaded：字母图未就绪时 rect 尺寸不对，展开位会算歪。
+// 但脚本若晚于 load 执行（缓存命中等）就再也等不到 load，所以按 readyState 补一次。
+if (document.readyState === 'complete') {
+  expandFromLettersFlag();
+} else {
+  window.addEventListener('load', expandFromLettersFlag);
+}

@@ -27,6 +27,17 @@ function calLevel(n: number): number {
   if (n <= 4) return 3;
   return 4;
 }
+
+/**
+ * 按月份切成 12 行 × 31 列（列 = 日）。
+ * 原来的 53 列「一年一条」布局配 min-width: 420/560px，而左侧栏只有 206~286px，
+ * 于是每行右侧被裁掉、滚动条又是隐藏的 —— 表现为「9-2、9-3 有，9-6 往后全黑」，
+ * 其实格子都在，只是被裁在可视区外。12 行月份矩阵宽度天然贴合侧栏，不再有裁切。
+ */
+const calendarMonths = Array.from({ length: 12 }, (_, m) => ({
+  month: m + 1,
+  days: calendar.days.filter((d) => d.month === m),
+}));
 ---
 
 <section class="notes-calendar" aria-label={`${year} 年写作热力图`}>
@@ -47,22 +58,32 @@ function calLevel(n: number): number {
     )}
   </div>
   <div class="notes-calendar-grid">
-    {calendar.days.map((day) => {
-      const level = calLevel(day.notes);
-      const tip = `${day.date} · ${day.notes} 篇`;
-      if (day.notes === 0) {
-        return <span class="notes-cal-day" data-count="0" aria-hidden="true"></span>;
-      }
-      // 有文章的日期可点击跳转到归档对应锚点
-      return (
-        <a
-          class="notes-cal-day"
-          data-count={level}
-          href={`${url('/notes/archive/')}#${day.date}`}
-          title={tip}
-          aria-label={tip}
-        ></a>
-      );
-    })}
+    {calendarMonths.map(({ month, days }) => (
+      <div class="notes-cal-row">
+        <span class="notes-cal-month" aria-hidden="true">{month}</span>
+        {days.map((day) => {
+          const level = calLevel(day.notes);
+          const tip = `${day.date} · ${day.notes} 篇`;
+          // 显式落列：短月留下的空档不占位，1 号永远对齐在同一列
+          const col = Number(day.date.slice(-2)) + 1;
+          if (day.notes === 0) {
+            return (
+              <span class="notes-cal-day" data-count="0" style={`grid-column:${col}`} aria-hidden="true" />
+            );
+          }
+          // 有文章的日期可点击跳转到归档对应锚点
+          return (
+            <a
+              class="notes-cal-day"
+              data-count={level}
+              style={`grid-column:${col}`}
+              href={`${url('/notes/archive/')}#${day.date}`}
+              title={tip}
+              aria-label={tip}
+            />
+          );
+        })}
+      </div>
+    ))}
   </div>
 </section>

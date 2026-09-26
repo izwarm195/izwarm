@@ -14,7 +14,7 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
 
-const ROOTS = ['CPP', 'English', 'Machine & Deep Learning', 'Signals/Signals & Systems'];
+const ROOTS = ['CPP', 'English', 'Machine & Deep Learning', 'Signals/Signals & Systems', 'Signals/数字电路与系统'];
 const SKIP_DIRS = new Set(['.obsidian', '.trash', 'Templates', 'Daily', 'Journal', 'Canvas', 'Private', 'Attachments', '_QuickAdd']);
 const _posArg = process.argv.slice(2).find((a) => !a.startsWith('--'));
 const VAULT = _posArg || process.env.OBSIDIAN_VAULT || 'D:\\搞学术\\大二暑\\Obsidian';
@@ -88,6 +88,16 @@ function slugify(s) {
 function parseDateStr(s, yearHint) {
   if (!s) return null;
   const raw = String(s).trim();
+  // 完整年份的 ISO 日期（frontmatter 的 Date / created / created_at 常直接这么写）。
+  // 原来只认两位年份，`Date: 2026-09-07` 一路落到 null，笔记日期只能退回
+  // 创建时间清单 / git 首次提交 —— 声明日期被无声忽略，热力图与归档就跟着错位。
+  const iso = raw.match(
+    /^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2}))?(?:\.\d+)?(Z|[+-]\d{2}:?\d{2})?)?$/
+  );
+  if (iso) {
+    const [, yy, mm, dd, hh, mi, ss, tz] = iso;
+    return hh ? `${yy}-${mm}-${dd}T${hh}:${mi}:${ss ?? '00'}${tz ?? ''}` : `${yy}-${mm}-${dd}`;
+  }
   const t = raw.match(/^(\d{2})-(\d{2})-(\d{2})[T\s](\d{2}):(\d{2}):(\d{2})$/);
   if (t) return `20${t[1]}-${t[2]}-${t[3]}T${t[4]}:${t[5]}:${t[6]}`;
   // 年份占位符（YY / YYYY 等未替换的字母）

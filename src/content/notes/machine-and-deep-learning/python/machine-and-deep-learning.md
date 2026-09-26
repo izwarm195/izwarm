@@ -4,7 +4,7 @@ slug: "machine-and-deep-learning/python/machine-and-deep-learning"
 description: "Numpy"
 publishDate: "2026-07-26"
 createdAt: "2026-07-26T00:00:00Z"
-updatedDate: "2026-09-16T23:07:48"
+updatedDate: "2026-09-26T16:17:26"
 tags: ["machine-learning","python","moc"]
 series: ["Machine & Deep Learning","Python"]
 ---
@@ -36,4 +36,4 @@ Numpy
 - [NNDL 26-09-08 前馈神经网络练习（第一部分）](/notes/machine-and-deep-learning/nndl/nndl-26-09-08-前馈神经网络练习-第一部分/)
 - [NNDL 26-09-08 前馈神经网络练习（第二部分）](/notes/machine-and-deep-learning/nndl/nndl-26-09-08-前馈神经网络练习-第二部分/)
 - [NNDL 26-09-16 卷积神经网络练习](/notes/machine-and-deep-learning/nndl/nndl-26-09-16-卷积神经网络练习/)
-
+- [NNDL 26-09-26 循环神经网络练习](/notes/machine-and-deep-learning/nndl/nndl-26-09-26-循环神经网络练习/)
