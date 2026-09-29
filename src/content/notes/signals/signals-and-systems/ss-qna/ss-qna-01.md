@@ -1,7 +1,7 @@
 ---
 title: "SS-QNA-01"
 slug: "signals/signals-and-systems/ss-qna/ss-qna-01"
-description: "h(t) left sum_{i 1}^{n}A_{i} mathrm{e}^{ alpha_{i}t} right u(t)"
+description: "由冲激响应的微分方程，得到的这个解的形式 h(t)。"
 publishDate: "2026-08-02"
 createdAt: "2026-08-02T00:00:00Z"
 tags: ["SS-QNA","signals","signals-systems"]

@@ -1,7 +1,7 @@
 ---
 title: "Summaries"
 slug: "cpp/summaries/summaries"
-description: "CS 26 07 09 const correctness (/notes/cpp/summaries/const correctness/)"
+description: "CS 26 07 09 const correctness"
 publishDate: "2026-07-10"
 createdAt: "2026-07-10T00:00:00Z"
 tags: ["cpp","summaries","moc"]

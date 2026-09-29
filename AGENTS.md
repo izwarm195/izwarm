@@ -2,12 +2,12 @@
 
 <!-- dsh-openwolf:start -->
 # Code Map
-Generated 2026-09-24T14:07:47.720Z · 171 files · 21924 lines · 0.37s
+Generated 2026-09-29T05:24:25.933Z · 189 files · 28711 lines · 1.19s
 
 ## ./
 - `CHANGES.md` — 585 lines · 第一阶段目标是忠实迁移，以下是相对原源码的全部偏离及原因。
 - `README.md` — 295 lines · 基于 Astro + TypeScript 重建的个人主页（第一阶段：首页一比一迁移）。
-- `astro.config.mjs` — 40 lines · export default defineConfig({
+- `astro.config.mjs` — 44 lines · export default defineConfig({
 - `package-lock.json` — 0 lines · [file too large]
 - `package.json` — 28 lines · izwarm
 - `tsconfig.json` — 5 lines · {
@@ -26,6 +26,7 @@ Generated 2026-09-24T14:07:47.720Z · 171 files · 21924 lines · 0.37s
 - `public/media/Web_dexpand.mp3` — 0 lines · [file too large]
 - `public/media/Web_expand.mp3` — 0 lines · [file too large]
 - `public/media/a.png` — 0 lines · [binary]
+- `public/media/afdian-card.png` — 0 lines · [file too large]
 - `public/media/afdian-izwarm.jpg` — 0 lines · [file too large]
 - `public/media/ambient-loop.mp3` — 0 lines · [file too large]
 - `public/media/bilibili.svg` — 1 lines · <?xml version="1.0" encoding="utf-8"?><!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
@@ -54,22 +55,23 @@ Generated 2026-09-24T14:07:47.720Z · 171 files · 21924 lines · 0.37s
 - `public/media/icons/triangle-exclaimation.svg` — 0 lines · <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M13.752 2.111c-.…
 
 ## scripts
-- `scripts/sync-obsidian.mjs` — 795 lines · ROOTS, SKIP_DIRS, _posArg, VAULT, OUT, MANIFEST · const ROOTS = ['CPP', 'English', 'Machine & Deep Learning', 'Signals/Signals & Systems'];
+- `scripts/sync-obsidian.mjs` — 834 lines · ROOTS, SKIP_DIRS, _posArg, VAULT, OUT, MANIFEST · const ROOTS = [
 
 ## src
 - `src/content.config.ts` — 43 lines · notes, projects, works, collections · Defines a zod schema in content.config.ts
 
 ## src/components/common
-- `src/components/common/PanelRail.astro` — 46 lines · interface Props {
+- `src/components/common/PanelRail.astro` — 47 lines · interface Props {
 
 ## src/components/home
-- `src/components/home/Landing.astro` — 107 lines · interface Props {
+- `src/components/home/Landing.astro` — 108 lines · interface Props {
 
 ## src/components/notes
 - `src/components/notes/ArchiveList.astro` — 56 lines · interface Props {
+- `src/components/notes/ArticleActions.astro` — 28 lines · <section class="article-actions" aria-label="文章操作">
 - `src/components/notes/ArticleSidebar.astro` — 60 lines · interface Props {
-- `src/components/notes/NotesCalendar.astro` — 75 lines · interface Props {
-- `src/components/notes/NotesRail.astro` — 38 lines · interface Props {
+- `src/components/notes/NotesCalendar.astro` — 88 lines · interface Props {
+- `src/components/notes/NotesRail.astro` — 39 lines · interface Props {
 - `src/components/notes/NotesShell.astro` — 36 lines · const NOTES_STATES = ['home', 'article', 'archive', 'tags'];
 - `src/components/notes/NotesSidebar.astro` — 18 lines · interface Props {
 - `src/components/notes/NotesStats.astro` — 26 lines · interface Props {
@@ -78,9 +80,9 @@ Generated 2026-09-24T14:07:47.720Z · 171 files · 21924 lines · 0.37s
 - `src/components/notes/SeriesNode.astro` — 29 lines · interface Props {
 
 ## src/config
-- `src/config/commit-activity.json` — 29 lines · {
-- `src/config/created-dates.json` — 93 lines · {
-- `src/config/media.ts` — 33 lines · base, MEDIA_BASE, media · Exports MEDIA_BASE, media
+- `src/config/commit-activity.json` — 32 lines · {
+- `src/config/created-dates.json` — 108 lines · {
+- `src/config/media.ts` — 40 lines · base, MEDIA_BASE, icon, media · Exports MEDIA_BASE, icon, media
 - `src/config/site.ts` — 9 lines · site · Exports site
 
 ## src/content/notes/cpp/examples
@@ -107,6 +109,8 @@ Generated 2026-09-24T14:07:47.720Z · 171 files · 21924 lines · 0.37s
 - `src/content/notes/cpp/summaries/static.md` — 207 lines · title: "static"
 - `src/content/notes/cpp/summaries/summaries.md` — 19 lines · title: "Summaries"
 - `src/content/notes/cpp/summaries/vector-optimizing.md` — 77 lines · title: "Vector Optimizing"
+- `src/content/notes/cpp/summaries/二级c-上机综合案例三例.md` — 629 lines · title: "二级C++上机综合案例三例"
+- `src/content/notes/cpp/summaries/二级c-选择题公共基础知识速补.md` — 1037 lines · title: "二级C++选择题公共基础知识速补"
 
 ## src/content/notes/cpp/tips
 - `src/content/notes/cpp/tips/lambda.md` — 244 lines · title: "Lambda"
@@ -154,6 +158,7 @@ Generated 2026-09-24T14:07:47.720Z · 171 files · 21924 lines · 0.37s
 - `src/content/notes/machine-and-deep-learning/nndl/nndl-26-09-08-前馈神经网络练习-第一部分.md` — 343 lines · title: "NNDL 26-09-08 前馈神经网络练习（第一部分）"
 - `src/content/notes/machine-and-deep-learning/nndl/nndl-26-09-08-前馈神经网络练习-第二部分.md` — 395 lines · title: "NNDL 26-09-08 前馈神经网络练习（第二部分）"
 - `src/content/notes/machine-and-deep-learning/nndl/nndl-26-09-16-卷积神经网络练习.md` — 685 lines · title: "NNDL 26-09-16 卷积神经网络练习"
+- `src/content/notes/machine-and-deep-learning/nndl/nndl-26-09-26-循环神经网络练习.md` — 463 lines · title: "NNDL 26-09-26 循环神经网络练习"
 
 ## src/content/notes/machine-and-deep-learning/python
 - `src/content/notes/machine-and-deep-learning/python/machine-and-deep-learning.md` — 39 lines · title: "Machine & Deep Learning"
@@ -172,6 +177,17 @@ Generated 2026-09-24T14:07:47.720Z · 171 files · 21924 lines · 0.37s
 - `src/content/notes/machine-and-deep-learning/python/python-杂记-vi.md` — 455 lines · title: "Python 杂记 VI"
 - `src/content/notes/machine-and-deep-learning/python/python-杂记-vii.md` — 301 lines · title: "Python 杂记 VII"
 - `src/content/notes/machine-and-deep-learning/python/tensor-and-numpy-函数对比.md` — 342 lines · title: "Tensor & Numpy 函数对比"
+
+## src/content/notes/physics
+- `src/content/notes/physics/物理学-下册公式总结.md` — 32 lines · title: "《物理学》下册公式总结"
+- `src/content/notes/physics/第九章-振动-公式总结.md` — 399 lines · title: "第九章 振动 公式总结"
+- `src/content/notes/physics/第十一章-光学-公式总结.md` — 692 lines · title: "第十一章 光学 公式总结"
+- `src/content/notes/physics/第十三章-热力学基础-公式总结.md` — 488 lines · title: "第十三章 热力学基础 公式总结"
+- `src/content/notes/physics/第十二章-气体动理论-公式总结.md` — 344 lines · title: "第十二章 气体动理论 公式总结"
+- `src/content/notes/physics/第十五章-量子物理-公式总结.md` — 683 lines · title: "第十五章 量子物理 公式总结"
+- `src/content/notes/physics/第十六章-原子核与粒子物理简介-公式总结.md` — 228 lines · title: "第十六章 原子核与粒子物理简介 公式总结"
+- `src/content/notes/physics/第十四章-相对论-公式总结.md` — 381 lines · title: "第十四章 相对论 公式总结"
+- `src/content/notes/physics/第十章-波动-公式总结.md` — 463 lines · title: "第十章 波动 公式总结"
 
 ## src/content/notes/signals/signals-and-systems
 - `src/content/notes/signals/signals-and-systems/信号与系统阅读随记.md` — 869 lines · title: "信号与系统阅读随记"
@@ -193,32 +209,6 @@ Generated 2026-09-24T14:07:47.720Z · 171 files · 21924 lines · 0.37s
 - `src/content/notes/signals/signals-and-systems/text-book/第二章-连续时间系统时域分析.md` — 0 lines · [file too large]
 - `src/content/notes/signals/signals-and-systems/text-book/第五章-连续时间信号与系统复频域分析.md` — 0 lines · [file too large]
 - `src/content/notes/signals/signals-and-systems/text-book/第六章-离散时间信号与系统时域分析.md` — 0 lines · [file too large]
-- `src/content/notes/signals/signals-and-systems/text-book/第四章-连续时间系统实频域分析.md` — 0 lines · [file too large]
-- `src/content/notes/signals/signals-and-systems/text-book/附录.md` — 440 lines · title: "附录"
-
-## src/layouts
-- `src/layouts/BaseLayout.astro` — 28 lines · interface Props {
-
-## src/lib
-- `src/lib/notes.ts` — 308 lines · Note, TocItem, baseUrl, url, noteUrl, creationTime · Exports Note, TocItem, baseUrl, url, noteUrl +23 more
-- `src/lib/rehype-math-latex.mjs` — 39 lines · rehypeMathLatex, classes, parent, target, holder, index · Exports rehypeMathLatex, default function
-
-## src/pages
-- `src/pages/index.astro` — 16 lines · const notes = await getPublishedNotes();
-
-## src/pages/about
-- `src/pages/about/index.astro` — 14 lines · <BaseLayout title="About · izwarm">
-
-## src/pages/notes
-- `src/pages/notes/[...slug].astro` — 50 lines · export async function getStaticPaths() {
-- `src/pages/notes/archive.astro` — 19 lines · const notes = await getPublishedNotes();
-- `src/pages/notes/index.astro` — 16 lines · const notes = await getPublishedNotes();
-- `src/pages/notes/tags.astro` — 30 lines · const notes = await getPublishedNotes();
-
-## src/pages/notes/tags
-- `src/pages/notes/tags/[tag].astro` — 27 lines · export async function getStaticPaths() {
-
-## src/pages/projects
-- `src/pages/pr…
+- `src/content/notes/signals/signals-and-systems/text-book/第四章-连续时间系统实频域分析.md` — 0 …
 (rendered map truncated at 16384 bytes)
 <!-- dsh-openwolf:end -->

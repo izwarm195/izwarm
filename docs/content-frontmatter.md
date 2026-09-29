@@ -7,8 +7,8 @@
 ## 1. 发布规则
 
 - **白名单目录**：`CPP`、`English`、`Machine & Deep Learning`、
-  `Signals/Signals & Systems`（精确到该子目录）内的所有 Markdown **默认公开**，
-  无需逐篇添加字段。`Signals` 下的其他子目录（如 `Signals/Text books`）不在白名单内。
+  `Signals/Signals & Systems`（精确到该子目录）、`Signals/数字电路与系统`、`Physics`
+  内的所有 Markdown **默认公开**，无需逐篇添加字段。`Signals` 下的其他子目录不在白名单内。
 - **单篇退出**：笔记 Frontmatter 写 `publish: false` 则不公开。
 - **草稿 / 归档**：`status: draft` 不发布；`draft: true` 在生产构建隐藏、
   开发环境可预览。
@@ -57,7 +57,7 @@
   `CPP/Summaries` → `["CPP", "Summaries"]`；
   `English/Words Summary/数学英语词汇` → `["English", "Words Summary", "数学英语词汇"]`。
 - **tags**：保留 Obsidian `tags`；缺失时为空数组；另自动加入分类标签
-  （`cpp` / `english` / `machine-learning` / `signals`）。
+  （`cpp` / `english` / `machine-learning` / `signals` / `physics`）。
 - **updatedDate**：只认笔记里的 `updated_at`（Time Things 插件写入的真实编辑时间）。
   该字段是热力图与"更新于"的唯一真实时间来源，因此不再回退 Git 最近提交日期。
   注意插件的 `modifiedKeyFormat` 必须用 `YYYY` 这样的合法 token；若写成 `YY-MM-DD[T]HH:mm:ss`，

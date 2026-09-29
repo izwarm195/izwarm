@@ -1,7 +1,7 @@
 ---
 title: "Tips"
 slug: "cpp/tips/tips"
-description: "( 逗号表达式 (/notes/cpp/tips/逗号表达式/))"
+description: "(逗号表达式)"
 publishDate: "2026-07-11"
 createdAt: "2026-07-11T00:00:00Z"
 tags: ["cpp","tips","moc"]

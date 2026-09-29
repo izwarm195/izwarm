@@ -14,7 +14,14 @@ import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
 
-const ROOTS = ['CPP', 'English', 'Machine & Deep Learning', 'Signals/Signals & Systems', 'Signals/数字电路与系统'];
+const ROOTS = [
+  'CPP',
+  'English',
+  'Machine & Deep Learning',
+  'Signals/Signals & Systems',
+  'Signals/数字电路与系统',
+  'Physics',
+];
 const SKIP_DIRS = new Set(['.obsidian', '.trash', 'Templates', 'Daily', 'Journal', 'Canvas', 'Private', 'Attachments', '_QuickAdd']);
 const _posArg = process.argv.slice(2).find((a) => !a.startsWith('--'));
 const VAULT = _posArg || process.env.OBSIDIAN_VAULT || 'D:\\搞学术\\大二暑\\Obsidian';
@@ -191,10 +198,19 @@ async function writeActivity(vault, roots) {
 }
 
 function firstParagraph(body) {
-  for (const line of body.split(/\n+/)) {
+  // 行间公式块先整体挖掉：公式内容（`F=-kx`、`a=-\omega^{2}x`）当摘要只是噪声，
+  // 纯公式笔记（如物理公式总结）会因此只剩 "F kx" 这种没有信息量的描述。
+  // 换成空格而不是换行，避免把"由式 $$a=b$$ 可知"这类行拆成两个片段。
+  const prose = body.replace(/\$\$[\s\S]*?\$\$/g, ' ');
+  for (const line of prose.split(/\n+/)) {
     const trimmed = line.trim();
     if (!trimmed || trimmed.startsWith('>') || trimmed.startsWith('#') || trimmed.startsWith('```')) continue;
-    const t = trimmed.replace(/[*#>`|=\[\]$\\-]/g, ' ').replace(/\s+/g, ' ').trim();
+    const t = trimmed
+      // 链接/图片只留文字：否则摘要会带上内部 slug，如 "Numpy 函数汇总 (/notes/machine and deep learning/python/numpy 函数汇总/)"
+      .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1')
+      .replace(/[*#>`|=\[\]$\\-]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
     if (t) return t.length > 140 ? t.slice(0, 140) + '…' : t;
   }
   return '';
@@ -493,7 +509,13 @@ function toYaml(o) {
     .join('\n');
 }
 
-const CATEGORY_TAG = { CPP: 'cpp', English: 'english', 'Machine & Deep Learning': 'machine-learning', Signals: 'signals' };
+const CATEGORY_TAG = {
+  CPP: 'cpp',
+  English: 'english',
+  'Machine & Deep Learning': 'machine-learning',
+  Signals: 'signals',
+  Physics: 'physics',
+};
 
 async function main() {
   const summary = { published: 0, skipped: 0, errors: [] };
@@ -651,6 +673,13 @@ function selftest() {
   );
   assert(parseDateStr('04-07-09') === '2004-07-09', 'numeric two-digit year untouched');
   assert(deriveSlug('CPP', 'Summaries', 'const-correctness') === 'cpp/summaries/const-correctness', 'slug path');
+  // Physics 白名单：中文书名号标题 slugify 后不留连字符碎片
+  assert(
+    deriveSlug('Physics', '', '《物理学》下册公式总结') === 'physics/物理学-下册公式总结',
+    'slug CJK punctuation',
+    deriveSlug('Physics', '', '《物理学》下册公式总结'),
+    'physics/物理学-下册公式总结'
+  );
   const idx = new Map([['const-correctness', 'cpp/summaries/const-correctness']]);
   assert(
     convertBody('[[const-correctness]]', idx) === '[const-correctness](/notes/cpp/summaries/const-correctness/)',

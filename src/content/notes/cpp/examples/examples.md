@@ -1,7 +1,7 @@
 ---
 title: "Examples"
 slug: "cpp/examples/examples"
-description: "CE 26 07 09：禁止在int乘int时不开long long (/notes/cpp/examples/禁止在int乘int时不开long long/)"
+description: "CE 26 07 09：禁止在int乘int时不开long long"
 publishDate: "2026-07-10"
 createdAt: "2026-07-10T00:00:00Z"
 tags: ["cpp","examples","moc"]
