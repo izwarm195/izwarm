@@ -869,6 +869,8 @@ html {
   overflow-y: hidden;
   text-align: center;
   box-sizing: border-box;
+  /* \tag 的包含块（见下方 .katex-html 规则）：卡片自身充当它 */
+  position: relative;
   background: rgba(255, 255, 255, 0.045);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px 12px 12px 0;
@@ -882,6 +884,17 @@ html {
   margin-inline: auto;
   text-align: initial;
   font-size: 1.03em; /* 独立公式略大于行内，但明显小于原值 */
+}
+
+/* 公式编号 \tag{...}（KaTeX 输出 .katex-tag，CSS 为 position:absolute; right:0）：
+   KaTeX 默认让 .katex-html 当包含块，且 .katex 是整幅宽的 display:block——
+   此时 right:0 落在容器右缘。而本站为了让短公式居中把 .katex 收成了
+   inline-block（宽度 = 公式自身），包含块跟着缩到公式宽度，编号就叠在公式
+   右端（如 a=-ω²x 被 (9-3) 压住）。这里把 .katex-html 还原成 static，
+   让包含块回到 .katex-display 卡片，right:0 即为卡片内缘右侧。
+   KaTeX 内部的上标/分式定位依赖 .vlist（自带 position:relative），不受影响。 */
+.article-body .katex-display > .katex > .katex-html {
+  position: static;
 }
 
 /* 行间公式外壳（由 rehype-math-latex 注入，携带 data-latex 源码） */

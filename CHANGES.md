@@ -575,6 +575,28 @@
 - **验证**：`npm run build` 通过；长代码行 / 宽公式 / 宽表格横向拖动可见半透明
   圆边灰条（浏览器人工复核）。
 
+## 41. 修复公式编号 `\tag` 叠在公式右端
+
+- **症状**：物理公式总结系列里 `$$…\tag{9-3}$$` 渲染出的编号 `(9-3)` 压在公式
+  尾部（如 `a=-ω²x` 被 `(9-3)` 盖住），而不是贴在公式卡片的内缘右侧。
+- **原因**：KaTeX 把编号输出为 `.katex-tag`，其样式是 `position:absolute; right:0`，
+  包含块取最近的定位祖先 `.katex-html`。KaTeX 默认让 `.katex` 是整幅宽的
+  `display:block`，所以 `right:0` 正好落在容器右缘；而本站为了让短公式居中，把
+  `.article-body .katex-display > .katex` 改成了 `display:inline-block` +
+  `min-width:max-content`，`.katex` 宽度收缩到公式自身宽度，`.katex-html`
+  随之收缩，编号于是被摆到**公式自身**的右端，覆盖公式尾部。
+- **修改**（`src/styles/notes.css`）：`.katex-display` 增加 `position: relative`；
+  新增 `.article-body .katex-display > .katex > .katex-html { position: static }`，
+  把编号的包含块交还给公式卡片，`right:0` 即为卡片内缘右侧。
+  KaTeX 内部上标 / 分式的绝对定位依赖 `.vlist`（自带 `position:relative`），
+  不受这次改动影响。
+- **影响**：只有编号的水平落点变化（公式右端 → 卡片内缘右侧）；公式居中方式、
+  卡片背景、超宽公式的横向滚动行为均不变。
+- **验证**：`npm run build` 冷构建 **144 页** 通过；产物 CSS 中
+  `.katex-display{…;position:relative;…}` 与
+  `.article-body .katex-display>.katex>.katex-html{position:static}`
+  均已生成（选择器优先级 0,4,0 > KaTeX 自带的 0,3,0，无需依赖引入顺序）。
+
 ## 验证方式汇总
 
 - TypeScript 检查：`npm run typecheck`
