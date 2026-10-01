@@ -579,23 +579,33 @@
 
 - **症状**：物理公式总结系列里 `$$…\tag{9-3}$$` 渲染出的编号 `(9-3)` 压在公式
   尾部（如 `a=-ω²x` 被 `(9-3)` 盖住），而不是贴在公式卡片的内缘右侧。
-- **原因**：KaTeX 把编号输出为 `.katex-tag`，其样式是 `position:absolute; right:0`，
-  包含块取最近的定位祖先 `.katex-html`。KaTeX 默认让 `.katex` 是整幅宽的
-  `display:block`，所以 `right:0` 正好落在容器右缘；而本站为了让短公式居中，把
-  `.article-body .katex-display > .katex` 改成了 `display:inline-block` +
-  `min-width:max-content`，`.katex` 宽度收缩到公式自身宽度，`.katex-html`
-  随之收缩，编号于是被摆到**公式自身**的右端，覆盖公式尾部。
-- **修改**（`src/styles/notes.css`）：`.katex-display` 增加 `position: relative`；
-  新增 `.article-body .katex-display > .katex > .katex-html { position: static }`，
-  把编号的包含块交还给公式卡片，`right:0` 即为卡片内缘右侧。
-  KaTeX 内部上标 / 分式的绝对定位依赖 `.vlist`（自带 `position:relative`），
-  不受这次改动影响。
-- **影响**：只有编号的水平落点变化（公式右端 → 卡片内缘右侧）；公式居中方式、
+- **原因**：KaTeX 把编号输出为 `.katex-tag{position:absolute; right:0}`，落点是
+  **最近的定位祖先**，而 KaTeX 自带的定位链是 `.katex-html{position:relative}`
+  套在 `.katex{position:relative}` 里。KaTeX 默认让 `.katex-display > .katex` 是
+  整幅宽的 `display:block`，所以 `right:0` 恰好落在容器右缘；本站为了让短公式居中
+  把它改成了 `display:inline-block` + `min-width:max-content`，`.katex` 的宽度
+  收缩成**公式自身**宽度，于是编号被摆到公式自己的右端，覆盖公式尾部。
+- **踩坑记录（重要）**：第一版只把 `.katex-html` 改成 `position:static`，**完全无效**——
+  `.katex` 本身还是 `position:relative`，包含块根本没离开那层 inline-block。
+  线上部署后用户反馈「一点没变」，随后用 Blink 实测复现确认：改动前后
+  `tag.right` 与 `formula.right` 都是 431，`overlaps=true`。
+- **修改**（`src/styles/notes.css`）：
+  1. `.article-body .katex-display { position: relative }`（卡片充当包含块）；
+  2. `.article-body .katex-display > .katex { position: static }`（**关键**：放开
+     KaTeX 自带的 `position:relative`）；
+  3. `.article-body .katex-display > .katex > .katex-html { position: static }`
+     （同样放开，双保险）；
+  4. `.article-body .katex-display > .katex > .katex-html > .katex-tag { right: 20px }`
+     与卡片左右 padding 对齐，编号不贴到边框上。
+  KaTeX 内部上标 / 分式 / 伸缩括号的绝对定位挂在 `.vlist`、`.katex-base`、
+  `.katex-stretchy` 等自带 `position:relative` 的元素上，不依赖 `.katex`。
+- **影响**：只有编号的水平落点变化（公式右端 → 卡片内缘内侧 20px）；公式居中方式、
   卡片背景、超宽公式的横向滚动行为均不变。
-- **验证**：`npm run build` 冷构建 **144 页** 通过；产物 CSS 中
-  `.katex-display{…;position:relative;…}` 与
-  `.article-body .katex-display>.katex>.katex-html{position:static}`
-  均已生成（选择器优先级 0,4,0 > KaTeX 自带的 0,3,0，无需依赖引入顺序）。
+- **验证**：`npm run build` 冷构建 **144 页** 通过。用无头 Edge（Blink）对**构建产物
+  CSS** 做真实排版测量：还原改动前 `tag.right=431 / formula.right=431 / overlaps=true`，
+  本产物 `tag.right=757 / card.right=778 / gap=21px / overlaps=false`；同时对分式、
+  根号、`\left(\right)` 等复杂公式做前后内部排版比对，卡片尺寸与各 `.katex-base`
+  宽度完全一致（`innards same = true`），确认放开 `.katex` 的定位不影响 KaTeX 自身。
 
 ## 验证方式汇总
 

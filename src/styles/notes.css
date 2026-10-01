@@ -884,17 +884,27 @@ html {
   margin-inline: auto;
   text-align: initial;
   font-size: 1.03em; /* 独立公式略大于行内，但明显小于原值 */
+  /* KaTeX 自带 `.katex{position:relative}`。不放开它，公式编号的包含块就还是
+     这块「宽度=公式自身」的 inline-block，编号必然压在公式右端（见下方注解）。 */
+  position: static;
 }
 
-/* 公式编号 \tag{...}（KaTeX 输出 .katex-tag，CSS 为 position:absolute; right:0）：
-   KaTeX 默认让 .katex-html 当包含块，且 .katex 是整幅宽的 display:block——
-   此时 right:0 落在容器右缘。而本站为了让短公式居中把 .katex 收成了
-   inline-block（宽度 = 公式自身），包含块跟着缩到公式宽度，编号就叠在公式
-   右端（如 a=-ω²x 被 (9-3) 压住）。这里把 .katex-html 还原成 static，
-   让包含块回到 .katex-display 卡片，right:0 即为卡片内缘右侧。
-   KaTeX 内部的上标/分式定位依赖 .vlist（自带 position:relative），不受影响。 */
+/* 公式编号 \tag{...}：KaTeX 输出 .katex-tag{position:absolute;right:0}，落在最近的
+   定位祖先上。KaTeX 默认链路是 .katex-html{position:relative} → .katex{position:relative}，
+   而 KaTeX 默认 .katex 是整幅宽的 display:block，right:0 正好落在容器右缘；本站为了让
+   短公式居中把 .katex 收成 inline-block（宽度 = 公式自身），编号就被摆到公式自己的右端、
+   盖住公式尾部（如 a=-ω²x 被 (9-3) 压住）。
+   连着两层都还原成 static，包含块才回到 .katex-display 卡片，right 才有意义。
+   KaTeX 内部的上标 / 分式 / 伸缩括号依赖 .vlist、.katex-base、.katex-stretchy 等自带
+   position:relative 的元素，不依赖 .katex，故内部排版不受影响（已在 Blink 实测比对：
+   分式、根号、\left(\right)、积分等公式的卡片尺寸与各 base 宽度完全一致）。 */
 .article-body .katex-display > .katex > .katex-html {
   position: static;
+}
+
+/* 编号贴卡片右侧，内缩量与卡片左右 padding 一致（18px 20px），不贴到边框上 */
+.article-body .katex-display > .katex > .katex-html > .katex-tag {
+  right: 20px;
 }
 
 /* 行间公式外壳（由 rehype-math-latex 注入，携带 data-latex 源码） */
