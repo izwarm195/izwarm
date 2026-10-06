@@ -1343,6 +1343,94 @@ html {
   color: var(--text-dim);
 }
 
+/* ---- Friends：友链卡片（一个框装一位朋友：图标 + 基本信息 + 访问/复制）----
+   卡片的尺度全部写死 px：它属于内容区，和右栏字母的 --w-size 没有几何关系。 */
+.friends-grid {
+  list-style: none;
+  display: grid;
+  /* min(100%, 300px)：窄屏下这一列不会被 300px 的下限顶出屏幕 */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 14px;
+  margin-top: 22px;
+}
+.friend-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px 12px 12px 0; /* W 形：与按钮、卡片一致的左下直角 */
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.friend-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(127, 192, 192, 0.42);
+}
+/* 图标位：垫一层首字方块，外链图标加载失败时它就是唯一的可见内容 */
+.friend-icon {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px 12px 12px 0;
+}
+.friend-initial {
+  font-size: 20px;
+  line-height: 1;
+  color: var(--text-dim);
+}
+.friend-favicon {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 非正方形图标裁满整格，不留白边 */
+}
+.friend-info {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.friend-name {
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+  color: #f0f2f5;
+}
+.friend-host {
+  margin-top: 3px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text-dim);
+  overflow-wrap: anywhere; /* 长域名 / 长路径不许把卡片撑宽 */
+}
+.friend-desc {
+  margin-top: 6px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--text-dim);
+}
+.friend-actions {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+/* 复用文章底部那套 .action-btn（同材质、同 hover 反馈），只做两处收窄 */
+.friend-actions .action-btn {
+  padding: 8px 12px;
+  text-decoration: none; /* 「访问」是 <a>，去掉 UA 下划线 */
+}
+.friend-actions .action-btn .action-label {
+  white-space: nowrap;
+}
+
 /* ============================================================
    手机端（≤900px）
    桌面端（>900px）的规则一条都没动：下面每一条都只在窄屏生效。
@@ -1687,6 +1775,20 @@ html {
     display: block;
     height: 32px;
     width: auto;
+  }
+
+  /* ---------- Friends：卡片折成上下两段，两个按钮等宽铺满一行 ---------- */
+  .friend-card {
+    flex-wrap: wrap;
+  }
+  .friend-actions {
+    flex-direction: row;
+    width: 100%;
+  }
+  .friend-actions .action-btn {
+    flex: 1 1 0;
+    justify-content: center;
+    padding: 10px 12px; /* 手机上按钮高一点，好点 */
   }
 }
 

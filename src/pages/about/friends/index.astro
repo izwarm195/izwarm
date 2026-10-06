@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Landing from '../../../components/home/Landing.astro';
+import FriendCard from '../../../components/about/FriendCard.astro';
+import { friends } from '../../../config/friends';
+---
+
+<BaseLayout title="Friends · izwarm">
+  <Landing open active="about">
+    <section slot="notes-main" class="page-panel" aria-label="Friends">
+      <h1>Friends</h1>
+      <p class="page-desc"></p>
+      <ul class="friends-grid">
+        {friends.map((friend) => <FriendCard friend={friend} />)}
+      </ul>
+    </section>
+  </Landing>
+</BaseLayout>

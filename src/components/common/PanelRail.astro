@@ -6,8 +6,12 @@ import { media } from '../../config/media';
  * 两栏页面（Projects / Works / About）右栏导航：
  * - 返回主页由常驻的锚点字母承担（home.ts 拦截点击，反向动画收起底板），
  *   右栏不再重复放字母按钮
- * - Projects / Works：Selected / Timeline / Statistics 子页面入口（整页跳转）
- * - About：暂无导航（空菜单，仅保留锚点字母）
+ * - Projects / Works：Selected / Timeline / Statistics 子页面入口
+ * - About：两个模块入口 izwarm / Friends（与 Notes 的三个按钮同一套逻辑：
+ *   悬停右栏展开、点按钮原位无缝换页）。izwarm 就是原来的 About 页本身
+ *   （/about/），Friends 是 /about/friends/，两者都留在 about 面板状态里。
+ * 链接由 notes.ts 的链接拦截器接管（按当前 state 的路径前缀判定），
+ * 所以换页是 fetch + 原位替换，不整页刷新。
  */
 interface Props {
   active: 'projects' | 'works' | 'about';
@@ -15,15 +19,26 @@ interface Props {
 
 const { active } = Astro.props;
 
-// About 暂无子页面；Projects / Works 共用三个入口（后续可各自扩展）
+// Projects / Works 共用三个入口（后续可各自扩展）；About 是自己的两个模块
 const items =
   active === 'about'
-    ? []
+    ? [
+        { label: 'izwarm', href: url('/about/') },
+        { label: 'Friends', href: url('/about/friends/') },
+      ]
     : [
         { label: 'Selected', href: url(`/${active}/selected/`) },
         { label: 'Timeline', href: url(`/${active}/timeline/`) },
         { label: 'Statistics', href: url(`/${active}/statistics/`) },
       ];
+
+/**
+ * 当前按钮高亮：SPA 换页时整个 rail 区域会被换成目标页那一份服务端渲染的
+ * 标记，所以这里读 Astro.url 就够了，不需要在客户端再算一遍。
+ * 只做末尾斜杠规范化，避免 /about/friends 与 /about/friends/ 判成两个页面。
+ */
+const normalize = (path: string): string => (path.endsWith('/') ? path : path + '/');
+const currentPath = normalize(Astro.url.pathname);
 
 // 手机端底部工具栏里的「返回首页」按钮：用当前栏目自己的锚点字母
 // （桌面端它常驻在右栏，点它同样回主页展开态），所以 .rail-home 在宽屏隐藏。
@@ -34,7 +49,11 @@ const homeLetter = { projects: media.logoA, works: media.logoR, about: media.log
   <ul class="notes-rail-menu">
     {items.map((item) => (
       <li>
-        <a class="w-shape notes-rail-link" href={item.href}>
+        <a
+          class="w-shape notes-rail-link"
+          href={item.href}
+          aria-current={normalize(item.href) === currentPath ? 'page' : undefined}
+        >
           {item.label}
         </a>
       </li>

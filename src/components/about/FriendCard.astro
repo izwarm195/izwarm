@@ -1,0 +1,68 @@
+---
+/**
+ * 友链卡片：一个框里装一位朋友 —— 图标 + 基本信息 + 访问/复制。
+ *
+ * 交互不在这里：Friends 面板会被 SPA 换页整体替换（[data-notes-region] 的
+ * 子节点 replaceChildren），组件内的 <script> 只执行一次，绑在元素上的监听
+ * 下一次换页就丢了。所以「复制」只输出 data-friend-copy 钩子，逻辑在
+ * scripts/notes.ts 的 document 委托里（与文章底部的分享按钮同一套路）。
+ *
+ * 「访问」是真正的 <a target="_blank">，不拦截：外链不属于面板路由，
+ * panel-nav 的链接拦截器按路径前缀判定，不会接管它。
+ */
+import { icon } from '../../config/media';
+import { displayHost, type FriendLink } from '../../config/friends';
+
+interface Props {
+  friend: FriendLink;
+}
+
+const { friend } = Astro.props;
+const initial = friend.initial ?? friend.name.slice(0, 1);
+const host = displayHost(friend.url);
+---
+
+<li class="friend-card">
+  <span class="friend-icon" aria-hidden="true">
+    <span class="friend-initial">{initial}</span>
+    <!-- 外链图标：加载失败（对方站点挂掉 / 防盗链）时移除自己，露出下面的首字方块 -->
+    <img
+      class="friend-favicon"
+      src={friend.icon}
+      alt=""
+      width="52"
+      height="52"
+      loading="lazy"
+      decoding="async"
+      onerror="this.remove()"
+    />
+  </span>
+
+  <div class="friend-info">
+    <h2 class="friend-name">{friend.name}</h2>
+    <p class="friend-host">{host}</p>
+    <p class="friend-desc">{friend.desc}</p>
+  </div>
+
+  <div class="friend-actions">
+    <a
+      class="action-btn friend-btn"
+      href={friend.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      title={`打开 ${friend.name}`}
+    >
+      <img class="action-icon" src={icon('external-link')} alt="" width="16" height="16" />
+      <span class="action-label">访问</span>
+    </a>
+    <button
+      class="action-btn friend-btn"
+      type="button"
+      data-friend-copy={friend.url}
+      title={`复制 ${friend.name} 的地址`}
+    >
+      <img class="action-icon" src={icon('copy')} alt="" width="16" height="16" />
+      <span class="action-label">复制</span>
+    </button>
+  </div>
+</li>

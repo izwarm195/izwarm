@@ -607,6 +607,34 @@
   根号、`\left(\right)` 等复杂公式做前后内部排版比对，卡片尺寸与各 `.katex-base`
   宽度完全一致（`innards same = true`），确认放开 `.katex` 的定位不影响 KaTeX 自身。
 
+## 42. About 拆成 izwarm / Friends 两个模块，新增友链卡
+
+- **修改**：
+  1. `src/components/common/PanelRail.astro`：About 从「空菜单」变成两个入口 ——
+     `izwarm`（`/about/`，就是原来的 About 页本身）与 `Friends`（`/about/friends/`），
+     与 Notes 的三个按钮同一套逻辑（悬停右栏滑出、点击原位换页）；并按
+     `Astro.url.pathname` 给当前项加 `aria-current="page"` 高亮（换页时整个 rail
+     区域会被换成目标页那份服务端渲染的标记，所以不需要在客户端再算）。
+  2. 新增 `src/pages/about/friends/index.astro`（Friends 面板）与
+     `src/components/about/FriendCard.astro`（一张卡 = 图标 + 基本信息 + 访问 + 复制）。
+  3. 新增 `src/config/friends.ts`：友链数据的唯一来源，加人只改这个文件。
+  4. 新增 `public/media/icons/external-link.svg`（自绘，Zest 这一版没有外链图标），
+     供「访问」按钮用；「复制」复用已有的 `copy.svg`。
+  5. `src/scripts/notes.ts` 增加友链卡「复制」的 document 委托（`data-friend-copy`），
+     与文章底部「分享」按钮同一套路；`src/styles/notes.css` 增加卡片与窄屏样式。
+- **原因**：About 只有一个占位页，需要容纳两类内容 —— 关于自己（izwarm）与友链
+  （Friends）。友链卡参考 <https://hatoya-doublepigeonblog.pages.dev/friends/> 的组织
+  方式：一个框里放网页图标、基本信息、以及「访问 / 复制」两个操作。
+- **影响**：`/about/` 的 URL、内容、字母 M 的三段式转场全部不变；`/about/friends/`
+  由 `stateFromPath()` 推导出的面板状态仍是 `about`，所以两栏布局、窄屏底部工具栏、
+  锚点字母都不用改。卡片里的「访问」是真外链（`target="_blank"`），不属于面板路由，
+  不会被 `panel-nav` 的链接拦截器接管。
+- **验证**：`npm run typecheck` 通过；`npm run build` 冷构建 **145 页**
+  （原 144 + 新增 `/about/friends/`）；产物 `dist/about/friends/index.html` 中
+  两个 rail 按钮与 `aria-current` 落点正确（`/about/` 高亮 izwarm、`/about/friends/`
+  高亮 Friends），友链卡四个部位与 `data-friend-copy` 均正常输出，卡片样式进了
+  `dist/_astro/index.*.css`，复制逻辑进了 NotesShell 的脚本包。
+
 ## 验证方式汇总
 
 - TypeScript 检查：`npm run typecheck`

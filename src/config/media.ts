@@ -13,7 +13,8 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 export const MEDIA_BASE = base + '/media';
 
 /** public/media/icons 下的图标（Zest Interface Icons，MIT，见同目录 LICENSE-Zest.txt）。
- *  图标本身是纯黑描边，页面上靠 CSS filter: invert() 变浅色。 */
+ *  图标本身是纯黑描边，页面上靠 CSS filter: invert() 变浅色。
+ *  external-link.svg 是自绘的（Zest 这一版没有外链图标），同样纯黑描边，供友链卡「访问」按钮用。 */
 export const icon = (name: string): string => `${MEDIA_BASE}/icons/${name}.svg`;
 
 export const media = {

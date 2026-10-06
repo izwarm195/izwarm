@@ -412,6 +412,26 @@ document.addEventListener('click', (e) => {
   });
 });
 
+// ---------- 友链卡的「复制」：复制对方站点地址 ----------
+// 与分享按钮同一个套路：走 document 委托（Friends 面板换页时卡片节点会被整体替换），
+// 复制失败也照样给反馈——站点跑在 http 上，看到的多半是 execCommand 那条兜底路径。
+document.addEventListener('click', (e) => {
+  const btn = (e.target as HTMLElement | null)?.closest?.<HTMLButtonElement>('[data-friend-copy]');
+  if (!btn) return;
+  const address = btn.getAttribute('data-friend-copy') ?? '';
+  if (!address) return;
+  const label = btn.querySelector<HTMLElement>('.action-label');
+  const original = label?.textContent ?? '';
+  void copyText(address).then(() => {
+    btn.classList.add('is-done');
+    if (label) label.textContent = '已复制';
+    window.setTimeout(() => {
+      btn.classList.remove('is-done');
+      if (label) label.textContent = original;
+    }, 1500);
+  });
+});
+
 // Esc 关闭弹层（弹层在文章页里，换页后节点会被替换，所以监听挂在 document 上）
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeCoffee();
