@@ -796,6 +796,9 @@ html {
   gap: 0.55em;
   margin: 0 -1.05em;
   padding: 0.55em 1.05em;
+  /* 这一行铺满卡片内宽（负边距吃掉卡片内边距），所以 hover / 聚焦高亮必须跟着卡片圆角走，
+     否则会画出一个探出圆角的直角矩形。9px = 卡片圆角 10px 减去 1px 描边。 */
+  border-radius: 0 9px 9px 0;
   color: #9fd0d0;
   font-size: 0.95em;
   letter-spacing: 0.1em;
@@ -811,6 +814,11 @@ html {
 .article-body details.answer > summary:focus-visible {
   color: #dcf2f2;
   background: rgba(127, 192, 192, 0.1);
+}
+
+/* 展开后 summary 不再贴着卡片下沿，只保留右上角跟着圆 */
+.article-body details.answer[open] > summary {
+  border-radius: 0 9px 0 0;
 }
 
 /* 折线箭头：上 + 右两条边转 45° 指向右（收起），135° 指向下（展开） */
@@ -912,6 +920,7 @@ html {
 /* ---- 文章底部操作底板（分享链接 / 请我喝咖啡）----
    与 .article 同材质、同宽，但另起一块底板（不嵌进文章卡里，避免卡片套卡片） */
 .article-actions {
+  position: relative; /* 「提议」的提示条以这块底板为准做绝对定位 */
   width: min(100%, 860px);
   margin: 16px auto 0;
   padding: 12px 14px;
@@ -971,6 +980,34 @@ html {
 }
 .action-btn.is-done .action-icon {
   filter: invert(0.92);
+}
+
+/* 「提议」复制成功后的提示条：贴在操作底板上方居中，脚本只切一个 class。
+   底板自带 backdrop-filter，所以这里用半透明实底 + 同套圆角，别用嵌套模糊。 */
+.action-hint {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  margin: 0;
+  padding: 8px 14px;
+  font-size: 12.5px;
+  line-height: 1;
+  white-space: nowrap;
+  color: #d8efef;
+  background: rgba(26, 28, 33, 0.94);
+  border: 1px solid rgba(127, 192, 192, 0.45);
+  border-radius: 10px 10px 10px 0;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.34);
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, 4px);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+}
+.article-actions.is-hinting .action-hint {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
 }
 
 /* ---- 咖啡按钮弹出的爱发电收款卡弹层：标记在 BaseLayout、样式在 global.css ----

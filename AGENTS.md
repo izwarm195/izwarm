@@ -2,7 +2,7 @@
 
 <!-- dsh-openwolf:start -->
 # Code Map
-Generated 2026-10-08T08:47:08.200Z · 195 files · 30554 lines · 0.66s
+Generated 2026-10-08T14:01:14.550Z · 195 files · 30637 lines · 0.72s
 
 ## ./
 - `CHANGES.md` — 645 lines · 第一阶段目标是忠实迁移，以下是相对原源码的全部偏离及原因。
@@ -73,7 +73,7 @@ Generated 2026-10-08T08:47:08.200Z · 195 files · 30554 lines · 0.66s
 
 ## src/components/notes
 - `src/components/notes/ArchiveList.astro` — 56 lines · interface Props {
-- `src/components/notes/ArticleActions.astro` — 28 lines · <section class="article-actions" aria-label="文章操作">
+- `src/components/notes/ArticleActions.astro` — 41 lines · <section class="article-actions" aria-label="文章操作">
 - `src/components/notes/ArticleSidebar.astro` — 60 lines · interface Props {
 - `src/components/notes/NotesCalendar.astro` — 88 lines · interface Props {
 - `src/components/notes/NotesRail.astro` — 39 lines · interface Props {
@@ -89,7 +89,7 @@ Generated 2026-10-08T08:47:08.200Z · 195 files · 30554 lines · 0.66s
 - `src/config/created-dates.json` — 109 lines · {
 - `src/config/friends.ts` — 34 lines · FriendLink, displayHost · Exports FriendLink, friends, displayHost
 - `src/config/media.ts` — 41 lines · base, MEDIA_BASE, icon, media · Exports MEDIA_BASE, icon, media
-- `src/config/site.ts` — 9 lines · site · Exports site
+- `src/config/site.ts` — 11 lines · site · Exports site
 
 ## src/content/notes/cpp/examples
 - `src/content/notes/cpp/examples/count-perfect-squares.md` — 54 lines · title: "完全平方数计数"
@@ -213,6 +213,6 @@ Generated 2026-10-08T08:47:08.200Z · 195 files · 30554 lines · 0.66s
 - `src/content/notes/signals/signals-and-systems/ss-qna/ss-qna-06.md` — 55 lines · title: "SS-QNA-06"
 - `src/content/notes/signals/signals-and-systems/ss-qna/ss-qna-07.md` — 64 lines · title: "SS-QNA-07"
 
-## src/content/notes/signals/si…
+## src/content/notes/signals/s…
 (rendered map truncated at 16384 bytes)
 <!-- dsh-openwolf:end -->

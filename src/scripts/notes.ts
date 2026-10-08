@@ -19,6 +19,7 @@ import {
   syncArticleFolds,
   NOTES_STATES,
 } from './panel-nav';
+import { site } from '../config/site';
 
 const shellEl = document.getElementById('notesShell');
 const notesBase = import.meta.env.BASE_URL.replace(/\/$/, '') + '/notes';
@@ -385,6 +386,22 @@ function shareUrl(): string {
   return location.origin + location.pathname;
 }
 
+/** 「提议」复制邮箱后的提示条：贴在操作底板上方，2.2s 后淡出。
+ *  底板内节点会被 SPA 换页整体替换，所以每次都从按钮重新查一遍，不缓存。 */
+let actionHintTimer: number | undefined;
+
+function showActionHint(btn: HTMLElement, text: string): void {
+  const bar = btn.closest<HTMLElement>('.article-actions');
+  const hint = bar?.querySelector<HTMLElement>('[data-action-hint]');
+  if (!bar || !hint) return;
+  hint.textContent = text;
+  bar.classList.add('is-hinting');
+  window.clearTimeout(actionHintTimer);
+  actionHintTimer = window.setTimeout(() => {
+    bar.classList.remove('is-hinting');
+  }, 2200);
+}
+
 document.addEventListener('click', (e) => {
   const target = e.target as HTMLElement | null;
   if (target?.closest?.('[data-coffee-close]')) {
@@ -397,6 +414,20 @@ document.addEventListener('click', (e) => {
 
   if (action === 'coffee') {
     openCoffee();
+    return;
+  }
+  if (action === 'suggest') {
+    const label = btn.querySelector<HTMLElement>('.action-label');
+    const original = label?.textContent ?? '';
+    void copyText(site.feedbackEmail).then(() => {
+      btn.classList.add('is-done');
+      if (label) label.textContent = '已复制';
+      showActionHint(btn, '欢迎邮箱反馈');
+      window.setTimeout(() => {
+        btn.classList.remove('is-done');
+        if (label) label.textContent = original;
+      }, 1500);
+    });
     return;
   }
   if (action !== 'share') return;

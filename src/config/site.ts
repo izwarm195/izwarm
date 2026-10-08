@@ -6,4 +6,6 @@
 export const site = {
   title: 'izwarm',
   lang: 'zh',
+  /** 「提议」按钮复制的反馈邮箱 */
+  feedbackEmail: '213253670@seu.edu.cn',
 } as const;
