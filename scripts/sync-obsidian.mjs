@@ -13,6 +13,7 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import matter from 'gray-matter';
+import { SEGMENT_ALIASES } from './slug-aliases.mjs';
 
 const ROOTS = [
   'CPP',
@@ -130,8 +131,50 @@ function placeholderYear(yearHint, mm, dd, hh) {
   return year;
 }
 
+// ---------- URL 段落 → ASCII 代号 ----------
+const CHINESE_DIGITS = { 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 };
+
+/** 「三」「十五」「二十一」→ 3 / 15 / 21（只用于章节号，最多两位）；非中文数字返回 null */
+function chineseNumber(text) {
+  if (/^\d+$/.test(text)) return Number(text);
+  let value = 0;
+  for (const ch of text) {
+    if (ch === '十') {
+      value = (value || 1) * 10;
+      continue;
+    }
+    const digit = CHINESE_DIGITS[ch];
+    if (digit === undefined) return null;
+    value += digit;
+  }
+  return value > 0 ? value : null;
+}
+
+/** 段落 → 代号；没有代号时返回 null（调用方决定是保留中文还是登记告警） */
+function aliasedSegment(seg) {
+  const alias = SEGMENT_ALIASES[seg];
+  if (alias !== undefined) return alias;
+  if (seg === '附录') return 'appendix';
+  const m = seg.match(/^第(\d+|[一二三四五六七八九十]+)([章节])(?:$|[-\s])/);
+  if (m) {
+    const n = chineseNumber(m[1]);
+    if (n !== null) return (m[2] === '章' ? 'ch' : 's') + n;
+  }
+  return null;
+}
+
+/** 含中文却没有别名的段落：同步结束时统一告警，免得默默生成又长又编码的 URL */
+const unaliasedSegments = new Set();
+
+function slugPart(seg) {
+  const alias = aliasedSegment(seg);
+  if (alias !== undefined && alias !== null) return alias;
+  if (/[\u4e00-\u9fff]/.test(seg)) unaliasedSegments.add(seg);
+  return slugify(seg);
+}
+
 function deriveSlug(category, vaultRelDir, title) {
-  const parts = [slugify(category), ...vaultRelDir.split(path.sep).map(slugify), slugify(title)];
+  const parts = [slugify(category), ...vaultRelDir.split(path.sep).map(slugPart), slugPart(title)];
   return parts.filter(Boolean).join('/');
 }
 
@@ -502,6 +545,59 @@ function normalizeListIndent(markdown) {
   return out.join('\n');
 }
 
+/**
+ * GFM 表格分隔行按表头格数补齐。
+ *
+ * Obsidian 阅读视图对「表头 5 格、分隔行只写 4 个 ---」的表是宽容的：照样渲染成表格。
+ * 站点走 remark-gfm / CommonMark，分隔行格数与表头不一致时**整张表不成立**，
+ * 退化成一段满是竖线的普通段落 —— 数电笔记里的卡诺图正好踩了这个坑：
+ *
+ *   | $A\backslash BC$ | 00 | 01 | 11 | 10 |
+ *   | --- | --- | --- | --- |              ← 少一格，整张表作废
+ *   | **0** | 0 | 0 | 1 | 1 |
+ *
+ * 两边的行为对齐到 Obsidian：按表头格数补 `---`（多则截断），已有的对齐写法
+ * （`:---:`）原样保留。只在「上一行是表格行」且「本行整行只由 | - : 空格组成」
+ * 时才动手，所以普通段落里的横线不会被误判成表格。
+ */
+function normalizeTableDelimiters(markdown) {
+  const lines = markdown.split('\n');
+  let inFence = false;
+
+  /** 拆一行：引用前缀、是否带首尾竖线、各格内容（没有竖线时返回 null） */
+  const parseRow = (line) => {
+    // 不能用 /^(\s*...)(.*)$/：vault 里是混合换行，CRLF 文件按 '\n' 切开后每行尾部留着 \r，
+    // 而 `.` 不匹配 \r、`$`（无 m 标志）又只在输入末尾成立 —— 整条正则直接不匹配、返回 null。
+    // 前缀也只用空格/制表符，免得把行尾的 \r 吃进缩进里。
+    const m = line.match(/^([ \t]*(?:>[ \t]*)*)([\s\S]*)$/);
+    const body = m[2].trim();
+    if (!body.includes('|')) return null;
+    const lead = body.startsWith('|');
+    const tail = body.endsWith('|');
+    const parts = body
+      .replace(/^\|/, '')
+      .replace(/\|$/, '')
+      .split('|')
+      .map((s) => s.trim());
+    return { prefix: m[1], lead, tail, parts };
+  };
+  const isDelimiter = (parts) => parts.length > 0 && parts.every((p) => /^:?-+:?$/.test(p));
+
+  for (let i = 0; i < lines.length; i++) {
+    // 围栏状态必须从第 0 行开始翻转，否则「文件开头就是代码块」时整块样例都会被当成正文
+    if (/^\s*(?:>\s*)*(```|~~~)/.test(lines[i])) inFence = !inFence;
+    if (inFence || i === 0) continue;
+    const delim = parseRow(lines[i]);
+    if (!delim || !delim.lead || !delim.tail || !isDelimiter(delim.parts)) continue;
+    const head = parseRow(lines[i - 1]);
+    if (!head || isDelimiter(head.parts) || head.parts.length === delim.parts.length) continue;
+    const parts = delim.parts.slice(0, head.parts.length);
+    while (parts.length < head.parts.length) parts.push('---');
+    lines[i] = `${delim.prefix}| ${parts.join(' | ')} |`;
+  }
+  return lines.join('\n');
+}
+
 function toYaml(o) {
   return Object.entries(o)
     .filter(([, v]) => v !== undefined)
@@ -531,6 +627,7 @@ async function main() {
 
   // 第一遍：解析全部候选笔记（先建立 slug 索引，供双链转换）
   const candidates = [];
+  const slugOwner = new Map();
   for (const root of ROOTS) {
     const rootDir = path.join(VAULT, root);
     const files = await walk(rootDir, root);
@@ -561,6 +658,17 @@ async function main() {
       const vaultRelDir = path.dirname(file.rel);
       const dirBelow = vaultRelDir === category ? '' : vaultRelDir.slice(category.length + 1);
       const slug = deriveSlug(category, dirBelow, title);
+      // slug 撞车必须在这里就炸：两篇笔记映射到同一个 slug 会互相覆盖产出文件，
+      // 等于静默丢一篇（别名表把「第N章」压成 chN 之后，这个风险是真实存在的）。
+      // 此处在清空输出目录之前，抛错只会中止这次同步，不会破坏已同步内容。
+      const clash = slugOwner.get(slug);
+      if (clash) {
+        throw new Error(
+          `slug 冲突：${file.rel} 与 ${clash} 都映射到 "${slug}"。` +
+            '请在 scripts/slug-aliases.mjs 里给其中一个换一个代号。'
+        );
+      }
+      slugOwner.set(slug, file.rel);
       const fmDate = parseDateStr(data.Date || data.Da || data.created || data.created_at);
       const nameDate = parseDateStr(basename);
       const date =
@@ -601,16 +709,6 @@ async function main() {
     return;
   }
 
-  // 候选确认后才清空输出目录（同时清掉被改名/取消发布的旧 slug）
-  await fs.rm(OUT, { recursive: true, force: true });
-  await fs.mkdir(OUT, { recursive: true });
-
-  // 本地同步时刷新创建时间清单（CI 环境跳过，避免用检出时间覆盖）
-  if (!process.env.CI) {
-    await fs.mkdir(path.dirname(MANIFEST), { recursive: true });
-    await fs.writeFile(MANIFEST, JSON.stringify(manifestData, null, 2) + '\n', 'utf8');
-  }
-
   // 已发布笔记索引：标题 / 文件名 → slug，未公开或不存在时保持纯文本
   const slugIndex = new Map();
   for (const n of candidates) {
@@ -619,27 +717,54 @@ async function main() {
     if (!slugIndex.has(key)) slugIndex.set(key, n.slug);
   }
 
-  // 第二遍：转换双链并写出
-  for (const n of candidates) {
-      const body = normalizeListIndent(normalizeObsidianMath(convertBody(n.content, slugIndex))).replace(/^\s+/, '');
-      const fm = {
-        title: n.title,
-        slug: n.slug,
-        description: n.data.description || firstParagraph(body) || undefined,
-        publishDate: n.date,
-        createdAt: n.createdAt,
-        updatedDate: n.updated,
-        tags: [...new Set(n.tags)],
-        series: n.dirBelow ? [n.category, ...n.dirBelow.split(path.sep)] : [n.category],
-      };
+  // 第二遍：先把每篇的正文与 frontmatter 全部算出来，再动输出目录。
+  // 顺序很重要：下面第 3 步的 fs.rm 是这条流水线上唯一的破坏性操作，而转换本身
+  // 是会抛错的（历史事故：CRLF 让拆行正则返回 null，脚本崩在写回途中，留下一个被
+  // 清空了一半的 src/content/notes）。先算后删，任何转换错误都只中止这一次同步。
+  const outputs = candidates.map((n) => {
+    const body = normalizeTableDelimiters(
+      normalizeListIndent(normalizeObsidianMath(convertBody(n.content, slugIndex)))
+    ).replace(/^\s+/, '');
+    const fm = {
+      title: n.title,
+      slug: n.slug,
+      description: n.data.description || firstParagraph(body) || undefined,
+      publishDate: n.date,
+      createdAt: n.createdAt,
+      updatedDate: n.updated,
+      tags: [...new Set(n.tags)],
+      series: n.dirBelow ? [n.category, ...n.dirBelow.split(path.sep)] : [n.category],
+    };
+    return {
+      file: path.join(OUT, ...n.slug.split('/')) + '.md',
+      text: `---\n${toYaml(fm)}\n---\n\n${body}\n`,
+    };
+  });
 
-      const outFile = path.join(OUT, ...n.slug.split('/')) + '.md';
-      await fs.mkdir(path.dirname(outFile), { recursive: true });
-      await fs.writeFile(outFile, `---\n${toYaml(fm)}\n---\n\n${body}\n`, 'utf8');
-      summary.published++;
+  // 本地同步时刷新创建时间清单（CI 环境跳过，避免用检出时间覆盖）
+  if (!process.env.CI) {
+    await fs.mkdir(path.dirname(MANIFEST), { recursive: true });
+    await fs.writeFile(MANIFEST, JSON.stringify(manifestData, null, 2) + '\n', 'utf8');
+  }
+
+  // 候选确认、正文全部转换成功后才清空输出目录
+  //（同时清掉被改名/取消发布的旧 slug）
+  await fs.rm(OUT, { recursive: true, force: true });
+
+  for (const out of outputs) {
+    await fs.mkdir(path.dirname(out.file), { recursive: true });
+    await fs.writeFile(out.file, out.text, 'utf8');
+    summary.published++;
   }
 
   console.log(`published: ${summary.published}, skipped: ${summary.skipped}`);
+  if (unaliasedSegments.size > 0) {
+    console.warn(
+      `warn: ${unaliasedSegments.size} 个段落还没有 ASCII 代号，URL 里会带中文（每字编码成 9 个字符）：\n` +
+        [...unaliasedSegments].map((s) => `  ${s}`).join('\n') +
+        '\n  修法：在 scripts/slug-aliases.mjs 里加一行「原文: 短代号」'
+    );
+  }
   for (const e of summary.errors) console.warn(`warn: ${e}`);
 }
 
@@ -673,12 +798,26 @@ function selftest() {
   );
   assert(parseDateStr('04-07-09') === '2004-07-09', 'numeric two-digit year untouched');
   assert(deriveSlug('CPP', 'Summaries', 'const-correctness') === 'cpp/summaries/const-correctness', 'slug path');
-  // Physics 白名单：中文书名号标题 slugify 后不留连字符碎片
+  // 中文书名号等标点 slugify 后不留连字符碎片（真的走中文兜底时才有意义，故直接测 slugify）
   assert(
-    deriveSlug('Physics', '', '《物理学》下册公式总结') === 'physics/物理学-下册公式总结',
+    slugify('《物理学》下册公式总结') === '物理学-下册公式总结',
     'slug CJK punctuation',
-    deriveSlug('Physics', '', '《物理学》下册公式总结'),
-    'physics/物理学-下册公式总结'
+    slugify('《物理学》下册公式总结'),
+    '物理学-下册公式总结'
+  );
+  // 别名表命中 + 章节规则：中文字段一律换成 ASCII 代号，URL 里不再出现百分号编码
+  assert(
+    deriveSlug('Physics', '', '《物理学》下册公式总结') === 'physics/formulas-vol2',
+    'leaf alias'
+  );
+  assert(
+    deriveSlug('Signals', '数字电路与系统', '第3章 逻辑函数及其简化') === 'signals/dcs/ch3',
+    'dir alias + chapter rule'
+  );
+  assert(
+    deriveSlug('English', `Words Summary${path.sep}数学英语词汇`, 'Stage 1 - Early Elementary') ===
+      'english/words-summary/math-vocab/stage-1-early-elementary',
+    'aliased dir keeps ascii leaf'
   );
   const idx = new Map([['const-correctness', 'cpp/summaries/const-correctness']]);
   assert(
@@ -821,6 +960,49 @@ function selftest() {
     normalizeListIndent('- a\n  b\n> 引用\n- c') === '- a\n  b\n> 引用\n- c',
     'root blockquote ends list'
   );
+  // 表格分隔行按表头补格（数电笔记的卡诺图：表头 5 格、分隔行只写了 4 个 ---）
+  assert(
+    normalizeTableDelimiters('| A | B | C | D | E |\n| --- | --- | --- | --- |\n| 0 | 0 | 0 | 1 | 1 |') ===
+      '| A | B | C | D | E |\n| --- | --- | --- | --- | --- |\n| 0 | 0 | 0 | 1 | 1 |',
+    'table delimiter padded to header width'
+  );
+  // 已对齐的表原样不动（幂等）
+  assert(
+    normalizeTableDelimiters('| A | B |\n| :-: | --- |\n| 0 | 1 |') === '| A | B |\n| :-: | --- |\n| 0 | 1 |',
+    'well-formed table untouched'
+  );
+  // 普通段落里的横线不许当成分隔行
+  assert(
+    normalizeTableDelimiters('说明 | 文字\n---\n正文') === '说明 | 文字\n---\n正文',
+    'bare rule is not a table delimiter'
+  );
+  // 代码块里的表格样例不许改
+  assert(
+    normalizeTableDelimiters('```\n| A | B |\n| --- |\n```') === '```\n| A | B |\n| --- |\n```',
+    'table inside fence untouched'
+  );
+  // CRLF：vault 里混着 CRLF 文件，行尾的 \r 不能让拆行正则失配（曾整脚本崩在中途）
+  assert(
+    normalizeTableDelimiters('| A | B | C |\r\n| --- | --- |\r\n| 1 | 2 | 3 |\r\n') ===
+      '| A | B | C |\r\n| --- | --- | --- |\n| 1 | 2 | 3 |\r\n',
+    'CRLF line endings do not break row parsing'
+  );
+  // URL 段落代号：字典序优先，其次是章节规则
+  assert(aliasedSegment('数字电路与系统') === 'dcs', 'alias table wins');
+  assert(aliasedSegment('第3章 逻辑函数及其简化') === 'ch3', 'arabic chapter');
+  assert(aliasedSegment('第九章 振动 公式总结') === 'ch9', 'chinese chapter');
+  assert(aliasedSegment('第十二章 气体动理论 公式总结') === 'ch12', 'chinese chapter >= 10');
+  assert(aliasedSegment('第二十一章 x') === 'ch21', 'chinese chapter 21');
+  assert(aliasedSegment('附录') === 'appendix', 'appendix');
+  assert(aliasedSegment('第2章') === 'ch2', 'chapter with nothing after it');
+  assert(aliasedSegment('关于第3章的内容') === null, 'chapter rule is anchored at the start');
+  assert(aliasedSegment('第三次作业') === null, '第N 后面不是章/节就不算章节');  assert(aliasedSegment('第1节 引言') === 's1', 'section');
+  assert(aliasedSegment('没编号的中文标题') === null, 'unaliased returns null');
+  // 别名表的值必须是纯 ASCII 片段，否则 URL 里照样会冒出百分号编码
+  const badAlias = Object.entries(SEGMENT_ALIASES).find(
+    ([key, value]) => !/^[a-z0-9][a-z0-9-]*$/.test(value)
+  );
+  assert(badAlias === undefined, 'alias values are ascii slugs', badAlias, undefined);
   console.log('selftest ok');
 }
 

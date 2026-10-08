@@ -9,6 +9,7 @@
  */
 import {
   copyText,
+  initAnswerFolds,
   initCodeCopy,
   initToc,
   isNarrowLayout,
@@ -453,3 +454,4 @@ document.addEventListener(
 initCodeCopy();
 initToc();
 syncArticleFolds();
+initAnswerFolds();

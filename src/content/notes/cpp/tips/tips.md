@@ -10,8 +10,8 @@ series: ["CPP","Tips"]
 
 # Quotes
 
-- ([逗号表达式](/notes/cpp/tips/逗号表达式/))
-- ([位运算](/notes/cpp/tips/位运算/))
+- ([逗号表达式](/notes/cpp/tips/comma-operator/))
+- ([位运算](/notes/cpp/tips/bitwise/))
 
 # Notes
 - `"..."`约等于const char.

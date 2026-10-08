@@ -1,0 +1,52 @@
+---
+title: "数字反转"
+slug: "cpp/examples/reverse-number"
+description: "输入一个不小于 100 且小于 1000，同时包括小数点后一位的一个浮点数，例如 123.4 ，要求把这个数字翻转过来，变成 4.321 并输出。输入/输出格式均为一行一个浮点数。"
+publishDate: "2026-07-11"
+createdAt: "2026-07-11T00:00:00Z"
+tags: ["cpp","examples"]
+series: ["CPP","Examples"]
+---
+
+# 问题描述：
+输入一个不小于 100 且小于 1000，同时包括小数点后一位的一个浮点数，例如 123.4 ，要求把这个数字翻转过来，变成 4.321 并输出。输入/输出格式均为一行一个浮点数。
+
+| 输入  | 123.4 |
+| --- | ----- |
+| 输出  | 4.321 |
+# Notes
+- 慎用`std::pow()`
+  [CS 26-07-11 cmath pow()](/notes/cpp/summaries/cmath-pow/)
+
+# 参考程序
+
+- Char
+```cpp
+#include <iostream>
+using namespace std;
+
+int main() {
+    char a[5] = {};  // 初始化为空
+    cin.width(5);    // 最多读取 4 个字符（留 1 个给 '\0'）
+    cin >> a;
+    cout << a[4] << a[3] << a[2] << a[1] << a[0] << "\n";
+    return 0;
+}
+```
+
+- String
+```cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+int main() {
+    string a;
+    cin >> a;
+    for (int i = a.length() - 1; i >= 0; i--) {
+        cout << a[i];
+    }
+    cout << "\n";
+    return 0;
+}
+```

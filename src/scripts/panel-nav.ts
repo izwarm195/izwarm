@@ -69,6 +69,71 @@ export function syncArticleFolds(): void {
   });
 }
 
+// ---------- 习题答案折叠块（<details class="answer">）----------
+/**
+ * 找出正文里的"答案"折叠块。
+ * 1. 首选 <details class="answer">（vault 侧的统一写法）；
+ * 2. 万一日后换了渲染器、class 被剥掉，退回 summary 文本恰为「答案」的 details ——
+ *    笔记本身的写法没变，只是属性丢了，不该整篇失去"展开全部"。
+ * 只认 details 的直接子 summary：嵌套 details 时不会把外层误判成答案块。
+ */
+function collectAnswerFolds(): HTMLDetailsElement[] {
+  const marked = Array.from(document.querySelectorAll<HTMLDetailsElement>('details.answer'));
+  if (marked.length > 0) return marked;
+  return Array.from(document.querySelectorAll<HTMLDetailsElement>('.article-body details')).filter(
+    (fold) => {
+      const summary = fold.querySelector(':scope > summary');
+      return summary !== null && (summary.textContent ?? '').trim() === '答案';
+    }
+  );
+}
+
+/**
+ * 「展开全部答案 / 收起全部答案」按钮。
+ *
+ * 单个答案块的展开/收起完全交给浏览器原生 <details>：这里不 preventDefault、
+ * 不代管 open，只写按钮点击与按钮文案。
+ *
+ * 和 initCodeCopy 一样在每次面板换页后重跑：按钮随 [data-notes-region] 的内容被整体
+ * 替换，绑在旧节点上的监听会一起消失，所以每次都得重新查一次。
+ */
+export function initAnswerFolds(): void {
+  const button = document.querySelector<HTMLButtonElement>('[data-answer-toggle]');
+  if (!button) return;
+  const folds = collectAnswerFolds();
+  if (folds.length === 0) {
+    // 该篇没有答案块（如第 5 章只有题目）：整条工具栏不出现，不留空占位。
+    // 服务端已经按正文判过一次，这里是渲染器剥 class 时的兜底。
+    button.closest('.answer-toolbar')?.remove();
+    return;
+  }
+  const label = button.querySelector<HTMLElement>('[data-answer-toggle-label]');
+  const count = button.querySelector<HTMLElement>('[data-answer-toggle-count]');
+  if (count) count.textContent = `${folds.length} 题`;
+
+  const sync = (): void => {
+    const allOpen = folds.every((fold) => fold.open);
+    button.setAttribute('aria-expanded', allOpen ? 'true' : 'false');
+    if (label) label.textContent = allOpen ? '收起全部答案' : '展开全部答案';
+  };
+
+  button.addEventListener('click', () => {
+    const open = !folds.every((fold) => fold.open);
+    folds.forEach((fold) => {
+      fold.open = open;
+    });
+    sync();
+  });
+
+  // 用户自己点开/收起单个块后，按钮文案也得跟着回到正确状态。
+  // details 的 toggle 事件不冒泡，但捕获阶段照样会经过祖先，所以在正文上挂一次即可。
+  button
+    .closest('.article')
+    ?.querySelector('.article-body')
+    ?.addEventListener('toggle', sync, true);
+  sync();
+}
+
 function setActiveHeading(id: string): void {
   if (!id || id === activeHeadingId) return;
   activeHeadingId = id;
@@ -420,6 +485,7 @@ export async function loadPageIntoPanel(
   initToc();
   initCodeCopy();
   syncArticleFolds();
+  initAnswerFolds();
   if (hash) {
     const target = document.getElementById(hash.slice(1));
     if (target) target.scrollIntoView({ block: 'start' });

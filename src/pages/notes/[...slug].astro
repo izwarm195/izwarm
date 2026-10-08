@@ -22,6 +22,13 @@ const siblings = getSiblingNotes(notes, note);
 // 排除 depth 1 会让"通篇只用 # 分节"的笔记（如 numpy 综合案例）大纲全空。
 const toc = headings.filter((heading) => heading.depth >= 1 && heading.depth <= 4);
 const words = countWords(note.body ?? '');
+// 习题答案折叠块（<details class="answer">，见 docs/content-frontmatter.md）：
+// 按原始正文判断，因为"渲染后 class 是否被保留"是渲染器的事，不是笔记的事。
+// 两条判据对应 panel-nav.ts 里 initAnswerFolds 的同一套兜底：
+// 首选 class="answer"，渲染器剥掉 class 时退回 summary 文本恰为「答案」的 details。
+// 没有答案块的笔记（第 5 章目前只有题目）拿不到按钮，也不该多出一条空工具栏。
+const answerFoldRe = /<details[^>]*\bclass="[^"]*\banswer\b[^"]*"|<details[^>]*>\s*<summary>\s*答案\s*<\/summary>/gi;
+const answerCount = (note.body?.match(answerFoldRe) ?? []).length;
 ---
 
 <BaseLayout title={`${note.data.title} · izwarm`}>
@@ -44,6 +51,24 @@ const words = countWords(note.body ?? '');
           ))}
           <span>{words} 字数</span>
         </div>
+        {answerCount > 0 && (
+          <div class="answer-toolbar">
+            {/* 只做「全部」这一个按钮：单个答案块的展开/收起是浏览器原生
+                <details> 行为，脚本不 preventDefault、不代管 open（见 panel-nav.ts）。
+                换页由 SPA 原位替换区域内容，所以按钮不在这里绑监听，
+                由 initAnswerFolds() 在每次替换后重新查一次。 */}
+            <button
+              class="answer-toggle"
+              type="button"
+              data-answer-toggle
+              aria-expanded="false"
+              title="切换全部习题答案"
+            >
+              <span class="answer-toggle-label" data-answer-toggle-label>展开全部答案</span>
+              <span class="answer-toggle-count" data-answer-toggle-count>{answerCount} 题</span>
+            </button>
+          </div>
+        )}
         <div class="article-body">
           <Content />
         </div>

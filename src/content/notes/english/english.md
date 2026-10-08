@@ -15,7 +15,7 @@ series: ["English"]
 
 
 ### Words Summary
-[WS 26-08-03 数学英语词汇](/notes/english/words-summary/数学英语词汇/数学英语词汇/)
+[WS 26-08-03 数学英语词汇](/notes/english/words-summary/math-vocab/math-vocab/)
 
 # Essays
 ### IEEE Spectrum

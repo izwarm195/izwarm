@@ -1,0 +1,71 @@
+---
+title: "去旅行"
+slug: "cpp/examples/travel"
+description: "GESPPASS — GESP C++ 等级认证真题刷题平台:逐题精讲、智能推题、限时模考、错题本、打卡积分。"
+publishDate: "2026-08-26"
+createdAt: "2026-08-26T00:00:00Z"
+updatedDate: "2026-08-26T19:42:01"
+tags: ["clippings","cpp"]
+series: ["CPP","Examples"]
+---
+
+· 时间限制:1.0 s
+· 内存限制:512.0 MB
+
+# 题目描述
+
+快暑假了，小杨同学正在计划出去旅行，前往目的地的方案多种多样，小杨同学想知道如何前往目的地最便宜。小杨同学住在 A 市，旅行目的地是 B 市，小杨同学前往目的地有三种方案：  
+1\. 从 A 市直飞 B 市；  
+2\. 从 A 市坐高铁到 C 市，然后坐飞机到 B 市；  
+3\. 从 A 市坐高铁到 C 市，然后坐高铁到 B 市。
+
+请帮小杨同学求出最便宜的出行方案的价格。
+
+# 输入格式
+
+输入包含 4 行，每行一个正整数：
+· 第 1 行的正整数表示「从 A 市直飞 B 市」的价格；
+· 第 2 行的正整数表示「从 A 市坐高铁到 C 市」的价格；
+· 第 3 行的正整数表示「从 C 市坐飞机到 B 市」的价格；
+· 第 4 行的正整数表示「从 C 市坐高铁到 B 市」的价格。
+
+# 输出格式
+
+输出一个正整数，表示 3 种方式中，最便宜的出行方案的价格。
+
+```cpp
+#include <iostream>
+using namespace std;
+
+int main() {
+    int AB = 0;
+    int AC = 0;
+    int CB_p = 0;
+    int CB_r = 0;
+    cin >> AB >> AC >> CB_p >> CB_r;
+    int plan1 = AB;
+    int plan2 = AC + CB_p;
+    int plan3 = AC + CB_r;
+    int result = 0;
+    if (plan1 < plan2)
+    {
+        if(plan1 < plan3)
+        {
+            result = plan1;
+        }
+        else result = plan3;
+    }
+    else
+    {
+        if (plan2 < plan3)
+        {
+            result = plan2;
+        }
+        else result = plan3;
+    }
+    cout << result;
+    return 0;
+}
+
+```
+（这什么难度，我为什么要记。）

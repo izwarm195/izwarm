@@ -772,6 +772,143 @@ html {
   background: rgba(62, 117, 117, 0.26);
 }
 
+/* ---- 习题答案折叠块（<details class="answer">）+「展开全部答案」按钮 ----
+   vault 侧约定：每道题（## N.M）后跟一个原生 details，<summary> 之后必须空一行
+   —— 那个空行是 markdown 照常解析的关键（见 docs/content-frontmatter.md）。
+   单个块的开合完全走浏览器原生行为，脚本只负责那个「全部」按钮，所以这里
+   不写任何会吃掉点击、或把 open 状态改掉的规则。 */
+.article-body details.answer {
+  margin: 1.15em 0 1.5em;
+  padding: 0 1.05em;
+  /* 左缘一道主题青细线当"这是答案"的标识，其余三边淡描边 */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 2px solid rgba(127, 192, 192, 0.45);
+  border-radius: 0 10px 10px 0;
+  background: rgba(62, 117, 117, 0.1);
+}
+
+/* summary 排成 flex：原生三角换成一条可旋转的折线，右端留「展开 / 收起」提示。
+   左右负边距让这一行铺满卡片内宽（点击区域也就宽了），正文仍留在 details 的内边距里。
+   横向滚动条 / 宽表都不要沾到这一行，所以这里不做 overflow。 */
+.article-body details.answer > summary {
+  display: flex;
+  align-items: center;
+  gap: 0.55em;
+  margin: 0 -1.05em;
+  padding: 0.55em 1.05em;
+  color: #9fd0d0;
+  font-size: 0.95em;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  user-select: none;
+  list-style: none; /* Firefox */
+  transition: color 0.18s ease, background 0.18s ease;
+}
+.article-body details.answer > summary::-webkit-details-marker {
+  display: none; /* Safari：display:flex 不一定收得掉它自带的那个三角 */
+}
+.article-body details.answer > summary:hover,
+.article-body details.answer > summary:focus-visible {
+  color: #dcf2f2;
+  background: rgba(127, 192, 192, 0.1);
+}
+
+/* 折线箭头：上 + 右两条边转 45° 指向右（收起），135° 指向下（展开） */
+.article-body details.answer > summary::before {
+  content: '';
+  flex: none;
+  width: 0.42em;
+  height: 0.42em;
+  margin-left: 0.12em;
+  border-top: 1.6px solid currentColor;
+  border-right: 1.6px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+}
+.article-body details.answer[open] > summary::before {
+  transform: rotate(135deg);
+}
+
+/* 右端的「展开 / 收起」提示：纯 CSS 跟着 open 走，不需要脚本同步 */
+.article-body details.answer > summary::after {
+  content: '展开';
+  margin-left: auto;
+  padding-left: 0.9em;
+  font-size: 0.8em;
+  letter-spacing: 0.16em;
+  color: #78828d;
+  transition: color 0.18s ease;
+}
+.article-body details.answer[open] > summary::after {
+  content: '收起';
+}
+.article-body details.answer > summary:hover::after,
+.article-body details.answer > summary:focus-visible::after {
+  color: #9fd0d0;
+}
+
+/* 折叠容器内的正文：上边贴住 summary，下边留出与左右一致的内边距收尾。
+   收起态非 summary 子元素不参与布局，这两条不会影响收起时的卡片高度。 */
+.article-body details.answer > summary + * {
+  margin-top: 0.55em;
+}
+.article-body details.answer > :last-child {
+  margin-bottom: 1.05em;
+}
+
+/* 真值表 / 卡诺图：宽度与横向滚动沿用上面的 .article-body table 规则
+   （display:block + max-content + max-width:100% + overflow-x:auto）。
+   details 不是 flex / grid，也没有 overflow:hidden，所以表格的包含块就是它的内容盒：
+   宽表滚的是表格自己，卡片不动，边框照旧。下面这条只是把这层依赖钉死 ——
+   将来谁给 details 换成 flex/grid，表格会因为 min-width:auto 改用 min-content 撑破卡片。 */
+.article-body details.answer > table {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* 「展开全部答案 / 收起全部答案」工具栏：紧跟元信息行，靠右一颗按钮，
+   不抢标题，也不给正文加一条横线。文案与 aria-expanded 由 initAnswerFolds 维护。 */
+.answer-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 0 20px;
+}
+.article-meta + .answer-toolbar {
+  /* 元信息的下边距是给正文留的，这里不必再叠一整份 */
+  margin-top: -12px;
+}
+.answer-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 13px;
+  font: inherit;
+  font-size: 12.5px;
+  line-height: 1;
+  color: #9fd0d0;
+  background: rgba(62, 117, 117, 0.16);
+  border: 1px solid rgba(127, 192, 192, 0.32);
+  border-radius: 10px 10px 10px 0; /* 与 .action-btn 同一套圆角 */
+  cursor: pointer;
+  transition: color 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+}
+.answer-toggle:hover,
+.answer-toggle:focus-visible {
+  color: #eaf7f7;
+  background: rgba(62, 117, 117, 0.34);
+  border-color: rgba(127, 192, 192, 0.6);
+}
+.answer-toggle-count {
+  color: #8b939d;
+  font-size: 0.92em;
+  letter-spacing: 0.04em;
+  transition: color 0.18s ease;
+}
+.answer-toggle:hover .answer-toggle-count,
+.answer-toggle:focus-visible .answer-toggle-count {
+  color: #b9c2cc;
+}
+
 /* ---- 文章底部操作底板（分享链接 / 请我喝咖啡）----
    与 .article 同材质、同宽，但另起一块底板（不嵌进文章卡里，避免卡片套卡片） */
 .article-actions {
@@ -1549,6 +1686,27 @@ html {
   .article-body .katex-display {
     margin: 1.05em 0;
     padding: 12px 10px;
+  }
+  /* 手机：答案卡片让出横向空间给真值表，summary 做成 ≥44px 的可点行 */
+  .article-body details.answer {
+    margin: 1em 0 1.35em;
+    padding: 0 0.85em;
+  }
+  .article-body details.answer > summary {
+    margin: 0 -0.85em;
+    padding: 0.62em 0.85em;
+    min-height: 44px;
+  }
+  .article-body details.answer > :last-child {
+    margin-bottom: 0.9em;
+  }
+  .answer-toolbar {
+    margin-bottom: 18px;
+  }
+  .answer-toggle {
+    padding: 10px 14px;
+    font-size: 13px;
+    min-height: 44px; /* 触屏可点项：一律 ≥44px */
   }
 
   /* ---------- 触屏可点项：一律 ≥44px ---------- */
