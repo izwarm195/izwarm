@@ -22,6 +22,7 @@ const ROOTS = [
   'Signals/Signals & Systems',
   'Signals/数字电路与系统',
   'Physics',
+  'Complex',
 ];
 const SKIP_DIRS = new Set(['.obsidian', '.trash', 'Templates', 'Daily', 'Journal', 'Canvas', 'Private', 'Attachments', '_QuickAdd']);
 const _posArg = process.argv.slice(2).find((a) => !a.startsWith('--'));
@@ -245,8 +246,20 @@ function firstParagraph(body) {
   // 纯公式笔记（如物理公式总结）会因此只剩 "F kx" 这种没有信息量的描述。
   // 换成空格而不是换行，避免把"由式 $$a=b$$ 可知"这类行拆成两个片段。
   const prose = body.replace(/\$\$[\s\S]*?\$\$/g, ' ');
+  // 折叠 callout 转出来的 <details> 块整体跳过：里面是答案/「本节包含」这类附属内容，
+  // 不该当摘要（物理笔记的折叠块正好在正文最前面，不跳过描述就会变成一段 HTML 标签）。
+  let inFold = false;
   for (const line of prose.split(/\n+/)) {
     const trimmed = line.trim();
+    if (/^<details\b/i.test(trimmed)) {
+      inFold = true;
+      continue;
+    }
+    if (/^<\/details>/i.test(trimmed)) {
+      inFold = false;
+      continue;
+    }
+    if (inFold) continue;
     if (!trimmed || trimmed.startsWith('>') || trimmed.startsWith('#') || trimmed.startsWith('```')) continue;
     const t = trimmed
       // 链接/图片只留文字：否则摘要会带上内部 slug，如 "Numpy 函数汇总 (/notes/machine and deep learning/python/numpy 函数汇总/)"
@@ -257,6 +270,89 @@ function firstParagraph(body) {
     if (t) return t.length > 140 ? t.slice(0, 140) + '…' : t;
   }
   return '';
+}
+
+/**
+ * Obsidian「可折叠 callout」→ 站点 `<details>`。
+ *
+ * 笔记里写 `> [!answer]- 答案`（`-` 默认收起 / `+` 默认展开），Obsidian 阅读视图
+ * 会把它渲染成一个可点开的折叠块。站点这边必须**在 markdown 解析之前**把它变成
+ * `<details>`/`<summary>`：这样块内的 markdown（真值表、列表、`$…$` 公式）仍按普通
+ * markdown 解析，公式才照常交给 KaTeX —— 用户反馈的「公式渲染不出来」正是因为在
+ * vault 里手写 `<details>` HTML 块时，块内内容不会被当成 markdown。
+ *
+ * 产出形如：
+ *   <details class="answer">
+ *   <summary><img class="callout-badge" …><strong>答案</strong></summary>
+ *   （此处必须空一行，HTML 块到此结束，后面的 markdown 才会被解析）
+ *   …被剥掉 `> ` 前缀的正文…
+ *
+ *   </details>
+ *
+ * 只处理「整块都在引用里」的折叠 callout：起始行顶格（允许缩进）为 `> [!类型]-/+`，
+ * 后续行都以 `>` 开头（`>` 开头的新 callout 会被剥成新行，因此不会误吞下一个）。
+ * 列表内的 callout（`- > [!note]`）与嵌套 callout（`> > [!x]`）不在这里处理，
+ * 留给 convertBody 的逐行规则，行为与改动前一致（只是不折叠）。
+ */
+function foldCallouts(markdown) {
+  const lines = markdown.split('\n');
+  const out = [];
+  const opener = /^\s*>\s*\[!([\w-]+)\]([+-])\s*(.*?)\s*$/;
+
+  // 手工外层循环（不用 forEach）：内层要一次吃掉整个引用块，需要手动前进 i
+  for (let i = 0; i < lines.length; i++) {
+    const m = lines[i].match(opener);
+    if (!m) {
+      out.push(lines[i]);
+      continue;
+    }
+    // 围栏内的 `> [!x]-` 只是代码示例，按原样输出
+    let fences = 0;
+    for (let k = 0; k < i; k++) if (/^\s*(?:>\s*)*(```|~~~)/.test(lines[k])) fences++;
+    if (fences % 2 === 1) {
+      out.push(lines[i]);
+      continue;
+    }
+
+    const type = m[1].toLowerCase();
+    const label = m[3] || type.charAt(0).toUpperCase() + type.slice(1);
+    const body = [];
+    let next = i + 1;
+    for (; next < lines.length; next++) {
+      const line = lines[next];
+      // 紧跟着的下一个 callout 另起一块：不这样切的话，两个相邻（中间只有 `>` 空行）
+      // 的答案会被并进同一个 details，展开一个连另一个也带出来
+      if (/^\s*>\s*\[![\w-]+\]/.test(line)) break;
+      if (/^\s*>/.test(line)) {
+        body.push(line.replace(/^\s*>\s?/, ''));
+        continue;
+      }
+      // 引用块里的空行常写成不带 `>` 的纯空行：算本文内容，继续吃它后面的引用行
+      if (/^\s*$/.test(line) && next + 1 < lines.length && /^\s*>/.test(lines[next + 1])) {
+        body.push('');
+        continue;
+      }
+      break;
+    }
+
+    const cls = type === 'answer' ? 'answer' : 'callout-fold';
+    // 去掉正文首尾的空行：分隔用的空行由下面统一补一条，
+    // 否则正文本身的开头空行会再叠一条，产出里出现连续空行
+    while (body.length > 0 && body[0] === '') body.shift();
+    while (body.length > 0 && body[body.length - 1] === '') body.pop();
+    const safeLabel = label.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    // `**答案**` 不能用：summary 这一行处在 HTML 块里，不会被当成 markdown
+    out.push(`<details class="${cls}"${m[2] === '+' ? ' open' : ''}>`);
+    out.push(
+      `<summary><img class="callout-badge" src="${SITE_BASE}/media/icons/${calloutIcon(type)}.svg" alt="${type}"><strong>${safeLabel}</strong></summary>`
+    );
+    out.push('');
+    out.push(...body);
+    out.push('');
+    out.push('</details>');
+    i = next - 1; // 内层已消费到 next，外层再 i++ 正好接上
+  }
+  return out.join('\n');
 }
 
 function convertBody(body, slugIndex) {
@@ -272,6 +368,8 @@ function convertBody(body, slugIndex) {
     .replace(/\[\[([^\]]+)\]\]/g, (_, target) => linkify(target, target))
     // Obsidian callout：隐藏 [!type]，改为 Zest 图标徽标 + 标题
     // 兼容列表内 callout：- > [!note] 标题
+    // 折叠 callout（[!type]- / [!type]+）已由前面的 foldCallouts 整块转成 <details>，
+    // 这里只兜住没被它接管的（列表内 / 嵌套引用里的），行为与改动前一致
     .replace(/^(\s*(?:[-*+]\s+)?(?:>\s*)?)\[!(\w+)\][+-]?[ \t]*(.*)$/gm, (_, quote, type, title) => {
       const t = type.toLowerCase();
       const label = title && title.trim() ? title.trim() : t.charAt(0).toUpperCase() + t.slice(1);
@@ -458,6 +556,15 @@ function normalizeListIndent(markdown) {
 
     const { width, stripped } = leadingInfo(line);
 
+    // 折叠块的 HTML 骨架必须顶格：它们是块级结构，不是列表项的续行。
+    // 不拦住的话，折叠块正文以列表结尾时（如物理笔记的「本节包含」），
+    // 紧跟的 </details> 会被当成惰性续行缩进 —— 缩进到 4 格就变成代码块，
+    // 整个 details 收不了尾，后面整篇笔记都会被吞进折叠块里。
+    if (/^<\/?(details|summary)\b/i.test(stripped)) {
+      out.push(stripped);
+      continue;
+    }
+
     // 行间公式内容行（可能以 > 等开头）优先按公式内容处理
     if (inMath) {
       if (/^\$\$\s*$/.test(stripped)) {
@@ -611,6 +718,7 @@ const CATEGORY_TAG = {
   'Machine & Deep Learning': 'machine-learning',
   Signals: 'signals',
   Physics: 'physics',
+  Complex: 'complex',
 };
 
 async function main() {
@@ -722,8 +830,11 @@ async function main() {
   // 是会抛错的（历史事故：CRLF 让拆行正则返回 null，脚本崩在写回途中，留下一个被
   // 清空了一半的 src/content/notes）。先算后删，任何转换错误都只中止这一次同步。
   const outputs = candidates.map((n) => {
+    // 顺序：先整块吃掉折叠 callout（产出 <details>，块内 markdown 照常解析），
+    // 再做双链/普通 callout 转换，最后才是公式与列表缩进规范化 —— 此时 callout 正文
+    // 已经剥掉 `> ` 前缀，对这两个只看普通 markdown 的函数来说就是一段普通内容。
     const body = normalizeTableDelimiters(
-      normalizeListIndent(normalizeObsidianMath(convertBody(n.content, slugIndex)))
+      normalizeListIndent(normalizeObsidianMath(convertBody(foldCallouts(n.content), slugIndex)))
     ).replace(/^\s+/, '');
     const fm = {
       title: n.title,
@@ -996,13 +1107,63 @@ function selftest() {
   assert(aliasedSegment('附录') === 'appendix', 'appendix');
   assert(aliasedSegment('第2章') === 'ch2', 'chapter with nothing after it');
   assert(aliasedSegment('关于第3章的内容') === null, 'chapter rule is anchored at the start');
-  assert(aliasedSegment('第三次作业') === null, '第N 后面不是章/节就不算章节');  assert(aliasedSegment('第1节 引言') === 's1', 'section');
+  assert(aliasedSegment('第三次作业') === null, '第N 后面不是章/节就不算章节');
+  assert(aliasedSegment('第1节 引言') === 's1', 'section');
   assert(aliasedSegment('没编号的中文标题') === null, 'unaliased returns null');
   // 别名表的值必须是纯 ASCII 片段，否则 URL 里照样会冒出百分号编码
   const badAlias = Object.entries(SEGMENT_ALIASES).find(
     ([key, value]) => !/^[a-z0-9][a-z0-9-]*$/.test(value)
   );
   assert(badAlias === undefined, 'alias values are ascii slugs', badAlias, undefined);
+
+  // ---- 折叠 callout → <details> ----
+  // 块内必须留成普通 markdown（空行 + 内容 + 空行）：公式、真值表、列表都靠这个
+  const folded = foldCallouts('> [!answer]- 答案\n>\n> (1) $x=1$\n');
+  assert(
+    folded ===
+      '<details class="answer">\n' +
+        '<summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer">' +
+        '<strong>答案</strong></summary>\n' +
+        '\n(1) $x=1$\n\n</details>\n',
+    'fold callout becomes details',
+    folded,
+    '<details class="answer">…'
+  );
+  // `+` = 默认展开；引用里的表格行剥掉 `> ` 之后仍是表格（分隔行紧随表头，中间不能有空行）
+  const opened = foldCallouts('> [!abstract]+ 本节包含\n> | a | b |\n> --- | ---\n> 1 | 2\n');
+  assert(opened.startsWith('<details class="callout-fold" open>'), 'plus marker opens by default');
+  assert(opened.includes('\n| a | b |\n--- | ---\n1 | 2\n'), 'quoted table is unquoted');
+  // 引用块到最后一个引用行为止；紧跟着的下一个 callout 另起一块，不能被吞进这一层
+  const chained = foldCallouts('> [!answer]- a\n> body\n> [!note] 普通 callout\n');
+  assert(
+    chained ===
+      '<details class="answer">\n' +
+        '<summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer">' +
+        '<strong>a</strong></summary>\n' +
+        '\nbody\n\n</details>\n' +
+        '> [!note] 普通 callout\n',
+    'next callout starts a new block',
+    chained
+  );
+  // 列表内 / 嵌套引用里的折叠 callout 不在这里接管，原样交回 convertBody
+  assert(foldCallouts('- > [!note]- x\n') === '- > [!note]- x\n', 'list callout left alone');
+  assert(foldCallouts('> > [!note]- x\n') === '> > [!note]- x\n', 'nested callout left alone');
+  // 代码块里的示例不能被改写
+  assert(
+    foldCallouts('```\n> [!answer]- 答案\n```\n') === '```\n> [!answer]- 答案\n```\n',
+    'fenced sample untouched'
+  );
+  // 折叠块正文以列表结尾时，收尾的 </details> 不能被 normalizeListIndent 当成
+  // 列表续行缩进（缩到 4 格会变代码块，整个 details 收不了尾、吞掉后面整篇笔记）
+  assert(
+    normalizeListIndent(foldCallouts('> [!abstract]- 本节\n> - a\n> - b\n')) ===
+      '<details class="callout-fold">\n' +
+        '<summary><img class="callout-badge" src="/media/icons/document.svg" alt="abstract">' +
+        '<strong>本节</strong></summary>\n' +
+        '\n- a\n- b\n\n</details>\n',
+    'closing tag stays flush left after a list body',
+    normalizeListIndent(foldCallouts('> [!abstract]- 本节\n> - a\n> - b\n'))
+  );
   console.log('selftest ok');
 }
 

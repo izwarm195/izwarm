@@ -4,7 +4,7 @@ slug: "machine-and-deep-learning/python/machine-and-deep-learning"
 description: "Numpy"
 publishDate: "2026-07-26"
 createdAt: "2026-07-26T00:00:00Z"
-updatedDate: "2026-09-26T16:17:26"
+updatedDate: "2026-10-11T20:50:09"
 tags: ["machine-learning","python","moc"]
 series: ["Machine & Deep Learning","Python"]
 ---
@@ -30,6 +30,7 @@ Numpy
   - [Python 杂记 VI](/notes/machine-and-deep-learning/python/python-misc-vi/)
   - [Python 杂记 VII](/notes/machine-and-deep-learning/python/python-misc-vii/)
   - Python 杂记 VIII
+  - Python 杂记 VIIII
 
 # NNDL
 - [NNDL 26-09-03 Logistic回归练习](/notes/machine-and-deep-learning/nndl/26-09-03-logistic/)

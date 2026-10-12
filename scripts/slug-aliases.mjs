@@ -20,6 +20,9 @@ export const SEGMENT_ALIASES = {
   // ---- 数字电路与系统 ----
   '《数字电路与系统》李文渊第2版 习题&解答': 'dcs-exercises',
 
+  // ---- 复变函数（Complex）----
+  '第一次作业': 'assignment-1',
+
   // ---- 信号与系统 ----
   'Signals & System 总目录': 'toc',
   '信号与系统阅读随记': 'reading-notes',
@@ -50,6 +53,7 @@ export const SEGMENT_ALIASES = {
   'Python 杂记 V': 'python-misc-v',
   'Python 杂记 VI': 'python-misc-vi',
   'Python 杂记 VII': 'python-misc-vii',
+  'Python 杂记 VIII - Path类常用方法': 'python-misc-viii-path',
 
   // ---- 英语 ----
   '数学英语词汇': 'math-vocab',

@@ -15,7 +15,7 @@ series: ["Signals","数字电路与系统"]
 (2) 有3个输入信号 A、B、C，当3个输入信号中有偶数个输入为1时，输出 F 为1，其余情况下，输出 F 为0。
 
 <details class="answer">
-<summary>答案</summary>
+<summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
 (1) 不多于一个输入为 1 时 $Y=1$：
 
@@ -56,7 +56,7 @@ $F = \bar{A}\bar{B}\bar{C} + \bar{A}BC + A\bar{B}C + AB\bar{C} = \sum m(0,3,5,6)
 (3) 1位二进制减法电路，其输入为被减数 A、减数 B 和低位的借位 BI，输出为差 $\Delta$ 和向高位的借位 BO。
 
 <details class="answer">
-<summary>答案</summary>
+<summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
 (1) 奇数个 1 时 $F=1$：
 
@@ -116,7 +116,7 @@ $\Delta = A \oplus B \oplus BI$，$BO = \bar{A}B + \bar{A}BI + B\,BI$
 ## 3.3 列举 2 个与逻辑的实例，并写出真值表。
 
 <details class="answer">
-<summary>答案</summary>
+<summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
 例 1：保险柜的两把钥匙串联，两把都转动（$A=1$ 且 $B=1$）锁才打开（$Y=1$）。
 例 2：设备启动要求“电源接通”与“急停未按下”同时成立。
@@ -135,7 +135,7 @@ $Y = A \cdot B$：有 0 出 0，全 1 才出 1。
 ## 3.4 列举 2 个或逻辑的实例，并写出真值表。
 
 <details class="answer">
-<summary>答案</summary>
+<summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
 例 1：前门与后门各有一个按钮，任一个按下（$A=1$ 或 $B=1$）门铃都响（$Y=1$）。
 例 2：门禁的刷卡与密码，任一种验证通过即可开门。
@@ -154,7 +154,7 @@ $Y = A + B$：有 1 出 1，全 0 才出 0。
 ## 3.5 列举 2 个非逻辑的实例，并写出真值表。
 
 <details class="answer">
-<summary>答案</summary>
+<summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
 例 1：同一开关的两个状态——开关接通时灯灭、断开时灯亮（继电器常闭触点）。
 例 2：三极管反相器，输入高电平则输出低电平。
@@ -176,7 +176,7 @@ $Y = A + B$：有 1 出 1，全 0 才出 0。
 (6) $Y = (\overline{A + BC})[D + B(A + \bar{C})]$
 
 <details class="answer">
-<summary>答案</summary>
+<summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
 约定：原变量用常开开关，反变量用常闭开关；乘表示串联，加表示并联。
 
@@ -199,7 +199,7 @@ $Y = A + B$：有 1 出 1，全 0 才出 0。
 (6) $\bar{ABC + \bar{A}BC + \bar{A}\bar{B}C}=\bar{A}\bar{B}\bar{C}+A\bar{B}\bar{C}+A\bar{B}C+\bar{A}B\bar{C}+AB\bar{C}$
 
 <details class="answer">
-<summary>答案</summary>
+<summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
 逐项列出左、右两式的真值表，两者逐行相同，故等式成立。
 
@@ -297,7 +297,7 @@ $Y = A + B$：有 1 出 1，全 0 才出 0。
 (8) $B\bar{C} + A\bar{B}C + BCD + A\bar{B}\cdot \bar{C}\cdot\bar{D} + \bar{A}BC\bar{D} + A\bar{B}\bar{C} + ABC = B + A$
 
 <details class="answer">
-<summary>答案</summary>
+<summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
 **(1) $AB + \bar{A}C + \bar{B}C = AB + C$**
 
@@ -349,7 +349,7 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 (6) $AB + BC + AC = (A + B)(B + C)(C + A)$
 
 <details class="answer">
-<summary>答案</summary>
+<summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
 对偶规则：$+ \leftrightarrow \cdot$、$1 \leftrightarrow 0$，变量与反号都不动。
 
@@ -377,7 +377,7 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 (6) $F = \overline{\overline{\overline{AC +B} + CD} + \bar{A}\bar{D}} + \overline{\bar{C} + \bar{B}}$
 
 <details class="answer">
-<summary>答案</summary>
+<summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
 记反函数为 $\bar{F}$（反演规则：$+\leftrightarrow\cdot$、变量取反、$0\leftrightarrow1$），对偶函数为 $F^{D}$（只换 $+\leftrightarrow\cdot$ 与 $0\leftrightarrow1$，变量不取反）。
 
@@ -432,7 +432,7 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 (6) $F = \overline{\overline{\overline{AC +B} + CD} + \bar{A}\bar{D}} + \overline{\bar{C} + \bar{B}}$
 
 <details class="answer">
-<summary>答案</summary>
+<summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
 (1) $F = \sum m(1,3,4,6,7)$
 
@@ -460,7 +460,7 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 (6) $F = \overline{AC + B + CD} + \overline{AD} + \overline{C + B}$
 
 <details class="answer">
-<summary>答案</summary>
+<summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
 (1) $F = \prod M(0,2,5)$
 
@@ -490,7 +490,7 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 (8) $F = f(A,B,C,D) = \prod M(0,1,6,11) * \prod d(3,14,15)$。
 
 <details class="answer">
-<summary>答案</summary>
+<summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
 (1) $F$ 的最小项为 $m_0, m_2, m_5$（原文中 $\bar{A}\bar{B}\bar{C}$ 重复出现两次），故 $\bar{F} = \sum m(1,3,4,6,7) = \bar{A}\bar{B}C + \bar{A}B\bar{C} + A\bar{B}\bar{C} + AB\bar{C} + ABC$
 
@@ -522,7 +522,7 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 (8) $Y = f(A,B,C,D) = \prod M(0,1,6,12,13) * \prod d(3,14,15)$；
 
 <details class="answer">
-<summary>答案</summary>
+<summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
 **(1) $Y = B + A\cdot C$**
 
@@ -595,7 +595,7 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 ## 3.15 已知原函数的卡诺图，求其反函数的卡诺图，可以将原函数的卡诺图中 1 变为 0，0 变为 1。用此方法写出题 3.14 中各函数的反函数。
 
 <details class="answer">
-<summary>答案</summary>
+<summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
 把 3.14 各卡诺图中原填 1 的格改填 0、填 0 的改填 1（$\times$ 不可用格保持不动），即得反函数的卡诺图。对应地：
 
@@ -622,7 +622,7 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 ## 3.16 将 3.2 题中各函数用卡诺图表示。
 
 <details class="answer">
-<summary>答案</summary>
+<summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
 **(1) 3.2(1) 的 $F$（奇校验）**
 
@@ -659,7 +659,7 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 ## 3.17 将 3.2 题中各函数写成标准与 - 或表达式。
 
 <details class="answer">
-<summary>答案</summary>
+<summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
 (1) $F = \sum m(1,2,4,7) = \bar{A}\bar{B}C + \bar{A}B\bar{C} + A\bar{B}\bar{C} + ABC$
 
@@ -678,7 +678,7 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 ## 3.18 将 3.2 题中各函数写成标准或 - 与表达式。
 
 <details class="answer">
-<summary>答案</summary>
+<summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
 (1) $F = \prod M(0,3,5,6)$
 
@@ -699,7 +699,7 @@ $F_1 = AB + \bar{A}C + \bar{B}D$
 $F_2 = A\bar{B}\bar{C}D + BCD + \bar{B}C$
 
 <details class="answer">
-<summary>答案</summary>
+<summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
 $F_1 = AB + \bar{A}C + \bar{B}D = \sum m(1,2,3,6,7,9,11,12,13,14,15)$
 
@@ -713,7 +713,7 @@ $F_2 = A\bar{B}\bar{C}D + BCD + \bar{B}C = \sum m(2,3,7,9,10,11,15)$
 
   即卡诺图是逻辑函数的逐格表示，两函数卡诺图对应格相与／相或／相异或，等价于对函数本身做相应运算，方法正确。
 
-  </details>
+</details>
 
 ## 3.20 用公式法简化下列逻辑函数。
 
@@ -727,7 +727,7 @@ $F_2 = A\bar{B}\bar{C}D + BCD + \bar{B}C = \sum m(2,3,7,9,10,11,15)$
 (8) $F = \overline{AC} + \overline{BC} \cdot B(\overline{AC} + \overline{AC})$
 
 <details class="answer">
-<summary>答案</summary>
+<summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
 (1) $F = A + C$
 
@@ -761,7 +761,7 @@ $F_2 = A\bar{B}\bar{C}D + BCD + \bar{B}C = \sum m(2,3,7,9,10,11,15)$
 (8) $F = f(A,B,C,D) = \prod M(0,2,5,7,9,10) + \prod d(1,4,8,12,15)$
 
 <details class="answer">
-<summary>答案</summary>
+<summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
 **(1) $F = \bar{A}\bar{B}C + A\bar{C}D + \bar{A}\bar{C} + BC$**
 
@@ -872,7 +872,7 @@ $F_2 = A\bar{B}\bar{C}D + BCD + \bar{B}C = \sum m(2,3,7,9,10,11,15)$
 ## 3.22 用卡诺图法化简 3.21 题中各函数，写出函数的最简或 - 与表达式。
 
 <details class="answer">
-<summary>答案</summary>
+<summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
 (1) $F = (\bar{A} + B + \bar{C})(\bar{A} + C + D)$
 
@@ -897,7 +897,7 @@ $F_2 = A\bar{B}\bar{C}D + BCD + \bar{B}C = \sum m(2,3,7,9,10,11,15)$
 ## 3.23 用卡诺图法化简 3.21 题中各函数，写出函数的最简与 - 或非表达式。
 
 <details class="answer">
-<summary>答案</summary>
+<summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
 (1) $F = \overline{A\bar{B}C + A\bar{C}\bar{D}}$
 

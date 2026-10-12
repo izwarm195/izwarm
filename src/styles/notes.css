@@ -772,12 +772,15 @@ html {
   background: rgba(62, 117, 117, 0.26);
 }
 
-/* ---- 习题答案折叠块（<details class="answer">）+「展开全部答案」按钮 ----
-   vault 侧约定：每道题（## N.M）后跟一个原生 details，<summary> 之后必须空一行
-   —— 那个空行是 markdown 照常解析的关键（见 docs/content-frontmatter.md）。
+/* ---- 折叠块（<details class="answer"> / <details class="callout-fold">）+「展开全部答案」按钮 ----
+   vault 侧写的是 Obsidian 折叠 callout（`> [!answer]- 答案`，`-` 收起 / `+` 展开），
+   同步脚本在 markdown 解析前把它整块转成 <details>，块内正文照常当 markdown 解析
+   （公式才交给 KaTeX，见 scripts/sync-obsidian.mjs 的 foldCallouts）。
+   `answer` 是习题答案（「展开全部答案」按钮一起开合的就是它），`callout-fold` 是其他
+   类型的折叠 callout（如物理笔记的「本节包含」），外观相同、不进那个按钮。
    单个块的开合完全走浏览器原生行为，脚本只负责那个「全部」按钮，所以这里
    不写任何会吃掉点击、或把 open 状态改掉的规则。 */
-.article-body details.answer {
+.article-body details:is(.answer, .callout-fold) {
   margin: 1.15em 0 1.5em;
   padding: 0 1.05em;
   /* 左缘一道主题青细线当"这是答案"的标识，其余三边淡描边 */
@@ -790,7 +793,7 @@ html {
 /* summary 排成 flex：原生三角换成一条可旋转的折线，右端留「展开 / 收起」提示。
    左右负边距让这一行铺满卡片内宽（点击区域也就宽了），正文仍留在 details 的内边距里。
    横向滚动条 / 宽表都不要沾到这一行，所以这里不做 overflow。 */
-.article-body details.answer > summary {
+.article-body details:is(.answer, .callout-fold) > summary {
   display: flex;
   align-items: center;
   gap: 0.55em;
@@ -807,22 +810,27 @@ html {
   list-style: none; /* Firefox */
   transition: color 0.18s ease, background 0.18s ease;
 }
-.article-body details.answer > summary::-webkit-details-marker {
+.article-body details:is(.answer, .callout-fold) > summary::-webkit-details-marker {
   display: none; /* Safari：display:flex 不一定收得掉它自带的那个三角 */
 }
-.article-body details.answer > summary:hover,
-.article-body details.answer > summary:focus-visible {
+.article-body details:is(.answer, .callout-fold) > summary:hover,
+.article-body details:is(.answer, .callout-fold) > summary:focus-visible {
   color: #dcf2f2;
   background: rgba(127, 192, 192, 0.1);
 }
 
 /* 展开后 summary 不再贴着卡片下沿，只保留右上角跟着圆 */
-.article-body details.answer[open] > summary {
+.article-body details:is(.answer, .callout-fold)[open] > summary {
   border-radius: 0 9px 0 0;
 }
 
+/* summary 里的 callout 徽标：栏目间距由 flex 的 gap 负责，抹掉通用 img 规则的右边距 */
+.article-body details:is(.answer, .callout-fold) > summary img.callout-badge {
+  margin: 0;
+}
+
 /* 折线箭头：上 + 右两条边转 45° 指向右（收起），135° 指向下（展开） */
-.article-body details.answer > summary::before {
+.article-body details:is(.answer, .callout-fold) > summary::before {
   content: '';
   flex: none;
   width: 0.42em;
@@ -833,12 +841,12 @@ html {
   transform: rotate(45deg);
   transition: transform 0.2s ease;
 }
-.article-body details.answer[open] > summary::before {
+.article-body details:is(.answer, .callout-fold)[open] > summary::before {
   transform: rotate(135deg);
 }
 
 /* 右端的「展开 / 收起」提示：纯 CSS 跟着 open 走，不需要脚本同步 */
-.article-body details.answer > summary::after {
+.article-body details:is(.answer, .callout-fold) > summary::after {
   content: '展开';
   margin-left: auto;
   padding-left: 0.9em;
@@ -847,20 +855,20 @@ html {
   color: #78828d;
   transition: color 0.18s ease;
 }
-.article-body details.answer[open] > summary::after {
+.article-body details:is(.answer, .callout-fold)[open] > summary::after {
   content: '收起';
 }
-.article-body details.answer > summary:hover::after,
-.article-body details.answer > summary:focus-visible::after {
+.article-body details:is(.answer, .callout-fold) > summary:hover::after,
+.article-body details:is(.answer, .callout-fold) > summary:focus-visible::after {
   color: #9fd0d0;
 }
 
 /* 折叠容器内的正文：上边贴住 summary，下边留出与左右一致的内边距收尾。
    收起态非 summary 子元素不参与布局，这两条不会影响收起时的卡片高度。 */
-.article-body details.answer > summary + * {
+.article-body details:is(.answer, .callout-fold) > summary + * {
   margin-top: 0.55em;
 }
-.article-body details.answer > :last-child {
+.article-body details:is(.answer, .callout-fold) > :last-child {
   margin-bottom: 1.05em;
 }
 
@@ -869,7 +877,7 @@ html {
    details 不是 flex / grid，也没有 overflow:hidden，所以表格的包含块就是它的内容盒：
    宽表滚的是表格自己，卡片不动，边框照旧。下面这条只是把这层依赖钉死 ——
    将来谁给 details 换成 flex/grid，表格会因为 min-width:auto 改用 min-content 撑破卡片。 */
-.article-body details.answer > table {
+.article-body details:is(.answer, .callout-fold) > table {
   min-width: 0;
   max-width: 100%;
 }
@@ -1725,16 +1733,16 @@ html {
     padding: 12px 10px;
   }
   /* 手机：答案卡片让出横向空间给真值表，summary 做成 ≥44px 的可点行 */
-  .article-body details.answer {
+  .article-body details:is(.answer, .callout-fold) {
     margin: 1em 0 1.35em;
     padding: 0 0.85em;
   }
-  .article-body details.answer > summary {
+  .article-body details:is(.answer, .callout-fold) > summary {
     margin: 0 -0.85em;
     padding: 0.62em 0.85em;
     min-height: 44px;
   }
-  .article-body details.answer > :last-child {
+  .article-body details:is(.answer, .callout-fold) > :last-child {
     margin-bottom: 0.9em;
   }
   .answer-toolbar {

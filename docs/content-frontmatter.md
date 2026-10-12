@@ -7,7 +7,8 @@
 ## 1. 发布规则
 
 - **白名单目录**：`CPP`、`English`、`Machine & Deep Learning`、
-  `Signals/Signals & Systems`（精确到该子目录）、`Signals/数字电路与系统`、`Physics`
+  `Signals/Signals & Systems`（精确到该子目录）、`Signals/数字电路与系统`、`Physics`、
+  `Complex`
   内的所有 Markdown **默认公开**，无需逐篇添加字段。`Signals` 下的其他子目录不在白名单内。
 - **单篇退出**：笔记 Frontmatter 写 `publish: false` 则不公开。
 - **草稿 / 归档**：`status: draft` 不发布；`draft: true` 在生产构建隐藏、
@@ -157,36 +158,56 @@ cover: /media/video-cover-dark.jpg
 > 安全闸：同步脚本在"一个候选笔记都没有"（vault 路径写错/未检出）时会告警并**不做任何写入**，
 > 不会清空 `src/content/notes/`。
 
-## 7. 习题答案折叠块（`<details class="answer">`）
+## 7. 折叠块（Obsidian 折叠 callout → `<details>`）
 
-章节习题笔记（目前是 `Signals/数字电路与系统`）的约定：每道题（`## N.M`）后面跟**一个**原生
-折叠块，块内是完整 markdown（表格、`$LaTeX$`、列表都可以）。
+习题答案（`Signals/数字电路与系统`、`Complex`）与物理笔记的「本节包含」都用 **Obsidian 折叠
+callout** 写：`> [!类型]- 标题` 默认收起，`> [!类型]+ 标题` 默认展开。这是 vault 侧的**唯一**
+写法 —— 不要手写 `<details>` HTML 块：那样在 Obsidian 阅读视图里块内公式不会被渲染，
+而站点侧也拿不到块内结构。
 
 ```markdown
 ## 2.1 将下列二进制数转换为十进制数。
 
 (1) 1011.101
 
-<details class="answer">
-<summary>答案</summary>
+> [!answer]- 答案
+>
+> (1) $1011.101_{2} = 11.625_{10}$
+```
 
-(1) 11.625
+同步脚本（`sync-obsidian.mjs` 的 `foldCallouts()`，跑在 markdown 解析之前）把整块转成：
+
+```html
+<details class="answer">
+<summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
+
+(1) $1011.101_{2} = 11.625_{10}$
 
 </details>
 ```
 
-**`<summary>` 之后必须空一行**：`<details>` 起始标签按 CommonMark 属于 HTML 块，靠空行结束，
-之后的 markdown 才会被正常解析成段落 / 表格 / 公式；少了那个空行，块内内容会整段退化成纯文本。
-`</details>` 前面也留一个空行，成对收尾。
+要点：
+
+- **必须转成 HTML 块 + 空行的形式**，块内正文才会被当普通 markdown 解析 —— 公式照常交给
+  KaTeX，真值表照常成表，列表照常成列表；直接塞进 `<summary>` 后面不空行就会整段退化成纯文本。
+- 块内每行的 `> ` 前缀会被剥掉；`> > …` 这类嵌套引用剥一层后仍是引用（符合原意）。
+- 紧跟着的下一个 callout 另起一块，不会把两段答案并进同一个 `details`。
+- 列表内的 callout（`- > [!note]`）与嵌套 callout（`> > [!x]`）不在这里处理，仍走原来的
+  逐行 callout 规则（只是不折叠）；代码围栏里的 `> [!x]-` 样例也不会被改写。
+- 类名：`answer` → `details.answer`；其他类型 → `details.callout-fold`。两者外观相同
+  （`src/styles/notes.css` 用 `:is(.answer, .callout-fold)` 共用一套规则），但只有 `answer`
+  会被「展开全部答案」按钮一起开合。
+- `description` 会自动跳过整个 `<details>` 块，不会把答案或 HTML 标签当摘要。
 
 站点侧（`src/pages/notes/[...slug].astro` + `src/scripts/panel-nav.ts`）：
 
-- **单个展开 / 收起**走浏览器原生 `<details>`：脚本不 `preventDefault`、不代管 `open`；
+- **单个展开 / 收起**走浏览器原生 `<details>`：脚本不 `preventDefault`、不代管 `open`，
+  `-` / `+` 的默认状态由同步脚本写成的 `open` 属性决定；
 - **全部展开 / 收起**由正文上方的「展开全部答案 / 收起全部答案（N 题）」按钮负责，
   只切换所有 `details.answer` 的 `open`，文案随状态在两种说法间切换；
 - 判据优先 `class="answer"`；渲染器若把 class 剥掉，退回 `<summary>` 文本恰为「答案」的块。
-  两条判据在服务端（渲染按钮与否）与客户端（收集折叠块）各判一次，没有答案块的章节
-  （如第 5 章当时只有题目）不会渲染出空工具栏，也不报错。
+  两条判据在服务端（渲染按钮与否）与客户端（收集折叠块）各判一次，没有答案块的笔记
+  （如第 5 章当时只有题目、物理笔记只有「本节包含」）不会渲染出空工具栏，也不报错。
 
 配套的同步侧处理：`normalizeTableDelimiters()` 会把「表头 5 格、分隔行只写 4 个 `---`」的
 GFM 表格按表头格数补齐。Obsidian 阅读视图对这类表是宽容的，`remark-gfm` 不是 —— 分隔行格数

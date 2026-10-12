@@ -112,8 +112,8 @@ print("滑动最小值：", mins)
 - 沿 `axis=-1` 求平方和再开根号
 - 自身距离设为无穷大后用 `argmin`
 
-  <details>
-  <summary>参考答案</summary>
+<details>
+<summary>参考答案</summary>
 
 ```python
 N = 10
@@ -132,7 +132,7 @@ nearest_dist = D[np.arange(N), nearest_idx]
 print("每个点的最近邻索引：", nearest_idx)
 print("最近邻距离：", nearest_dist)
 ```
-  </details>
+</details>
 
 > <img class="callout-badge" src="/media/icons/note.svg" alt="note">**这个广播真是抽象**
 > 
@@ -176,8 +176,8 @@ print("最近邻距离：", nearest_dist)
 
    **要求：** 全部使用 NumPy 向量化操作。
 
-   <details>
-   <summary>参考答案</summary>
+<details>
+<summary>参考答案</summary>
 
 ```python
 rng = np.random.default_rng(42)
@@ -204,7 +204,7 @@ strong_stocks = np.where(up_days > 10)[0]
 print(f"上涨天数 > 10 的股票索引：{strong_stocks}")
 print(f"上涨天数：{up_days}")
 ```
-   </details>
+</details>
 
 > <img class="callout-badge" src="/media/icons/note.svg" alt="note">**Note**
 > 注意 `np.diff()` 
@@ -222,8 +222,8 @@ print(f"上涨天数：{up_days}")
 
    **提示：** 窗口 shape 为 `(8, 8, 3, 3)`，将核 reshape 为 `(1, 1, 3, 3)` 后与窗口逐元素相乘再沿最后两个轴求和。
 
-   <details>
-   <summary>参考答案</summary>
+<details>
+<summary>参考答案</summary>
 
 ```python
 from numpy.lib.stride_tricks import sliding_window_view
@@ -252,6 +252,6 @@ edges = (windows * kernel_sobel).sum(axis=(2, 3))
 print("\nSobel 边缘检测：")
 print(edges.astype(int))
 ```
-   </details>
+</details>
 
 

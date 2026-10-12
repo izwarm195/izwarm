@@ -16,15 +16,19 @@ series: ["Physics"]
 > - 收录：**只保留结论性公式**（定义式、定律式、定理式与常用结论）；省略推导与中间式，文字说明不超过一行
 > - 覆盖：简谐振动 · 旋转矢量 · 单摆复摆 · 振动能量 · 振动合成 · 阻尼与受迫振动 · 电磁振荡
 
-> <img class="callout-badge" src="/media/icons/document.svg" alt="abstract">**本节包含**
-> - 9-1 简谐振动 振幅 周期和频率 相位
-> - 9-2 旋转矢量
-> - 9-3 单摆和复摆
-> - 9-4 简谐振动的能量
-> - 9-5 简谐振动的合成
-> - 9-6 阻尼振动 受迫振动 共振
-> - 9-7 电磁振荡
-> - 9-8 简述非线性系统
+<details class="callout-fold">
+<summary><img class="callout-badge" src="/media/icons/document.svg" alt="abstract"><strong>本节包含</strong></summary>
+
+- 9-1 简谐振动 振幅 周期和频率 相位
+- 9-2 旋转矢量
+- 9-3 单摆和复摆
+- 9-4 简谐振动的能量
+- 9-5 简谐振动的合成
+- 9-6 阻尼振动 受迫振动 共振
+- 9-7 电磁振荡
+- 9-8 简述非线性系统
+
+</details>
 
 ## 9-1 简谐振动 振幅 周期和频率 相位
 
