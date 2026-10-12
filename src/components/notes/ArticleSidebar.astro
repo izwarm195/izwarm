@@ -1,5 +1,7 @@
 ---
 import { noteUrl } from '../../lib/notes';
+import { buildTocTree } from '../../lib/toc';
+import TocTree from './TocTree.astro';
 import type { Note, TocItem } from '../../lib/notes';
 
 interface Props {
@@ -9,6 +11,7 @@ interface Props {
 }
 
 const { note, siblings, toc } = Astro.props;
+const tocTree = buildTocTree(toc);
 ---
 
 {/*
@@ -22,16 +25,10 @@ const { note, siblings, toc } = Astro.props;
     <summary class="notes-fold-head">
       <h2 class="notes-section-label">大纲</h2>
     </summary>
-    {toc.length === 0 ? (
+    {tocTree.length === 0 ? (
       <p class="notes-empty">本文没有可用的标题。</p>
     ) : (
-      <ol class="notes-toc">
-        {toc.map((heading) => (
-          <li>
-            <a data-depth={heading.depth} href={`#${heading.slug}`}>{heading.text}</a>
-          </li>
-        ))}
-      </ol>
+      <TocTree items={tocTree} />
     )}
   </details>
 

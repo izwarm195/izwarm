@@ -2,7 +2,7 @@
 
 <!-- dsh-openwolf:start -->
 # Code Map
-Generated 2026-10-08T14:01:14.550Z · 195 files · 30637 lines · 0.72s
+Generated 2026-10-12T15:51:08.147Z · 199 files · 32398 lines · 0.59s
 
 ## ./
 - `CHANGES.md` — 645 lines · 第一阶段目标是忠实迁移，以下是相对原源码的全部偏离及原因。
@@ -13,7 +13,7 @@ Generated 2026-10-08T14:01:14.550Z · 195 files · 30637 lines · 0.72s
 - `tsconfig.json` — 5 lines · {
 
 ## docs
-- `docs/content-frontmatter.md` — 194 lines · > 目标：Obsidian 私有库 → 同步脚本 → Astro 站点。本文定义“公开笔记”在网站侧使用的
+- `docs/content-frontmatter.md` — 215 lines · > 目标：Obsidian 私有库 → 同步脚本 → Astro 站点。本文定义“公开笔记”在网站侧使用的
 
 ## public
 - `public/avatar.svg` — 5 lines · <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="izwarm">
@@ -56,8 +56,8 @@ Generated 2026-10-08T14:01:14.550Z · 195 files · 30637 lines · 0.72s
 - `public/media/icons/triangle-exclaimation.svg` — 0 lines · <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M13.752 2.111c-.…
 
 ## scripts
-- `scripts/slug-aliases.mjs` — 76 lines · SEGMENT_ALIASES · Exports SEGMENT_ALIASES
-- `scripts/sync-obsidian.mjs` — 1016 lines · ROOTS, SKIP_DIRS, _posArg, VAULT, OUT, MANIFEST · const ROOTS = [
+- `scripts/slug-aliases.mjs` — 80 lines · SEGMENT_ALIASES · Exports SEGMENT_ALIASES
+- `scripts/sync-obsidian.mjs` — 1177 lines · ROOTS, SKIP_DIRS, _posArg, VAULT, OUT, MANIFEST · const ROOTS = [
 
 ## src
 - `src/content.config.ts` — 43 lines · notes, projects, works, collections · Defines a zod schema in content.config.ts
@@ -74,8 +74,8 @@ Generated 2026-10-08T14:01:14.550Z · 195 files · 30637 lines · 0.72s
 ## src/components/notes
 - `src/components/notes/ArchiveList.astro` — 56 lines · interface Props {
 - `src/components/notes/ArticleActions.astro` — 41 lines · <section class="article-actions" aria-label="文章操作">
-- `src/components/notes/ArticleSidebar.astro` — 60 lines · interface Props {
-- `src/components/notes/NotesCalendar.astro` — 88 lines · interface Props {
+- `src/components/notes/ArticleSidebar.astro` — 57 lines · interface Props {
+- `src/components/notes/NotesCalendar.astro` — 121 lines · interface Props {
 - `src/components/notes/NotesRail.astro` — 39 lines · interface Props {
 - `src/components/notes/NotesShell.astro` — 36 lines · const NOTES_STATES = ['home', 'article', 'archive', 'tags'];
 - `src/components/notes/NotesSidebar.astro` — 18 lines · interface Props {
@@ -83,13 +83,17 @@ Generated 2026-10-08T14:01:14.550Z · 195 files · 30637 lines · 0.72s
 - `src/components/notes/ProfileCard.astro` — 50 lines · <section class="notes-profile" aria-label="个人简介">
 - `src/components/notes/SeriesExplorer.astro` — 22 lines · interface Props {
 - `src/components/notes/SeriesNode.astro` — 29 lines · interface Props {
+- `src/components/notes/TocTree.astro` — 32 lines · interface Props {
 
 ## src/config
-- `src/config/commit-activity.json` — 32 lines · {
-- `src/config/created-dates.json` — 109 lines · {
+- `src/config/commit-activity.json` — 35 lines · {
+- `src/config/created-dates.json` — 111 lines · {
 - `src/config/friends.ts` — 34 lines · FriendLink, displayHost · Exports FriendLink, friends, displayHost
 - `src/config/media.ts` — 41 lines · base, MEDIA_BASE, icon, media · Exports MEDIA_BASE, icon, media
 - `src/config/site.ts` — 11 lines · site · Exports site
+
+## src/content/notes/complex
+- `src/content/notes/complex/assignment-1.md` — 764 lines · title: "第一次作业"
 
 ## src/content/notes/cpp/examples
 - `src/content/notes/cpp/examples/count-perfect-squares.md` — 54 lines · title: "完全平方数计数"
@@ -167,7 +171,7 @@ Generated 2026-10-08T14:01:14.550Z · 195 files · 30637 lines · 0.72s
 - `src/content/notes/machine-and-deep-learning/nndl/26-09-26-rnn.md` — 463 lines · title: "NNDL 26-09-26 循环神经网络练习"
 
 ## src/content/notes/machine-and-deep-learning/python
-- `src/content/notes/machine-and-deep-learning/python/machine-and-deep-learning.md` — 39 lines · title: "Machine & Deep Learning"
+- `src/content/notes/machine-and-deep-learning/python/machine-and-deep-learning.md` — 40 lines · title: "Machine & Deep Learning"
 - `src/content/notes/machine-and-deep-learning/python/numpy-dialogue-i.md` — 2952 lines · title: "Numpy 对话总结 I"
 - `src/content/notes/machine-and-deep-learning/python/numpy-dialogue-ii.md` — 175 lines · title: "Numpy 对话总结 II"
 - `src/content/notes/machine-and-deep-learning/python/numpy-examples.md` — 257 lines · title: "Numpy 综合案例"
@@ -182,21 +186,22 @@ Generated 2026-10-08T14:01:14.550Z · 195 files · 30637 lines · 0.72s
 - `src/content/notes/machine-and-deep-learning/python/python-misc-v.md` — 125 lines · title: "Python 杂记 V"
 - `src/content/notes/machine-and-deep-learning/python/python-misc-vi.md` — 455 lines · title: "Python 杂记 VI"
 - `src/content/notes/machine-and-deep-learning/python/python-misc-vii.md` — 301 lines · title: "Python 杂记 VII"
+- `src/content/notes/machine-and-deep-learning/python/python-misc-viii-path.md` — 157 lines · title: "Python 杂记 VIII - Path类常用方法"
 - `src/content/notes/machine-and-deep-learning/python/tensor-numpy-compare.md` — 342 lines · title: "Tensor & Numpy 函数对比"
 
 ## src/content/notes/physics
-- `src/content/notes/physics/ch10.md` — 463 lines · title: "第十章 波动 公式总结"
-- `src/content/notes/physics/ch11.md` — 692 lines · title: "第十一章 光学 公式总结"
-- `src/content/notes/physics/ch12.md` — 344 lines · title: "第十二章 气体动理论 公式总结"
-- `src/content/notes/physics/ch13.md` — 488 lines · title: "第十三章 热力学基础 公式总结"
-- `src/content/notes/physics/ch14.md` — 381 lines · title: "第十四章 相对论 公式总结"
-- `src/content/notes/physics/ch15.md` — 683 lines · title: "第十五章 量子物理 公式总结"
-- `src/content/notes/physics/ch16.md` — 228 lines · title: "第十六章 原子核与粒子物理简介 公式总结"
-- `src/content/notes/physics/ch9.md` — 399 lines · title: "第九章 振动 公式总结"
+- `src/content/notes/physics/ch10.md` — 467 lines · title: "第十章 波动 公式总结"
+- `src/content/notes/physics/ch11.md` — 696 lines · title: "第十一章 光学 公式总结"
+- `src/content/notes/physics/ch12.md` — 348 lines · title: "第十二章 气体动理论 公式总结"
+- `src/content/notes/physics/ch13.md` — 492 lines · title: "第十三章 热力学基础 公式总结"
+- `src/content/notes/physics/ch14.md` — 385 lines · title: "第十四章 相对论 公式总结"
+- `src/content/notes/physics/ch15.md` — 687 lines · title: "第十五章 量子物理 公式总结"
+- `src/content/notes/physics/ch16.md` — 232 lines · title: "第十六章 原子核与粒子物理简介 公式总结"
+- `src/content/notes/physics/ch9.md` — 403 lines · title: "第九章 振动 公式总结"
 - `src/content/notes/physics/formulas-vol2.md` — 32 lines · title: "《物理学》下册公式总结"
 
 ## src/content/notes/signals/dcs
-- `src/content/notes/signals/dcs/ch2.md` — 294 lines · title: "第2章 数制与码制"
+- `src/content/notes/signals/dcs/ch2.md` — 667 lines · title: "第2章 数制与码制"
 - `src/content/notes/signals/dcs/ch3.md` — 921 lines · title: "第3章 逻辑函数及其简化"
 - `src/content/notes/signals/dcs/ch5.md` — 108 lines · title: "第5章 组合逻辑电路的分析与设计"
 - `src/content/notes/signals/dcs/dcs-exercises.md` — 16 lines · title: "《数字电路与系统》李文渊第2版 习题&解答"
@@ -209,10 +214,6 @@ Generated 2026-10-08T14:01:14.550Z · 195 files · 30637 lines · 0.72s
 - `src/content/notes/signals/signals-and-systems/ss-qna/ss-qna-02.md` — 80 lines · title: "SS-QNA-02"
 - `src/content/notes/signals/signals-and-systems/ss-qna/ss-qna-03.md` — 38 lines · title: "SS-QNA-03"
 - `src/content/notes/signals/signals-and-systems/ss-qna/ss-qna-04.md` — 29 lines · title: "SS-QNA-04"
-- `src/content/notes/signals/signals-and-systems/ss-qna/ss-qna-05.md` — 31 lines · title: "SS-QNA-05"
-- `src/content/notes/signals/signals-and-systems/ss-qna/ss-qna-06.md` — 55 lines · title: "SS-QNA-06"
-- `src/content/notes/signals/signals-and-systems/ss-qna/ss-qna-07.md` — 64 lines · title: "SS-QNA-07"
-
-## src/content/notes/signals/s…
+- `src/content/notes/signals/si…
 (rendered map truncated at 16384 bytes)
 <!-- dsh-openwolf:end -->

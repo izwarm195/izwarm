@@ -1,6 +1,7 @@
 ---
 import { getCalendarData, getCalendarYears, url } from '../../lib/notes';
 import type { CommitActivity, Note } from '../../lib/notes';
+import { icon } from '../../config/media';
 import activity from '../../config/commit-activity.json';
 
 interface Props {
@@ -15,17 +16,20 @@ const year = years.includes(requested) ? requested : (years[0] ?? new Date().get
 const calendar = getCalendarData(notes, year, act);
 const base = Astro.url.pathname;
 
-/** 当日发布笔记数 → 热力档位（1 篇 = 1 级，4 篇以上封顶 4 级）
- *  口径：只按「文章发布时间 + 当日篇数」着色（publishDate 是笔记自己的日期，
- *  来自文件名日期前缀 / frontmatter / 创建时间清单 / vault 首次提交）。
- *  不再把 vault 的提交数、编辑次数掺进颜色 —— 那是备份节奏，不是写作量，
- *  混进来会让人对着热力图怀疑"没同步"。 */
-function calLevel(n: number): number {
-  if (n <= 0) return 0;
-  if (n === 1) return 1;
-  if (n === 2) return 2;
-  if (n <= 4) return 3;
-  return 4;
+/** 亮度基准：全年单日最大提交数（下面的百分比按它归一） */
+const maxCommits = calendar.days.reduce((max, day) => Math.max(max, day.commits), 0);
+
+/**
+ * 提交数 → 着色强度（32%~100%）。
+ * 两种含义共用同一个强度轴，只是底色不同：
+ * - 有文章的日子：主题色（--accent）；
+ * - 没有文章但有提交的日子：白色。
+ * 暗端留 32%：近黑底板上再暗就与空格子分不开；
+ * 用 sqrt 而不是线性：vault 的提交数集中在 1~2，线性会让绝大多数格子挤在暗端。
+ */
+function shade(commits: number): number {
+  if (commits <= 0 || maxCommits <= 0) return 32;
+  return Math.round((32 + 68 * Math.sqrt(commits / maxCommits)) * 10) / 10;
 }
 
 /**
@@ -38,6 +42,19 @@ const calendarMonths = Array.from({ length: 12 }, (_, m) => ({
   month: m + 1,
   days: calendar.days.filter((d) => d.month === m),
 }));
+
+const legend = [
+  {
+    kind: 'article',
+    iconName: 'note',
+    tip: '有文章：深浅按当日提交数',
+  },
+  {
+    kind: 'commit',
+    iconName: 'circled-check',
+    tip: '只提交、没有文章：深浅同样按当日提交数',
+  },
+] as const;
 ---
 
 <section class="notes-calendar" aria-label={`${year} 年写作热力图`}>
@@ -61,21 +78,25 @@ const calendarMonths = Array.from({ length: 12 }, (_, m) => ({
     {calendarMonths.map(({ days }) => (
       <div class="notes-cal-row">
         {days.map((day) => {
-          const level = calLevel(day.notes);
-          const tip = `${day.date} · ${day.notes} 篇`;
-          // 显式落列：短月留下的空档不占位，1 号永远对齐在同一列
-          const col = Number(day.date.slice(-2));
-          if (day.notes === 0) {
-            return (
-              <span class="notes-cal-day" data-count="0" style={`grid-column:${col}`} aria-hidden="true" />
-            );
+          // 颜色只说两件事：这天有没有文章（色相）、提交了多少（深浅）。
+          const kind = day.notes > 0 ? 'article' : day.commits > 0 ? 'commit' : 'empty';
+          const style = `grid-column:${Number(day.date.slice(-2))};--cal-pct:${shade(day.commits)}%`;
+          if (kind === 'empty') {
+            return <span class="notes-cal-day" data-kind="empty" style={style} aria-hidden="true" />;
           }
-          // 有文章的日期可点击跳转到归档对应锚点
+          const tip =
+            kind === 'article'
+              ? `${day.date} · ${day.notes} 篇 · ${day.commits} 次提交`
+              : `${day.date} · ${day.commits} 次提交`;
+          // 只有有文章的日子能点进归档：纯提交的日子在归档里没有落点
+          if (kind === 'commit') {
+            return <span class="notes-cal-day" data-kind="commit" style={style} title={tip} aria-label={tip} />;
+          }
           return (
             <a
               class="notes-cal-day"
-              data-count={level}
-              style={`grid-column:${col}`}
+              data-kind="article"
+              style={style}
               href={`${url('/notes/archive/')}#${day.date}`}
               title={tip}
               aria-label={tip}
@@ -83,6 +104,18 @@ const calendarMonths = Array.from({ length: 12 }, (_, m) => ({
           );
         })}
       </div>
+    ))}
+    {/* 图例与热力图之间空出一整行小格：这一行只占位，不可见、不可点 */}
+    <div class="notes-cal-row notes-cal-gap" aria-hidden="true">
+      <span class="notes-cal-day" data-kind="empty" style="grid-column:1" />
+    </div>
+  </div>
+  <div class="notes-cal-legend">
+    {legend.map((item) => (
+      <span class="notes-cal-legend-item" title={item.tip}>
+        <span class="notes-cal-day notes-cal-swatch" data-kind={item.kind} style="--cal-pct:100%" />
+        <img class="notes-cal-legend-icon" src={icon(item.iconName)} alt="" width="12" height="12" />
+      </span>
     ))}
   </div>
 </section>

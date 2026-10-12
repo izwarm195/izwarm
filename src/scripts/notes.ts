@@ -12,6 +12,7 @@ import {
   initAnswerFolds,
   initCodeCopy,
   initToc,
+  initTocMath,
   isNarrowLayout,
   isPanelPath,
   loadPageIntoPanel,
@@ -482,7 +483,20 @@ document.addEventListener(
   true
 );
 
+// ---------- 大纲：次级标题的展开 / 收起 ----------
+// 委托到 document：SPA 换页会把整棵大纲换掉，绑在节点上的监听下一次就没了。
+document.addEventListener('click', (e) => {
+  const btn = (e.target as HTMLElement | null)?.closest?.<HTMLButtonElement>('[data-toc-toggle]');
+  if (!btn) return;
+  const item = btn.closest<HTMLElement>('.notes-toc-item');
+  if (!item) return;
+  const collapsed = item.classList.toggle('is-collapsed');
+  btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+  btn.setAttribute('aria-label', collapsed ? '展开子标题' : '收起子标题');
+});
+
 initCodeCopy();
 initToc();
+initTocMath();
 syncArticleFolds();
 initAnswerFolds();

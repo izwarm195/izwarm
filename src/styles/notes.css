@@ -334,20 +334,42 @@ html {
   display: block;
   text-decoration: none;
 }
-.notes-cal-day[data-count='0'] {
+/* 一个热力格只说两件事：色相 = 这天有没有文章，深浅 = 当天提交数（--cal-pct，
+   由组件按全年最大值归一后写在内联样式里）。空格子保持原来的暗格，不可点。 */
+.notes-cal-day[data-kind='article'] {
+  background: color-mix(in srgb, var(--accent) var(--cal-pct, 40%), var(--bg-obsidian-soft));
+}
+.notes-cal-day[data-kind='commit'] {
+  background: color-mix(in srgb, #fff var(--cal-pct, 40%), var(--bg-obsidian-soft));
+}
+.notes-cal-day[data-kind='empty'] {
   opacity: 0.35;
 }
-.notes-cal-day[data-count='1'] {
-  background: rgba(120, 122, 130, 0.45);
+/* 图例与网格之间空出的那一行小格：占位用，不可见也不可点 */
+.notes-cal-gap {
+  visibility: hidden;
 }
-.notes-cal-day[data-count='2'] {
-  background: rgba(160, 164, 176, 0.6);
+.notes-cal-legend {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 2px;
 }
-.notes-cal-day[data-count='3'] {
-  background: rgba(200, 204, 214, 0.75);
+.notes-cal-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 }
-.notes-cal-day[data-count='4'] {
-  background: var(--metal-highlight);
+.notes-cal-swatch {
+  flex: none;
+  width: 11px;
+  height: 11px;
+}
+/* Zest 图标是纯黑描边，靠 invert 变浅色（与复制按钮同一套） */
+.notes-cal-legend-icon {
+  width: 12px;
+  height: 12px;
+  filter: invert(0.72);
 }
 
 /* ---- 系列树：浮动窗口 + 手风琴展开 ---- */
@@ -1191,6 +1213,11 @@ html {
   flex-direction: column;
   gap: 30px;
 }
+/* 「大纲」「同系列」两枚小标题用仿宋：与正文标题（h1 楷体 / h2 仿宋）同一套字体谱系 */
+.notes-article-side .notes-section-label {
+  font-family: 'FangSong', 'FangSong_GB2312', '仿宋', 'STFangsong', 'Noto Serif CJK SC', serif;
+  letter-spacing: 0.14em;
+}
 .notes-toc-wrap,
 .notes-siblings-wrap {
   max-height: 46vh;
@@ -1205,8 +1232,18 @@ html {
   list-style: none;
   font-size: 13px;
 }
+/* 嵌套的层级列表不再缩进：缩进由 a[data-depth] 的 padding 负责，与折平目录时一致 */
+.notes-toc .notes-toc {
+  margin: 0;
+}
+.notes-toc-row {
+  display: flex;
+  align-items: stretch;
+}
 .notes-toc a {
   display: block;
+  flex: 1 1 auto;
+  min-width: 0;
   padding: 5px 8px 5px 12px;
   border-left: 1px solid var(--edge-line);
   color: var(--text-dim);
@@ -1232,6 +1269,58 @@ html {
 }
 .notes-toc a[data-depth='4'] {
   padding-left: 42px;
+}
+/* 次级标题的展开 / 收起：只有带子标题的行才有这枚按钮，方向由 aria-expanded 决定 */
+.notes-toc-toggle {
+  flex: none;
+  align-self: stretch;
+  width: 20px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.notes-toc-toggle::before {
+  content: '›';
+  display: block;
+  font-size: 15px;
+  line-height: 1.5;
+  transform: rotate(90deg);
+  transition: transform 0.18s ease;
+}
+.notes-toc-toggle[aria-expanded='false']::before {
+  transform: rotate(0deg);
+}
+.notes-toc-toggle:hover,
+.notes-toc-toggle:focus-visible {
+  color: var(--text-primary);
+}
+.notes-toc-item.is-collapsed > .notes-toc {
+  display: none;
+}
+/* 目录里的公式：字号 = KaTeX 的 \large（正文 .katex 是 1.21em，×1.2 即 1.45em）。
+   必须给 inline-block —— .katex 自身是 inline，行高比公式矮时行盒不会跟着长高，
+   分数与上下标会挤到相邻两行上去；inline-block 是原子级盒，行盒会按它真实高度撑开。 */
+.notes-toc .katex {
+  display: inline-block;
+  font-size: 1.45em;
+}
+/* 公式所在的那一行留出上下余量：\large 之后行高 1.5 已不够用 */
+.notes-toc a[data-math] {
+  padding-top: 9px;
+  padding-bottom: 9px;
+  line-height: 1.7;
+}
+/* 标题里的行内代码 / 加粗被一起克隆进目录：跟着目录字号收一点，不再触发正文字号 */
+.notes-toc code {
+  font-family: 'JetBrains Mono', 'Cascadia Mono', Consolas, monospace;
+  font-size: 0.88em;
+  color: var(--metal-highlight);
+}
+.notes-toc strong {
+  font-weight: 500;
 }
 .notes-siblings {
   list-style: none;
@@ -1767,6 +1856,13 @@ html {
   }
   .notes-toc a[data-depth='4'] {
     padding-left: 50px;
+  }
+  /* 展开/收起是触屏上唯一"点得到"的小控件：宽度撑到 44px */
+  .notes-toc-toggle {
+    width: 44px;
+  }
+  .notes-toc-toggle::before {
+    font-size: 18px;
   }
   .notes-siblings a {
     padding: 12px 10px;

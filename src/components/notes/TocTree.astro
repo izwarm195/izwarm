@@ -1,0 +1,32 @@
+---
+import type { TocNode } from '../../lib/toc';
+
+interface Props {
+  items: TocNode[];
+}
+
+const { items } = Astro.props;
+---
+
+{/* 递归渲染一层标题；有子标题的行右侧多一枚展开/收起按钮。
+    标签文本先按拍平文本输出，前端再换成正文标题的克隆（公式、行内代码一并带过来）。 */}
+<ol class="notes-toc">
+  {items.map((node) => (
+    <li class="notes-toc-item">
+      <div class="notes-toc-row">
+        <a data-depth={node.depth} href={`#${node.slug}`}>{node.text}</a>
+        {node.children.length > 0 && (
+          <button
+            class="notes-toc-toggle"
+            type="button"
+            data-toc-toggle
+            aria-expanded="true"
+            aria-label="收起子标题"
+            title="收起 / 展开子标题"
+          />
+        )}
+      </div>
+      {node.children.length > 0 && <Astro.self items={node.children} />}
+    </li>
+  ))}
+</ol>

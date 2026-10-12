@@ -167,6 +167,34 @@ export function initToc(): void {
   headings.forEach((h) => tocObserver?.observe(h));
 }
 
+/**
+ * 大纲里的公式：标题在构建期只剩拍平的纯文本（headings[].text 里 $\varphi$ 是 φ、
+ * 行内代码还带着反引号），所以这里直接把正文标题节点克隆进目录 —— 公式、行内代码、
+ * 加粗全部原样保留，也不用在网站侧再实现一遍 github-slugger 的 id 规则。
+ *
+ * 克隆来的公式只有 .katex-html（构建时 output:'html'，没有 MathML 副本），
+ * 而它整段带 aria-hidden，读屏会一个字都读不到，因此把拍平文本留在 aria-label 上。
+ */
+export function initTocMath(): void {
+  document.querySelectorAll<HTMLAnchorElement>('.notes-toc a').forEach((link) => {
+    // 已经换过的不再处理：拍平文本只剩 "A 和 φ"，再克隆一次只会把 aria-label 弄糙
+    if (link.dataset.math === '1') return;
+    const heading = document.getElementById(link.getAttribute('href')?.slice(1) ?? '');
+    if (!heading || heading.querySelector('.katex') === null) return;
+    const flat = link.textContent ?? '';
+    const cloned = Array.from(heading.childNodes, (child) => child.cloneNode(true) as ChildNode);
+    // 标题里的链接/图片不该跟着进目录（链接套链接是非法结构，图会撑破侧栏）
+    cloned.forEach((node) => {
+      if (!(node instanceof HTMLElement)) return;
+      node.querySelectorAll('a').forEach((a) => a.replaceWith(...Array.from(a.childNodes)));
+      node.querySelectorAll('img').forEach((img) => img.remove());
+    });
+    link.replaceChildren(...cloned);
+    link.dataset.math = '1';
+    link.setAttribute('aria-label', flat);
+  });
+}
+
 // ---------- 代码块 / 公式复制按钮（替换后重新初始化） ----------
 /** execCommand 兜底：Clipboard API 只在安全上下文里存在（虚拟主机是 http） */
 function fallbackCopy(text: string): boolean {
@@ -483,6 +511,7 @@ export async function loadPageIntoPanel(
   document.dispatchEvent(new CustomEvent('izwarm:panel-swap'));
   const hash = url.includes('#') ? url.slice(url.indexOf('#')) : '';
   initToc();
+  initTocMath();
   initCodeCopy();
   syncArticleFolds();
   initAnswerFolds();
