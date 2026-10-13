@@ -1,11 +1,11 @@
 ---
 title: "Numpy 对话总结 I"
-slug: "machine-and-deep-learning/python/numpy-dialogue-i"
+slug: "machine-and-deep-learning/python/numpy-things/numpy-dialogue-i"
 description: "常用创建方式："
 publishDate: "2026-07-29"
 createdAt: "2026-07-29T00:00:00Z"
 tags: ["machine-learning","python"]
-series: ["Machine & Deep Learning","Python"]
+series: ["Machine & Deep Learning","Python","Numpy Things"]
 ---
 
 ## 1. 数组创建与形状

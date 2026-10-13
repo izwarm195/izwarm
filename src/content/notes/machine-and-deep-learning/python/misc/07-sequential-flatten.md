@@ -1,12 +1,12 @@
 ---
-title: "Python 杂记 VII"
-slug: "machine-and-deep-learning/python/python-misc-vii"
+title: "Python 杂记 07 - nn.Sequential 与 flatten"
+slug: "machine-and-deep-learning/python/misc/07-sequential-flatten"
 description: "我实测对比了一下：同 seed 下前向输出 max diff 0.0 ，参数量都是 131。逻辑上完全等价——都是 4→16→3，隐层 ReLU，输出层线性出 logits。"
 publishDate: "2026-09-10"
 createdAt: "2026-09-10T00:00:00Z"
 updatedDate: "2026-09-15T19:42:56"
 tags: ["machine-learning"]
-series: ["Machine & Deep Learning","Python"]
+series: ["Machine & Deep Learning","Python","Python 杂记"]
 ---
 
 # `nn.Sequential` & 更朴实的前向

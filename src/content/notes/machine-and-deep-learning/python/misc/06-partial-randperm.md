@@ -1,12 +1,12 @@
 ---
-title: "Python 杂记 VI"
-slug: "machine-and-deep-learning/python/python-misc-vi"
+title: "Python 杂记 06 - functools.partial 与 randperm"
+slug: "machine-and-deep-learning/python/misc/06-partial-randperm"
 description: "from functools import partial 导入的 partial ，是 Python 中用于 冻结（固定）函数的部分参数 ，从而生成一个新函数的高阶工具。"
 publishDate: "2026-09-07"
 createdAt: "2026-09-07T00:00:00Z"
 updatedDate: "2026-09-10T17:19:48"
 tags: ["machine-learning"]
-series: ["Machine & Deep Learning","Python"]
+series: ["Machine & Deep Learning","Python","Python 杂记"]
 ---
 
 # `from functools import partial` 

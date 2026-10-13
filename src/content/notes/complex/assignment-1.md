@@ -1,11 +1,10 @@
 ---
-title: "第一次作业"
+title: "复变函数 - 第一次作业"
 slug: "complex/assignment-1"
-description: "当 x,y 等于什么实数时，等式 dfrac{x+1+ mathrm{i}(y 3)}{5+3 mathrm{i}} 1+ mathrm{i} 成立?"
 publishDate: "2026-10-12"
 createdAt: "2026-10-12T00:00:00Z"
-updatedDate: "2026-10-12T11:04:14"
-tags: ["complex","复变函数","homework"]
+updatedDate: "2026-10-12T17:49:13"
+tags: ["complex","复变函数","homework","math"]
 series: ["Complex"]
 ---
 
@@ -13,8 +12,7 @@ series: ["Complex"]
 
 ## 一. 计算题（共3题，6.3分）
 
-### 1.
-当 $x,y$ 等于什么实数时，等式 $\dfrac{x+1+\mathrm{i}(y-3)}{5+3\mathrm{i}} = 1+\mathrm{i}$ 成立?
+### 1. 当 $x,y$等于什么实数时，等式 $\dfrac{x+1+\mathrm{i}(y-3)}{5+3\mathrm{i}} = 1+\mathrm{i}$ 成立?
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -29,8 +27,7 @@ $$
 
 </details>
 
-### 2.
-若 $(1+\mathrm{i})^n = (1-\mathrm{i})^n$ ,试求 $n$ 的值.
+### 2. 若 $(1+\mathrm{i})^n = (1-\mathrm{i})^n$ ,试求 $n$ 的值.
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -45,8 +42,7 @@ $$
 
 </details>
 
-### 3.
-1.求方程 $z^3+8=0$ 的所有根; 2. 求微分方程 $y'''+8y=0$ 的通解.
+### 3. 1.求方程 $z^3+8=0$ 的所有根; 2. 求微分方程 $y'''+8y=0$ 的通解.
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -71,8 +67,8 @@ $$
 
 ## 二. 简答题（共38题，82.7分）
 
-### 4.
-将下列复数化为三角表示式和指数表示式: $\mathrm{i}$ ;
+### 将下列复数化为三角表示式和指数表示式:
+#### 4.  $\mathrm{i}$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -83,8 +79,7 @@ $$
 
 </details>
 
-### 5.
-将下列复数化为三角表示式和指数表示式: $-1$ ;
+#### 5.  $-1$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -95,8 +90,7 @@ $$
 
 </details>
 
-### 6.
-将下列复数化为三角表示式和指数表示式: $1+\mathrm{i}\sqrt{3}$ ;
+#### 6.  $1+\mathrm{i}\sqrt{3}$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -107,8 +101,7 @@ $$
 
 </details>
 
-### 7.
-将下列复数化为三角表示式和指数表示式: $\dfrac{2\mathrm{i}}{-1+\mathrm{i}}$ ;
+#### 7.  $\dfrac{2\mathrm{i}}{-1+\mathrm{i}}$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -123,8 +116,7 @@ $$
 
 </details>
 
-### 8.
-将下列复数化为三角表示式和指数表示式: $1-\cos \varphi + \mathrm{i}\sin \varphi \quad (0 \leqslant \varphi \leqslant \pi)$ ;
+#### 8.  $1-\cos \varphi + \mathrm{i}\sin \varphi \quad (0 \leqslant \varphi \leqslant \pi)$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -143,8 +135,7 @@ $$
 
 </details>
 
-### 9.
-将下列复数化为三角表示式和指数表示式: $\dfrac{(\cos 5\varphi + \mathrm{i}\sin 5\varphi)^2}{(\cos 3\varphi - \mathrm{i}\sin 3\varphi)^3}$ 。
+#### 9.  $\dfrac{(\cos 5\varphi + \mathrm{i}\sin 5\varphi)^2}{(\cos 3\varphi - \mathrm{i}\sin 3\varphi)^3}$ 。
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -158,8 +149,8 @@ $$
 
 </details>
 
-### 10.
-将下列坐标变换公式写成复数的形式: 平移公式: $\begin{cases} x = x_1 + a_1, \\ y = y_1 + b_1; \end{cases}$
+### 将下列坐标变换公式写成复数的形式:
+#### 10.  平移公式: $\begin{cases} x = x_1 + a_1, \\ y = y_1 + b_1; \end{cases}$
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -174,8 +165,7 @@ $$
 
 </details>
 
-### 11.
-将下列坐标变换公式写成复数的形式: 旋转公式: $\begin{cases} x = x_1 \cos \alpha - y_1 \sin \alpha, \\ y = x_1 \sin \alpha + y_1 \cos \alpha. \end{cases}$
+#### 11.  旋转公式: $\begin{cases} x = x_1 \cos \alpha - y_1 \sin \alpha, \\ y = x_1 \sin \alpha + y_1 \cos \alpha. \end{cases}$
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -191,8 +181,7 @@ $$
 
 </details>
 
-### 12.
-当 $|z|\leqslant 1 $ 时，求 $|z^n+a|$ 的最大值，其中 $n$ 为正整数， $a$ 为复数。
+### 12. 当 $|z|\leqslant 1$ 时，求 $|z^n+a|$ 的最大值，其中 $n$ 为正整数， $a$ 为复数。
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -211,8 +200,8 @@ $$
 
 </details>
 
-### 13.
-指出下列各题中点 $z$ 的轨迹或所在范围，并作图: (1) $|z-5|=6$ ;
+### 指出下列各题中点 $z$ 的轨迹或所在范围，并作图:
+#### 13.  $|z-5|=6$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -223,10 +212,11 @@ $$
 |z-5|=6
 $$
 
+![](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/5bb98026f5dde5ba4f932510895f9e35.svg)
+
 </details>
 
-### 14.
-指出下列各题中点 $z$ 的轨迹或所在范围，并作图: (2) $|z+2\mathrm{i}|\geqslant 1$ ;
+#### 14.  $|z+2\mathrm{i}|\geqslant 1$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -237,10 +227,11 @@ $$
 |z+2\mathrm{i}|\geqslant1
 $$
 
+![](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/a2427f79b4cc64287ede799946c63060.svg)
+
 </details>
 
-### 15.
-指出下列各题中点 $z$ 的轨迹或所在范围，并作图: (3) $\operatorname{Re}(z+2)=-1$ ;
+#### 15.  $\operatorname{Re}(z+2)=-1$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -249,10 +240,11 @@ $$
 \operatorname{Re}z=-3\qquad(\text{直线 }x=-3)
 $$
 
+![](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/9c259ca307b47b28fe473d25c8f0766c.svg)
+
 </details>
 
-### 16.
-指出下列各题中点 $z$ 的轨迹或所在范围，并作图: (4) $\operatorname{Re}(\mathrm{i}\overline{z})=3$ ;
+#### 16.  $\operatorname{Re}(\mathrm{i}\overline{z})=3$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -265,10 +257,11 @@ $$
 y=3\qquad(\text{直线 }y=3)
 $$
 
+![](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/6167fa6c1fd84e12532547179c0a44b0.svg)
+
 </details>
 
-### 17.
-指出下列各题中点 $z$ 的轨迹或所在范围，并作图: (5) $|z+\mathrm{i}|=|z-\mathrm{i}|$ ;
+#### 17.  $|z+\mathrm{i}|=|z-\mathrm{i}|$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -279,10 +272,11 @@ $$
 y=0
 $$
 
+![](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/a18e9e2c62b571e5b3090ca9dbcc46cd.svg)
+
 </details>
 
-### 18.
-指出下列各题中点 $z$ 的轨迹或所在范围，并作图: (6) $|z+3|+|z+1|=4$ ;
+#### 18.  $|z+3|+|z+1|=4$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -293,10 +287,11 @@ $$
 \frac{(x+2)^2}{4}+\frac{y^2}{3}=1
 $$
 
+![](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/5147a6534ef06576e0be0fa5c1e32be8.svg)
+
 </details>
 
-### 19.
-指出下列各题中点 $z$ 的轨迹或所在范围，并作图: (7) $\operatorname{Im}(z)\leqslant 2$ ;
+#### 19.  $\operatorname{Im}(z)\leqslant 2$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -305,10 +300,11 @@ $$
 y\leqslant2
 $$
 
+![](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/cd3a3fc8f5128a60e0cb281c579d49fc.svg)
+
 </details>
 
-### 20.
-指出下列各题中点 $z$ 的轨迹或所在范围，并作图: (8) $\left|\dfrac{z-3}{z-2}\right|\geqslant 1$ ;
+#### 20.  $\left|\dfrac{z-3}{z-2}\right|\geqslant 1$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -319,10 +315,11 @@ $$
 
 半平面 $x\leqslant\dfrac52$（$z\neq2$）
 
+![](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/407e720ba0871681a483281ae318d615.svg)
+
 </details>
 
-### 21.
-指出下列各题中点 $z$ 的轨迹或所在范围，并作图: (9) $0<\arg z<\pi$ ;
+#### 21.  $0<\arg z<\pi$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -333,10 +330,11 @@ $$
 \operatorname{Im}z>0
 $$
 
+![](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/336cfe8c6a95073568d8b5042604ad29.svg)
+
 </details>
 
-### 22.
-指出下列各题中点 $z$ 的轨迹或所在范围，并作图: (10) $\arg(z-\mathrm{i})=\dfrac{\pi}{4}$ 。
+#### 22.  $\arg(z-\mathrm{i})=\dfrac{\pi}{4}$ 。
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -347,10 +345,12 @@ $$
 y-1=x\quad(x>0)
 $$
 
+![](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/ef0702c79ef66ba03f23cc2ab684cfc8.svg)
+
 </details>
 
-### 23.
-指出下列不等式所确定的区域与闭区域，并指明它们是有界的还是无界的，单连通的还是多连通的: (1) $\operatorname{Im}(z)>0$ ;
+### 指出下列不等式所确定的区域与闭区域，并指明它们是有界的还是无界的，单连通的还是多连通的:
+#### 23.  $\operatorname{Im}(z)>0$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -363,8 +363,7 @@ $$
 
 </details>
 
-### 24.
-指出下列不等式所确定的区域与闭区域，并指明它们是有界的还是无界的，单连通的还是多连通的: (2) $|z-1|>4$ ;
+#### 24.  $|z-1|>4$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -377,8 +376,7 @@ $$
 
 </details>
 
-### 25.
-指出下列不等式所确定的区域与闭区域，并指明它们是有界的还是无界的，单连通的还是多连通的: (3) $0<\operatorname{Re}(z)<1$ ;
+#### 25.  $0<\operatorname{Re}(z)<1$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -391,8 +389,7 @@ $$
 
 </details>
 
-### 26.
-指出下列不等式所确定的区域与闭区域，并指明它们是有界的还是无界的，单连通的还是多连通的: (4) $2\leqslant|z|\leqslant 3$ ;
+#### 26.  $2\leqslant|z|\leqslant 3$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -405,8 +402,7 @@ $$
 
 </details>
 
-### 27.
-指出下列不等式所确定的区域与闭区域，并指明它们是有界的还是无界的，单连通的还是多连通的: (5) $|z-1|<|z+3|$ ;
+#### 27.  $|z-1|<|z+3|$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -419,8 +415,7 @@ $$
 
 </details>
 
-### 28.
-指出下列不等式所确定的区域与闭区域，并指明它们是有界的还是无界的，单连通的还是多连通的: (6) $-1<\arg z<-1+\pi$ ;
+#### 28.  $-1<\arg z<-1+\pi$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -435,8 +430,7 @@ $$
 
 </details>
 
-### 29.
-指出下列不等式所确定的区域与闭区域，并指明它们是有界的还是无界的，单连通的还是多连通的: (7) $|z-1|<4|z+1|$ ;
+#### 29.  $|z-1|<4|z+1|$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -452,8 +446,7 @@ $$
 
 </details>
 
-### 30.
-指出下列不等式所确定的区域与闭区域，并指明它们是有界的还是无界的，单连通的还是多连通的: (8) $|z-2|+|z+2|\leqslant 6$ ;
+#### 30.  $|z-2|+|z+2|\leqslant 6$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -468,8 +461,7 @@ $$
 
 </details>
 
-### 31.
-指出下列不等式所确定的区域与闭区域，并指明它们是有界的还是无界的，单连通的还是多连通的: (9) $|z-2|-|z+2|>1$ ;
+#### 31.  $|z-2|-|z+2|>1$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -484,8 +476,7 @@ $$
 
 </details>
 
-### 32.
-指出下列不等式所确定的区域与闭区域，并指明它们是有界的还是无界的，单连通的还是多连通的: (10) $z\overline{z}-(2+\mathrm{i})z-(2-\mathrm{i})\overline{z}\leqslant 4$ .
+#### 32.  $z\overline{z}-(2+\mathrm{i})z-(2-\mathrm{i})\overline{z}\leqslant 4$ .
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -502,8 +493,8 @@ $$
 
 </details>
 
-### 33.
-将下列方程( $t$ 为实参数)给出的曲线用直角坐标方程来表示，其中 $a$ 与 $b$ 为实常数: (1) $z = t(1+\mathrm{i})$ ;
+### 将下列方程( $t$ 为实参数)给出的曲线用直角坐标方程来表示，其中 $a$ 与 $b$ 为实常数:
+#### 33.  $z = t(1+\mathrm{i})$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -514,8 +505,7 @@ $$
 
 </details>
 
-### 34.
-将下列方程( $t$ 为实参数)给出的曲线用直角坐标方程来表示，其中 $a$ 与 $b$ 为实常数: (2) $z = a\cos t + \mathrm{i}b\sin t$ ;
+#### 34.  $z = a\cos t + \mathrm{i}b\sin t$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -526,8 +516,7 @@ $$
 
 </details>
 
-### 35.
-将下列方程( $t$ 为实参数)给出的曲线用直角坐标方程来表示，其中 $a$ 与 $b$ 为实常数: (3) $z = t+\dfrac{\mathrm{i}}{t}$ ;
+#### 35.  $z = t+\dfrac{\mathrm{i}}{t}$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -538,8 +527,7 @@ $$
 
 </details>
 
-### 36.
-将下列方程( $t$ 为实参数)给出的曲线用直角坐标方程来表示，其中 $a$ 与 $b$ 为实常数: (4) $z = t^2+\dfrac{\mathrm{i}}{t^2}$ ;
+#### 36.  $z = t^2+\dfrac{\mathrm{i}}{t^2}$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -550,8 +538,7 @@ $$
 
 </details>
 
-### 37.
-将下列方程( $t$ 为实参数)给出的曲线用直角坐标方程来表示，其中 $a$ 与 $b$ 为实常数: (5) $z = a\operatorname{ch} t + \mathrm{i}b\operatorname{sh} t$ ;
+#### 37.  $z = a\operatorname{ch} t + \mathrm{i}b\operatorname{sh} t$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -563,8 +550,7 @@ $$
 
 </details>
 
-### 38.
-将下列方程( $t$ 为实参数)给出的曲线用直角坐标方程来表示，其中 $a$ 与 $b$ 为实常数: (6) $z = a\mathrm{e}^{\mathrm{i}t}+b\mathrm{e}^{-\mathrm{i}t}$ ;
+#### 38.  $z = a\mathrm{e}^{\mathrm{i}t}+b\mathrm{e}^{-\mathrm{i}t}$ ;
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -576,8 +562,7 @@ $$
 
 </details>
 
-### 39.
-将下列方程( $t$ 为实参数)给出的曲线用直角坐标方程来表示，其中 $a$ 与 $b$ 为实常数: (7) $z = \mathrm{e}^{\alpha t} \quad (\alpha = a+b\mathrm{i} \text{ 为复数}).$
+#### 39.  $z = \mathrm{e}^{\alpha t} \quad (\alpha = a+b\mathrm{i} \text{ 为复数}).$
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -594,11 +579,8 @@ $$
 
 </details>
 
-### 40.
-函数
-$$
-w=\dfrac{1}{z} 把下列 z 平面上的曲线映射成 w 平面上怎样的曲线? (3) x=1 ;
-$$
+### 函数 $w=\dfrac{1}{z}$ 把下列 $z$ 平面上的曲线映射成 $w$ 平面上怎样的曲线?
+#### 40.  $x=1 ;$
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -620,8 +602,7 @@ $w$ 平面上以 $\dfrac12$ 为心、$\dfrac12$ 为半径的圆周（挖去 $w=0
 
 </details>
 
-### 41.
-函数 $w=\dfrac{1}{z}$ 把下列 $z$ 平面上的曲线映射成 $w$ 平面上怎样的曲线? $(4) (x-1)^{2}+y^{2}=1 .$
+#### 41.  $(x-1)^{2}+y^{2}=1 .$
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -642,8 +623,7 @@ $$
 
 ## 三. 证明题（共5题，11分）
 
-### 42.
-证明: $|z_1+z_2|^2+|z_1-z_2|^2=2(|z_1|^2+|z_2|^2)$ , 并说明其几何意义.
+### 42. 证明: $|z_1+z_2|^2+|z_1-z_2|^2=2(|z_1|^2+|z_2|^2)$ , 并说明其几何意义.
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -666,8 +646,7 @@ $$
 
 </details>
 
-### 43.
-试证 $\arg z$ 在原点与负实轴上不连续.
+### 43. 试证 $\arg z$ 在原点与负实轴上不连续.
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -685,8 +664,7 @@ $$
 
 </details>
 
-### 44.
-设 $f(z) = \frac{1}{2\mathrm{i}} \left( \frac{z}{\overline{z}} - \frac{\overline{z}}{z} \right) \quad (z \ne 0),$ 试证当 $z \to 0$ 时 $f(z)$ 的极限不存在.
+### 44. 设 $f(z) = \frac{1}{2\mathrm{i}} \left( \frac{z}{\overline{z}} - \frac{\overline{z}}{z} \right) \quad (z \ne 0),$ 试证当 $z \to 0$ 时 $f(z)$ 的极限不存在.
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -707,8 +685,7 @@ $$
 
 </details>
 
-### 45.
-如果复数 $z_1,z_2,z_3$ 满足等式 $\frac{z_2-z_1}{z_3-z_1} = \frac{z_1-z_3}{z_2-z_3},$ 证明: $|z_2-z_1| = |z_3-z_1| = |z_2-z_3|,$ 并说明上述等式的几何意义。
+### 45. 如果复数 $z_1,z_2,z_3$ 满足等式 $\frac{z_2-z_1}{z_3-z_1} = \frac{z_1-z_3}{z_2-z_3},$ 证明: $|z_2-z_1| = |z_3-z_1| = |z_2-z_3|,$ 并说明上述等式的几何意义。
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -737,8 +714,7 @@ $$
 
 </details>
 
-### 46.
-设 $z_1,z_2,z_3$ 三点适合条件: $z_1+z_2+z_3=0$ , $|z_1|=|z_2|=|z_3|=1$ .证明: $z_1$ , $z_2,z_3$ 是内接于单位圆 $|z|=1$ 的一个正三角形的顶点.
+### 46. 设 $z_1,z_2,z_3$ 三点适合条件: $z_1+z_2+z_3=0$ , $|z_1|=|z_2|=|z_3|=1$ .证明: $z_1$ , $z_2,z_3$ 是内接于单位圆 $|z|=1$ 的一个正三角形的顶点.
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>

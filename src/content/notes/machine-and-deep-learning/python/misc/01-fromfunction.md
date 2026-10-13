@@ -1,12 +1,12 @@
 ---
-title: "Python 杂记 I"
-slug: "machine-and-deep-learning/python/python-misc-i"
+title: "Python 杂记 01 - fromfunction 与可变参数"
+slug: "machine-and-deep-learning/python/misc/01-fromfunction"
 description: "import numpy as np"
 publishDate: "2026-08-17"
 createdAt: "2026-08-17T00:00:00Z"
 updatedDate: "2026-08-30T11:17:23"
 tags: ["machine-learning"]
-series: ["Machine & Deep Learning","Python"]
+series: ["Machine & Deep Learning","Python","Python 杂记"]
 ---
 
 # 一种比较有趣的数组创建方式

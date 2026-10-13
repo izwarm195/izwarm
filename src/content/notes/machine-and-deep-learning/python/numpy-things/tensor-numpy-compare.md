@@ -1,15 +1,15 @@
 ---
 title: "Tensor & Numpy 函数对比"
-slug: "machine-and-deep-learning/python/tensor-numpy-compare"
+slug: "machine-and-deep-learning/python/numpy-things/tensor-numpy-compare"
 description: "Numpy 函数汇总"
 publishDate: "2026-08-17"
 createdAt: "2026-08-17T00:00:00Z"
 updatedDate: "2026-08-30T09:21:40"
 tags: ["python","machine-learning","PyTorch"]
-series: ["Machine & Deep Learning","Python"]
+series: ["Machine & Deep Learning","Python","Numpy Things"]
 ---
 
-[Numpy 函数汇总](/notes/machine-and-deep-learning/python/numpy-functions/)
+[Numpy 函数汇总](/notes/machine-and-deep-learning/python/numpy-things/numpy-functions/)
 ### **一、数组创建**
 
 | NumPy | PyTorch | 备注 |

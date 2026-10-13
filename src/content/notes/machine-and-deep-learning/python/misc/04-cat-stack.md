@@ -1,12 +1,12 @@
 ---
-title: "Python 杂记 IV"
-slug: "machine-and-deep-learning/python/python-misc-iv"
+title: "Python 杂记 04 - torch.cat 与 torch.stack"
+slug: "machine-and-deep-learning/python/misc/04-cat-stack"
 description: "在 PyTorch 中， torch.cat 用于 将多个张量在已有维度上拼接 （不会增加新维度）。对于二维张量（矩阵），核心是控制 dim 参数："
 publishDate: "2026-09-03"
 createdAt: "2026-09-03T00:00:00Z"
 updatedDate: "2026-09-03T22:07:33"
 tags: ["NNDL","PyTorch","python","machine-learning"]
-series: ["Machine & Deep Learning","Python"]
+series: ["Machine & Deep Learning","Python","Python 杂记"]
 ---
 
 # `torch.cat`

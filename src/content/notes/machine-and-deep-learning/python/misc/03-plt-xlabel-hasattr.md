@@ -1,12 +1,12 @@
 ---
-title: "Python 杂记 III"
-slug: "machine-and-deep-learning/python/python-misc-iii"
+title: "Python 杂记 03 - plt.xlabel 报错与 hasattr"
+slug: "machine-and-deep-learning/python/misc/03-plt-xlabel-hasattr"
 description: "当你执行 plt.xlabel('X', fontsize 14) 时，Python 抛出了以下报错："
 publishDate: "2026-08-30"
 createdAt: "2026-08-30T00:00:00Z"
 updatedDate: "2026-09-03T18:06:19"
 tags: ["machine-learning"]
-series: ["Machine & Deep Learning","Python"]
+series: ["Machine & Deep Learning","Python","Python 杂记"]
 ---
 
 #  `plt.xlabel('x'):"str" object is not callable`

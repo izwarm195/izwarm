@@ -1,12 +1,12 @@
 ---
 title: "Pandas 函数汇总"
-slug: "machine-and-deep-learning/python/pandas-functions"
+slug: "machine-and-deep-learning/python/pandas/pandas-functions"
 description: "函数 释义"
 publishDate: "2026-08-05"
 createdAt: "2026-08-05T00:00:00Z"
 updatedDate: "2026-08-15T01:30:17"
 tags: ["python","Pandas","machine-learning"]
-series: ["Machine & Deep Learning","Python"]
+series: ["Machine & Deep Learning","Python","Pandas"]
 ---
 
 ## 一、数据结构与创建

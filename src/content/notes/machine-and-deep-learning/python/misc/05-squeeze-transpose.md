@@ -1,12 +1,12 @@
 ---
-title: "Python 杂记 V"
-slug: "machine-and-deep-learning/python/python-misc-v"
+title: "Python 杂记 05 - torch.squeeze 与转置"
+slug: "machine-and-deep-learning/python/misc/05-squeeze-transpose"
 description: "torch.squeeze 是 PyTorch 中用于 删除维度大小为 1 的函数。它返回输入张量的一个 视图 （View），与原始数据共享内存。"
 publishDate: "2026-09-06"
 createdAt: "2026-09-06T00:00:00Z"
 updatedDate: "2026-09-06T16:22:39"
 tags: ["machine-learning","PyTorch","python"]
-series: ["Machine & Deep Learning","Python"]
+series: ["Machine & Deep Learning","Python","Python 杂记"]
 ---
 
 # `torch.squeeze`

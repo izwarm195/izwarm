@@ -1,12 +1,12 @@
 ---
-title: "Python 杂记 VIII - Path类常用方法"
-slug: "machine-and-deep-learning/python/python-misc-viii-path"
+title: "Python 杂记 09 - Path 常用方法"
+slug: "machine-and-deep-learning/python/misc/09-path-methods"
 description: "下面以 Python 的 pathlib.Path 为例。它是面向对象的路径操作类，比 os.path 更直观。"
 publishDate: "2026-10-11"
 createdAt: "2026-10-11T00:00:00Z"
 updatedDate: "2026-10-11T20:49:25"
 tags: ["python","machine-learning"]
-series: ["Machine & Deep Learning","Python"]
+series: ["Machine & Deep Learning","Python","Python 杂记"]
 ---
 
 下面以 **Python 的 `pathlib.Path` ** 为例。它是面向对象的路径操作类，比 `os.path` 更直观。

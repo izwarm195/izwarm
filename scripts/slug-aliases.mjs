@@ -21,6 +21,8 @@ export const SEGMENT_ALIASES = {
   '《数字电路与系统》李文渊第2版 习题&解答': 'dcs-exercises',
 
   // ---- 复变函数（Complex）----
+  // 笔记被改名成「复变函数 - 第一次作业」后，标题里多了前缀，URL 仍保持原来的 assignment-1
+  '复变函数 - 第一次作业': 'assignment-1',
   '第一次作业': 'assignment-1',
 
   // ---- 信号与系统 ----
@@ -38,6 +40,9 @@ export const SEGMENT_ALIASES = {
   'NNDL 26-09-26 循环神经网络练习': '26-09-26-rnn',
 
   // ---- Python / Numpy / Pandas ----
+  // Python 下分了三个子系列目录（Numpy Things / Pandas / Python 杂记，见 vault 的 MOC）：
+  // 「Numpy Things」与「Pandas」本身就是 ASCII，不用别名；只有「Python 杂记」要一个短代号。
+  'Python 杂记': 'misc',
   'Numpy 函数汇总': 'numpy-functions',
   'Numpy 对话总结 I': 'numpy-dialogue-i',
   'Numpy 对话总结 II': 'numpy-dialogue-ii',
@@ -46,14 +51,18 @@ export const SEGMENT_ALIASES = {
   'Pandas 函数汇总': 'pandas-functions',
   'Pandas 对话总结': 'pandas-dialogue',
   'Tensor & Numpy 函数对比': 'tensor-numpy-compare',
-  'Python 杂记 I': 'python-misc-i',
-  'Python 杂记 II': 'python-misc-ii',
-  'Python 杂记 III': 'python-misc-iii',
-  'Python 杂记 IV': 'python-misc-iv',
-  'Python 杂记 V': 'python-misc-v',
-  'Python 杂记 VI': 'python-misc-vi',
-  'Python 杂记 VII': 'python-misc-vii',
-  'Python 杂记 VIII - Path类常用方法': 'python-misc-viii-path',
+  // 杂记按 vault 的编号命名（Python 杂记 01 - …），目录已经叫 misc/，文件名不再重复前缀
+  'Python 杂记 01 - fromfunction 与可变参数': '01-fromfunction',
+  'Python 杂记 02 - assert 与 tensor.uniform_': '02-assert-uniform',
+  'Python 杂记 03 - plt.xlabel 报错与 hasattr': '03-plt-xlabel-hasattr',
+  'Python 杂记 04 - torch.cat 与 torch.stack': '04-cat-stack',
+  'Python 杂记 05 - torch.squeeze 与转置': '05-squeeze-transpose',
+  'Python 杂记 06 - functools.partial 与 randperm': '06-partial-randperm',
+  'Python 杂记 07 - nn.Sequential 与 flatten': '07-sequential-flatten',
+  'Python 杂记 08 - pathlib 与 os': '08-pathlib-os',
+  'Python 杂记 09 - Path 常用方法': '09-path-methods',
+  'Python 杂记 10 - ignore_index(-100) 与 CrossEntropy': '10-ignore-index',
+  'Python 杂记 11 - register_buffer': '11-register-buffer',
 
   // ---- 英语 ----
   '数学英语词汇': 'math-vocab',

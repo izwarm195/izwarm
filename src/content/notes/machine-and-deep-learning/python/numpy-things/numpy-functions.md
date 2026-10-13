@@ -1,16 +1,16 @@
 ---
 title: "Numpy 函数汇总"
-slug: "machine-and-deep-learning/python/numpy-functions"
+slug: "machine-and-deep-learning/python/numpy-things/numpy-functions"
 description: "Pytorch Tensor 张量操作和 Numpy 数组十分类似，具体详见"
 publishDate: "2026-07-01"
 createdAt: "2026-07-26T00:00:00Z"
 updatedDate: "2026-08-17T23:33:26"
 tags: ["machine-learning","python"]
-series: ["Machine & Deep Learning","Python"]
+series: ["Machine & Deep Learning","Python","Numpy Things"]
 ---
 
 Pytorch Tensor 张量操作和 Numpy 数组十分类似，具体详见
-[Tensor & Numpy 函数对比](/notes/machine-and-deep-learning/python/tensor-numpy-compare/)
+[Tensor & Numpy 函数对比](/notes/machine-and-deep-learning/python/numpy-things/tensor-numpy-compare/)
 ### **一、数组创建**
 
 | 函数                | 注释                    |

@@ -4,7 +4,7 @@ slug: "signals/dcs/ch3"
 description: "(1) 有3个输入信号 A、B、C，当3个输入信号中不多于一个输入为1时，输出信号 Y 为1，其余情况下，输出 Y 为0；"
 publishDate: "2026-09-10"
 createdAt: "2026-09-10T00:00:00Z"
-updatedDate: "2026-10-08T12:29:07"
+updatedDate: "2026-10-13T15:58:11"
 tags: ["signals"]
 series: ["Signals","数字电路与系统"]
 ---
@@ -17,7 +17,7 @@ series: ["Signals","数字电路与系统"]
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
-(1) 不多于一个输入为 1 时 $Y=1$：
+(1)
 
 | $A$ | $B$ | $C$ | $Y$ |
 | --- | --- | --- | --- |
@@ -32,7 +32,7 @@ series: ["Signals","数字电路与系统"]
 
 $Y = \bar{A}\bar{B} + \bar{A}\bar{C} + \bar{B}\bar{C} = \sum m(0,1,2,4)$
 
-(2) 偶数个输入为 1 时 $F=1$：
+(2)
 
 | $A$ | $B$ | $C$ | $F$ |
 | --- | --- | --- | --- |
@@ -58,7 +58,7 @@ $F = \bar{A}\bar{B}\bar{C} + \bar{A}BC + A\bar{B}C + AB\bar{C} = \sum m(0,3,5,6)
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
-(1) 奇数个 1 时 $F=1$：
+(1)
 
 | $A$ | $B$ | $C$ | $F$ |
 | --- | --- | --- | --- |
@@ -73,7 +73,7 @@ $F = \bar{A}\bar{B}\bar{C} + \bar{A}BC + A\bar{B}C + AB\bar{C} = \sum m(0,3,5,6)
 
 $F = \bar{A}\bar{B}C + \bar{A}B\bar{C} + A\bar{B}\bar{C} + ABC = \sum m(1,2,4,7)$
 
-(2) 数值比较，$X=x_1x_2$、$Y=y_1y_2$（$x_1$、$y_1$ 为高位）：
+(2)
 
 | $x_1$ | $x_2$ | $y_1$ | $y_2$ | $F_1$ | $F_2$ | $F_3$ |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -96,7 +96,7 @@ $F = \bar{A}\bar{B}C + \bar{A}B\bar{C} + A\bar{B}\bar{C} + ABC = \sum m(1,2,4,7)
 
 $F_1 = \sum m(4,8,9,12,13,14)$，$F_2 = \sum m(0,5,10,15)$，$F_3 = \sum m(1,2,3,6,7,11)$
 
-(3) 1 位二进制全减器（$BI$ 低位借位，$BO$ 向高位借位）：
+(3)
 
 | $A$ | $B$ | $BI$ | $\Delta$ | $BO$ |
 | --- | --- | --- | --- | --- |
@@ -128,8 +128,6 @@ $\Delta = A \oplus B \oplus BI$，$BO = \bar{A}B + \bar{A}BI + B\,BI$
 | 1 | 0 | 0 |
 | 1 | 1 | 1 |
 
-$Y = A \cdot B$：有 0 出 0，全 1 才出 1。
-
 </details>
 
 ## 3.4 列举 2 个或逻辑的实例，并写出真值表。
@@ -146,8 +144,6 @@ $Y = A \cdot B$：有 0 出 0，全 1 才出 1。
 | 0 | 1 | 1 |
 | 1 | 0 | 1 |
 | 1 | 1 | 1 |
-
-$Y = A + B$：有 1 出 1，全 0 才出 0。
 
 </details>
 
@@ -178,8 +174,6 @@ $Y = A + B$：有 1 出 1，全 0 才出 0。
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
-约定：原变量用常开开关，反变量用常闭开关；乘表示串联，加表示并联。
-
 (1) $Y = A + BC$：$A$ 与「$B$ 串 $C$」两条支路并联。
 (2) $Y = A + B\bar{C}$：$A$ 与「$B$ 串 $\bar{C}$」并联。
 (3) $Y = A + \overline{BC} = A + \bar{B} + \bar{C}$：$A$、$\bar{B}$、$\bar{C}$ 三条支路并联。
@@ -200,8 +194,6 @@ $Y = A + B$：有 1 出 1，全 0 才出 0。
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
-
-逐项列出左、右两式的真值表，两者逐行相同，故等式成立。
 
 **(1) $\overline{ABC} = \bar{A} + \bar{B} + \bar{C}$**
 
@@ -259,7 +251,7 @@ $Y = A + B$：有 1 出 1，全 0 才出 0。
 | 1 | 1 | 1 | 0 | 1 | 1 |
 | 1 | 1 | 1 | 1 | 1 | 1 |
 
-**(5)** 题干在 OCR 中已损：等号被吃进了上划线内（原文 `\overline{AB + \bar{A}B = \bar{A}\cdot \bar{B}} + A\bar{B}`）。按最合理的还原 $\overline{AB + \bar{A}\bar{B}} = \bar{A}B + A\bar{B}$ 作答——左边是「同或」取反即「异或」，与右边一致：
+**(5)**
 
 | $A$ | $B$ | 左式 | 右式 |
 | --- | --- | --- | --- |
@@ -281,8 +273,6 @@ $Y = A + B$：有 1 出 1，全 0 才出 0。
 | 1 | 1 | 0 | 1 | 1 |
 | 1 | 1 | 1 | 0 | 0 |
 
-（左边化简为 $A\bar{B}\bar{C} + \bar{C}$，与右边五项之和相同。）
-
 </details>
 
 ## 3.8 用逻辑代数的公理或定理证明下列等式。
@@ -301,7 +291,7 @@ $Y = A + B$：有 1 出 1，全 0 才出 0。
 
 **(1) $AB + \bar{A}C + \bar{B}C = AB + C$**
 
-左 $= AB + (\bar{A} + \bar{B})C = AB + \overline{AB}\,C = AB + C$（吸收律 $X + \bar{X}Y = X + Y$）。
+左 $= AB + (\bar{A} + \bar{B})C = AB + \overline{AB}\,C = AB + C$。
 
 **(2) $A + B + \bar{A}\bar{B}C = A + B + C$**
 
@@ -325,7 +315,7 @@ $Y = A + B$：有 1 出 1，全 0 才出 0。
 
 **(7) $\bar{A}\bar{B} + B + \bar{A}C = \bar{A} + B$**
 
-左 $= B + \bar{A}(\bar{B} + C) = B + \bar{A}\,\overline{B\bar{C}} = B + \bar{A}$（当 $B=0$ 时右项为 $\bar{A}$，当 $B=1$ 时整体为 1）。
+左 $= B + \bar{A}(\bar{B} + C) = B + \bar{A}\,\overline{B\bar{C}} = B + \bar{A}$。
 
 **(8) $B\bar{C} + A\bar{B}C + BCD + A\bar{B}\bar{C}\bar{D} + \bar{A}BC\bar{D} + A\bar{B}\bar{C} + ABC = B + A$**
 
@@ -342,7 +332,7 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 ## 3.9 写出下列等式的对偶等式。
 
 (1) $\bar{A} + \bar{B} + \bar{C} + ABC = 1$
-(2) $\bar{A} + \bar{B} + \bar{C} = ABC$
+(2) $\overline{\bar{A} + \bar{B} + \bar{C}} = ABC$
 (3) $A + \bar{A} \bar{B} = A + \bar{B}$
 (4) $A\bar{B} + \bar{A}C + \bar{B}C = A\bar{B} + \bar{A}C$
 (5) $A + B + \bar{A}\bar{B}C = A + B + C$
@@ -351,11 +341,9 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
-对偶规则：$+ \leftrightarrow \cdot$、$1 \leftrightarrow 0$，变量与反号都不动。
-
 (1) $\bar{A} + \bar{B} + \bar{C} + ABC = 1$ → 对偶式：$\bar{A}\,\bar{B}\,\bar{C}\,(A + B + C) = 0$
 
-(2) 题干转录有误：原文右式写成 $ABC$，与左式自相矛盾（左式即 $\overline{ABC}$）。按 $\bar{A} + \bar{B} + \bar{C} = \overline{ABC}$ 作答，其对偶式：$\bar{A}\,\bar{B}\,\bar{C} = \overline{A + B + C}$
+(2) $\overline{\bar{A} + \bar{B} + \bar{C}} = ABC$ → 对偶式：$\overline{\bar{A}\,\bar{B}\,\bar{C}} = A + B + C$
 
 (3) $A + \bar{A}\bar{B} = A + \bar{B}$ → 对偶式：$A(\bar{A} + \bar{B}) = A\bar{B}$
 
@@ -363,7 +351,7 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 
 (5) $A + B + \bar{A}\bar{B}C = A + B + C$ → 对偶式：$AB(\bar{A} + \bar{B} + C) = ABC$
 
-(6) $AB + BC + AC = (A + B)(B + C)(C + A)$ → 对偶式：$(A + B)(B + C)(C + A) = AB + BC + AC$（该式自对偶，对偶式与原式相同）
+(6) $AB + BC + AC = (A + B)(B + C)(C + A)$ → 对偶式：$(A + B)(B + C)(C + A) = AB + BC + AC$
 
 </details>
 
@@ -372,23 +360,20 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 (1) $F = (A + B)(B + C)(C + D)$
 (2) $F = \bar{A}BC + B\bar{C}\bar{D} + B\bar{C} + D$
 (3) $F = [(A\bar{C} + B)D + BE]C$
-(4) $F = A + \overline{BC} + \overline{BC} + \bar{A}$
+(4) $F = \overline{A + \overline{BC} + \overline{B}C + \bar{A}}$
 (5) $F = [\bar{A}(C + B)][A\bar{C}D + (\bar{C} + B)D]$
 (6) $F = \overline{\overline{\overline{AC +B} + CD} + \bar{A}\bar{D}} + \overline{\bar{C} + \bar{B}}$
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
-记反函数为 $\bar{F}$（反演规则：$+\leftrightarrow\cdot$、变量取反、$0\leftrightarrow1$），对偶函数为 $F^{D}$（只换 $+\leftrightarrow\cdot$ 与 $0\leftrightarrow1$，变量不取反）。
-
-
-**(1)** 原式 $F$ 的最小项集合为 $\sum m(5,6,7,10,11,13,14,15)$
+**(1)**
 
 　$\bar{F} = \bar{A}\bar{B} + \bar{B}\bar{C} + \bar{C}\bar{D}$
 
 　$F^{D} = AB + BC + CD$
 
-**(2)** 原式 $F$ 的最小项集合为 $\sum m(1,3,4,5,6,7,9,11,12,13,15)$
+**(2)**
 
 　$\bar{F} = \bar{B}\bar{D} + AC\bar{D}$
 
@@ -400,13 +385,13 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 
 　$F^{D} = B + C + DE$
 
-**(4)** 原式 $F$ 的最小项集合为 $\sum m(0,1,2,3,4,5,6,7)$
+**(4)** $F = 0$
 
-　$\bar{F} = 0$
+　$\bar{F} = 1$
 
-　$F^{D} = 0$
+　$F^{D} = 1$
 
-**(5)** 原式 $F$ 的最小项集合为 $\sum m(5,7)$
+**(5)**
 
 　$\bar{F} = A + \bar{B} + \bar{D}$
 
@@ -414,11 +399,7 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 
 **(6)**
 
-　$\bar{F} = 0$
-
-　$F^{D} = 0$
-
-（第 (4) 题原文 $\overline{BC}$ 出现两次，按去重后 $F = A + \bar{A} + \overline{BC} = 1$ 处理，故 $\bar{F} = 0$、$F^{D} = 0$。）
+　$F = \prod M(0,2,4,5,10,12,13)$
 
 </details>
 
@@ -446,8 +427,6 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 
 (6) $F = \sum m(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14)$
 
-（(1)(5) 只含 $A$、$B$、$C$，按 3 变量编号；(2)(3)(4)(6) 含 $D$，按 4 变量编号。）
-
 </details>
 
 ## 3.12 写出下列各式的最大项表达式。
@@ -457,7 +436,7 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 (3) $F = ABC + ABCD + A\bar{D}$
 (4) $F = ABC + ACD + BD + \overline{AC}$
 (5) $F = (C + \bar{A}B)[(\bar{A} + B) \cdot C + A]$
-(6) $F = \overline{AC + B + CD} + \overline{AD} + \overline{C + B}$
+(6) $F = \overline{\overline{\overline{AC + B} + CD} + \bar{A}\bar{D}} + \overline{\bar{C} + \bar{B}}$
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
@@ -473,8 +452,6 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 (5) $F = \prod M(0,2,4,6)$
 
 (6) $F = \prod M(3,5,7,10,11,12,13,14,15)$
-
-（最大项编号即函数取 0 的行；(1)(5) 按 3 变量编号。）
 
 </details>
 
@@ -492,21 +469,21 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
-(1) $F$ 的最小项为 $m_0, m_2, m_5$（原文中 $\bar{A}\bar{B}\bar{C}$ 重复出现两次），故 $\bar{F} = \sum m(1,3,4,6,7) = \bar{A}\bar{B}C + \bar{A}B\bar{C} + A\bar{B}\bar{C} + AB\bar{C} + ABC$
+(1) $\bar{F} = \sum m(1,3,4,6,7) = \bar{A}\bar{B}C + \bar{A}B\bar{C} + A\bar{B}\bar{C} + AB\bar{C} + ABC$
 
-(2) $F = \sum m(0,3,4,7)$，$\bar{F} = \sum m(1,2,5,6)$
+(2) $\bar{F} = \sum m(1,2,5,6)$
 
-(3) 题干四项在 OCR 中完全相同（都是 $\bar{A}\bar{B}\bar{C}\bar{D}$），按去重后 $F = m_0$ 作答：$\bar{F} = \sum m(1 \sim 15)$。**原文应有 4 个不同最小项，此处需对照纸书补正。**
+(3) $\bar{F} = \sum m(1 \sim 15)$
 
-(4) $F = \sum m(0,1,2,6,7,8,10,14,15)$，$\bar{F} = \sum m(3,4,5,9,11,12,13)$
+(4) $\bar{F} = \sum m(3,4,5,9,11,12,13)$
 
-(5) 原式 $= \prod M(2,5,7)$，即 $F = \sum m(0,1,3,4,6)$，$\bar{F} = \sum m(2,5,7)$
+(5) $\bar{F} = \sum m(2,5,7)$
 
-(6) $F = \prod M(1,3,4,7) = \sum m(0,2,5,6)$，$\bar{F} = \sum m(1,3,4,7)$
+(6) $\bar{F} = \sum m(1,3,4,7)$
 
-(7) $F = \sum m(0,1,3,7,8,9,13) + \sum d(5,11,15)$，$\bar{F} = \sum m(2,4,6,10,12,14) + \sum d(5,11,15)$
+(7) $\bar{F} = \sum m(2,4,6,10,12,14) + \sum d(5,11,15)$
 
-(8) $F = \prod M(0,1,6,11) + \prod d(3,14,15) = \sum m(2,4,5,7,8,9,10,12,13) + \sum d(3,14,15)$，$\bar{F} = \sum m(0,1,6,11) + \sum d(3,14,15)$
+(8) $\bar{F} = \sum m(0,1,6,11) + \sum d(3,14,15)$
 
 </details>
 
@@ -524,14 +501,14 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
-**(1) $Y = B + A\cdot C$**
+**(1)**
 
 | $A\backslash BC$ | 00 | 01 | 11 | 10 |
 | --- | --- | --- | --- | --- |
 | **0** | 0 | 0 | 1 | 1 |
 | **1** | 0 | 1 | 1 | 1 |
 
-**(2) $Y = (A + BC)[D + B(A + \bar{C})]$**
+**(2)**
 
 | $AB\backslash CD$ | 00 | 01 | 11 | 10 |
 | --- | --- | --- | --- | --- |
@@ -540,7 +517,7 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 | **11** | 1 | 1 | 1 | 1 |
 | **10** | 0 | 1 | 1 | 0 |
 
-**(3) $Y = (\bar{B} + A)(B + C + D)(\bar{A} + \bar{C})$**
+**(3)**
 
 | $AB\backslash CD$ | 00 | 01 | 11 | 10 |
 | --- | --- | --- | --- | --- |
@@ -549,14 +526,14 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 | **11** | 1 | 1 | 0 | 0 |
 | **10** | 0 | 1 | 0 | 0 |
 
-**(4) $Y = \sum m(1,3,4,7)$**
+**(4)**
 
 | $A\backslash BC$ | 00 | 01 | 11 | 10 |
 | --- | --- | --- | --- | --- |
 | **0** | 0 | 1 | 1 | 0 |
 | **1** | 1 | 0 | 1 | 0 |
 
-**(5) $Y = \sum m(0,1,2,3,4,9,14,15)$**
+**(5)**
 
 | $AB\backslash CD$ | 00 | 01 | 11 | 10 |
 | --- | --- | --- | --- | --- |
@@ -565,7 +542,7 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 | **11** | 0 | 0 | 1 | 1 |
 | **10** | 0 | 1 | 0 | 0 |
 
-**(6) $Y = \sum m(0,1,2,10,11,12,13) + \sum d(3,14,15)$**
+**(6)**
 
 | $AB\backslash CD$ | 00 | 01 | 11 | 10 |
 | --- | --- | --- | --- | --- |
@@ -574,14 +551,14 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 | **11** | 1 | 1 | × | × |
 | **10** | 0 | 0 | 1 | 1 |
 
-**(7) $Y = f(A,B,C) = \prod M(0,2,4,6)$**
+**(7)**
 
 | $A\backslash BC$ | 00 | 01 | 11 | 10 |
 | --- | --- | --- | --- | --- |
 | **0** | 0 | 1 | 1 | 0 |
 | **1** | 0 | 1 | 1 | 0 |
 
-**(8) $Y = f(A,B,C,D) = \prod M(0,1,6,12,13) + \prod d(3,14,15)$**
+**(8)**
 
 | $AB\backslash CD$ | 00 | 01 | 11 | 10 |
 | --- | --- | --- | --- | --- |
@@ -596,8 +573,6 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
-
-把 3.14 各卡诺图中原填 1 的格改填 0、填 0 的改填 1（$\times$ 不可用格保持不动），即得反函数的卡诺图。对应地：
 
 (1) $\bar{Y} = \sum m(0,1,4)$
 
@@ -615,8 +590,6 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 
 (8) $\bar{Y} = \sum m(0,1,6,12,13) + \sum d(3,14,15)$
 
-各式的卡诺图形状与 3.14 完全相同，仅 0/1 互换。
-
 </details>
 
 ## 3.16 将 3.2 题中各函数用卡诺图表示。
@@ -631,7 +604,7 @@ $= B(\bar{C} + D + \bar{A}) + A(C + \bar{B}\bar{C}) = B(\bar{A} + \bar{C} + D) +
 | **0** | 0 | 1 | 0 | 1 |
 | **1** | 1 | 0 | 1 | 0 |
 
-**(2) 3.2(2) 的 $F_2$（$X=Y$）**，行为 $x_1x_2$、列为 $y_1y_2$：
+**(2) 3.2(2) 的 $F_2$（$X=Y$）**
 
 | $x_1x_2\backslash y_1y_2$ | 00 | 01 | 11 | 10 |
 | --- | --- | --- | --- | --- |
@@ -729,30 +702,108 @@ $F_2 = A\bar{B}\bar{C}D + BCD + \bar{B}C = \sum m(2,3,7,9,10,11,15)$
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
-(1) $F = A + C$
+(1) $F = A + AC + BC + \bar{A}\bar{B}C$
 
-(2) $F = A + \bar{B} + \bar{C}$
+　$= A + BC + \bar{A}\bar{B}C$
 
-(3) $F = AB + AC + CD$
+　$= A + C(B + \bar{A}\bar{B})$
 
-(4) $F = \bar{A}C + \bar{B}C + \bar{B}D + A\bar{C}\bar{D}$
+　$= A + C(B + \bar{A})$
 
-(5) $F = AC + BC$
+　$= A + BC + \bar{A}C$
 
-(6) $F = AB + \bar{A}C$
+　$= A + C$
 
-(7) $F = \bar{A} + \bar{B} + \bar{C}$
+(2) $F = AC + AB + \overline{BC} + \overline{AB}\bar{C}$
 
-(8) $F = \bar{A} + \bar{C}$
+　$= AB + AC + (\bar{B} + \bar{C}) + (\bar{A} + \bar{B})\bar{C}$
 
-（结果均已用卡诺图/QM 复核，与原式逐行等价。）
+　$= AB + AC + \bar{B} + \bar{C} + \bar{A}\bar{C} + \bar{B}\bar{C}$
+
+　$= AB + AC + \bar{B} + \bar{C}$
+
+　$= A(B + C) + \overline{BC}$
+
+　$= [A + \overline{BC}]\,[(B + C) + \overline{BC}]$
+
+　$= (A + \bar{B} + \bar{C}) \cdot 1$
+
+　$= A + \bar{B} + \bar{C}$
+
+(3) $F = AB\bar{C} + \bar{A}CD + AC$
+
+　$= AB\bar{C} + C(A + \bar{A}D)$
+
+　$= AB\bar{C} + C(A + D)$
+
+　$= AB\bar{C} + AC + CD$
+
+　$= A(B\bar{C} + C) + CD$
+
+　$= A(B + C) + CD$
+
+　$= AB + AC + CD$
+
+(4) $F = A\bar{C}\bar{D} + \bar{B}D + A\bar{B} + \bar{A}C + \bar{B}C$
+
+　$= A\bar{C}\bar{D} + \bar{B}D + \bar{A}C + \bar{B}C + A\bar{B}(C + \bar{C})(D + \bar{D})$
+
+　$= A\bar{C}\bar{D} + \bar{B}D + \bar{A}C + \bar{B}C + A\bar{B}CD + A\bar{B}C\bar{D} + A\bar{B}\bar{C}D + A\bar{B}\bar{C}\bar{D}$
+
+　$= \bar{A}C + \bar{B}C + \bar{B}D + A\bar{C}\bar{D}$
+
+(5) $F = (C + AB)(A\bar{B} + B)(C + \bar{A})$
+
+　$= (C + AB)(A + B)(C + \bar{A})$
+
+　$= (A + B)(C + AB\bar{A})$
+
+　$= (A + B)C$
+
+　$= AC + BC$
+
+(6) $F = (\bar{A} + B)(\bar{A} + B + C)(A + C)(B + C + D)$
+
+　$= (\bar{A} + B)(A + C)(B + C + D)$
+
+　$= (\bar{A}C + AB + BC)(B + C + D)$
+
+　$= \bar{A}C(B + C + D) + AB(B + C + D) + BC(B + C + D)$
+
+　$= \bar{A}C + AB + BC$
+
+　$= AB + \bar{A}C$
+
+(7) $F = \overline{AC} + \overline{BC} + B(\overline{AC} + A\bar{C})$
+
+　$= (\bar{A} + \bar{C}) + (\bar{B} + \bar{C}) + B(\bar{A} + \bar{C} + A\bar{C})$
+
+　$= (\bar{A} + \bar{C}) + (\bar{B} + \bar{C}) + B(\bar{A} + \bar{C})$
+
+　$= \bar{A} + \bar{B} + \bar{C} + \bar{A}B + B\bar{C}$
+
+　$= \bar{A} + \bar{B} + \bar{C}$
+
+(8) $F = \overline{AC} + \overline{BC}\,B(\overline{AC} + \overline{AC})$
+
+　$= \overline{AC} + \overline{BC}\,B\,\overline{AC}$
+
+　$= \overline{AC} + (\bar{B} + \bar{C})B\,\overline{AC}$
+
+　$= \overline{AC} + B\bar{C}\,\overline{AC}$
+
+　$= \overline{AC}(1 + B\bar{C})$
+
+　$= \overline{AC}$
+
+　$= \bar{A} + \bar{C}$
 
 </details>
 
 ## 3.21 用卡诺图法化简下列各函数，写出函数的最简与 - 或表达式。
 
 (1) $F = \bar{A}\bar{B}C + A\bar{C}D + \bar{A}\bar{C} + BC$
-(2) $F = \overline{AC} + \overline{CD} + BC + AD$
+(2) $F = \overline{A}C + \overline{C}D + BC + AD$
 (3) $F = (A + B)(B + C)(\bar{A} + C)(A + B + C)$
 (4) $F = (\bar{A} + B)(\bar{A} + B + C)(A + C)(A + C + D)$
 (5) $F = \sum m(0,2,6,7)$
@@ -763,7 +814,7 @@ $F_2 = A\bar{B}\bar{C}D + BCD + \bar{B}C = \sum m(2,3,7,9,10,11,15)$
 <details class="answer">
 <summary><img class="callout-badge" src="/media/icons/circled-check.svg" alt="answer"><strong>答案</strong></summary>
 
-**(1) $F = \bar{A}\bar{B}C + A\bar{C}D + \bar{A}\bar{C} + BC$**
+**(1)**
 
 | $AB\backslash CD$ | 00 | 01 | 11 | 10 |
 | --- | --- | --- | --- | --- |
@@ -776,20 +827,20 @@ $F_2 = A\bar{B}\bar{C}D + BCD + \bar{B}C = \sum m(2,3,7,9,10,11,15)$
 
 （8 格圈 $\bar{A}$：m{0,1,2,3,4,5,6,7}；4 格圈 $\bar{C}D$：m{1,5,9,13}；4 格圈 $BC$：m{6,7,14,15}）
 
-**(2) $F = \overline{AC} + \overline{CD} + BC + AD$**
+**(2)**
 
 | $AB\backslash CD$ | 00 | 01 | 11 | 10 |
 | --- | --- | --- | --- | --- |
-| **00** | 1 | 1 | 1 | 1 |
-| **01** | 1 | 1 | 1 | 1 |
-| **11** | 1 | 1 | 1 | 1 |
-| **10** | 1 | 1 | 1 | 1 |
+| **00** | 0 | 1 | 1 | 1 |
+| **01** | 0 | 1 | 1 | 1 |
+| **11** | 0 | 1 | 1 | 1 |
+| **10** | 0 | 1 | 1 | 0 |
 
-最简与或式：$F = 1$
+最简与或式：$F = \bar{A}C + BC + D$
 
-（16 格圈 $1$：m{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}）
+（8 格圈 $D$：m{1,3,5,7,9,11,13,15}；4 格圈 $\bar{A}C$：m{2,3,6,7}；4 格圈 $BC$：m{6,7,14,15}；余下 m{0,4,8,10,12} 为 0）
 
-**(3) $F = (A+B)(B+C)(\bar{A}+C)(A+B+C)$**
+**(3)**
 
 | $AB\backslash CD$ | 00 | 01 | 11 | 10 |
 | --- | --- | --- | --- | --- |
@@ -802,7 +853,7 @@ $F_2 = A\bar{B}\bar{C}D + BCD + \bar{B}C = \sum m(2,3,7,9,10,11,15)$
 
 （4 格圈 $\bar{A}B$：m{4,5,6,7}；4 格圈 $AC$：m{10,11,14,15}）
 
-**(4) $F = (\bar{A}+B)(\bar{A}+B+C)(A+C)(A+C+D)$**
+**(4)**
 
 | $AB\backslash CD$ | 00 | 01 | 11 | 10 |
 | --- | --- | --- | --- | --- |
@@ -815,7 +866,7 @@ $F_2 = A\bar{B}\bar{C}D + BCD + \bar{B}C = \sum m(2,3,7,9,10,11,15)$
 
 （4 格圈 $\bar{A}C$：m{2,3,6,7}；4 格圈 $AB$：m{12,13,14,15}）
 
-**(5) $F = \sum m(0,2,6,7)$**
+**(5)**
 
 | $AB\backslash CD$ | 00 | 01 | 11 | 10 |
 | --- | --- | --- | --- | --- |
@@ -828,7 +879,7 @@ $F_2 = A\bar{B}\bar{C}D + BCD + \bar{B}C = \sum m(2,3,7,9,10,11,15)$
 
 （2 格圈 $\bar{A}\bar{B}\bar{D}$：m{0,2}；2 格圈 $\bar{A}BC$：m{6,7}）
 
-**(6) $F = \sum m(0,2,5,7,9,10) + \sum d(1,4,8,12,15)$**
+**(6)**
 
 | $AB\backslash CD$ | 00 | 01 | 11 | 10 |
 | --- | --- | --- | --- | --- |
@@ -841,7 +892,7 @@ $F_2 = A\bar{B}\bar{C}D + BCD + \bar{B}C = \sum m(2,3,7,9,10,11,15)$
 
 （4 格圈 $\bar{B}\bar{D}$：m{0,2,8,10}；4 格圈 $\bar{B}\bar{C}$：m{0,1,8,9}；2 格圈 $\bar{A}BD$：m{5,7}）
 
-**(7) $F = \prod M(2,4,6,13,15)$**
+**(7)**
 
 | $AB\backslash CD$ | 00 | 01 | 11 | 10 |
 | --- | --- | --- | --- | --- |
@@ -854,7 +905,7 @@ $F_2 = A\bar{B}\bar{C}D + BCD + \bar{B}C = \sum m(2,3,7,9,10,11,15)$
 
 （4 格圈 $\bar{B}\bar{C}$：m{0,1,8,9}；4 格圈 $\bar{A}D$：m{1,3,5,7}；4 格圈 $A\bar{D}$：m{8,10,12,14}；4 格圈 $\bar{B}D$：m{1,3,9,11}）
 
-**(8) $F = \prod M(0,2,5,7,9,10) + \prod d(1,4,8,12,15)$**
+**(8)**
 
 | $AB\backslash CD$ | 00 | 01 | 11 | 10 |
 | --- | --- | --- | --- | --- |
@@ -876,7 +927,7 @@ $F_2 = A\bar{B}\bar{C}D + BCD + \bar{B}C = \sum m(2,3,7,9,10,11,15)$
 
 (1) $F = (\bar{A} + B + \bar{C})(\bar{A} + C + D)$
 
-(2) $F = 1$
+(2) $F = (\bar{A} + B + D)(C + D)$
 
 (3) $F = (\bar{A} + C)(A + B)$
 
@@ -890,8 +941,6 @@ $F_2 = A\bar{B}\bar{C}D + BCD + \bar{B}C = \sum m(2,3,7,9,10,11,15)$
 
 (8) $F = (B + C)(B + D)(A + \bar{B} + \bar{D})$
 
-（或-与式由卡诺图中圈 0 得到：每个 0 格圈对应一个或项，圈内变量取反后相或，各或项再相乘。）
-
 </details>
 
 ## 3.23 用卡诺图法化简 3.21 题中各函数，写出函数的最简与 - 或非表达式。
@@ -901,7 +950,7 @@ $F_2 = A\bar{B}\bar{C}D + BCD + \bar{B}C = \sum m(2,3,7,9,10,11,15)$
 
 (1) $F = \overline{A\bar{B}C + A\bar{C}\bar{D}}$
 
-(2) $F = 1$
+(2) $F = \overline{A\bar{B}\bar{D} + \bar{C}\bar{D}}$
 
 (3) $F = \overline{A\bar{C} + \bar{A}\bar{B}}$
 
@@ -914,8 +963,6 @@ $F_2 = A\bar{B}\bar{C}D + BCD + \bar{B}C = \sum m(2,3,7,9,10,11,15)$
 (7) $F = \overline{ABD + \bar{A}B\bar{D} + \bar{A}C\bar{D}}$
 
 (8) $F = \overline{\bar{B}\bar{C} + \bar{B}\bar{D} + \bar{A}BD}$
-
-（与-或非式 = 对 $\bar{F}$ 的最简与或式整体取反，可用一级与或非门实现。）
 
 </details>
 

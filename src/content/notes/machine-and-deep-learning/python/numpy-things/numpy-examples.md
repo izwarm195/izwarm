@@ -1,11 +1,11 @@
 ---
 title: "Numpy 综合案例"
-slug: "machine-and-deep-learning/python/numpy-examples"
+slug: "machine-and-deep-learning/python/numpy-things/numpy-examples"
 description: "题目： 给定一个 (m, n) 的随机整数矩阵，如果某个元素为 0，则将该元素所在的行和列全部置为 0。"
 publishDate: "2026-08-01"
 createdAt: "2026-08-01T00:00:00Z"
 tags: ["machine-learning","python"]
-series: ["Machine & Deep Learning","Python"]
+series: ["Machine & Deep Learning","Python","Numpy Things"]
 ---
 
 ### 1. 矩阵"十字零"变换

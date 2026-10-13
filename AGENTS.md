@@ -2,7 +2,7 @@
 
 <!-- dsh-openwolf:start -->
 # Code Map
-Generated 2026-10-12T15:51:08.147Z · 199 files · 32398 lines · 0.59s
+Generated 2026-10-13T14:21:46.004Z · 202 files · 32903 lines · 0.59s
 
 ## ./
 - `CHANGES.md` — 645 lines · 第一阶段目标是忠实迁移，以下是相对原源码的全部偏离及原因。
@@ -56,7 +56,7 @@ Generated 2026-10-12T15:51:08.147Z · 199 files · 32398 lines · 0.59s
 - `public/media/icons/triangle-exclaimation.svg` — 0 lines · <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M13.752 2.111c-.…
 
 ## scripts
-- `scripts/slug-aliases.mjs` — 80 lines · SEGMENT_ALIASES · Exports SEGMENT_ALIASES
+- `scripts/slug-aliases.mjs` — 89 lines · SEGMENT_ALIASES · Exports SEGMENT_ALIASES
 - `scripts/sync-obsidian.mjs` — 1177 lines · ROOTS, SKIP_DIRS, _posArg, VAULT, OUT, MANIFEST · const ROOTS = [
 
 ## src
@@ -86,14 +86,14 @@ Generated 2026-10-12T15:51:08.147Z · 199 files · 32398 lines · 0.59s
 - `src/components/notes/TocTree.astro` — 32 lines · interface Props {
 
 ## src/config
-- `src/config/commit-activity.json` — 35 lines · {
-- `src/config/created-dates.json` — 111 lines · {
+- `src/config/commit-activity.json` — 37 lines · {
+- `src/config/created-dates.json` — 114 lines · {
 - `src/config/friends.ts` — 34 lines · FriendLink, displayHost · Exports FriendLink, friends, displayHost
 - `src/config/media.ts` — 41 lines · base, MEDIA_BASE, icon, media · Exports MEDIA_BASE, icon, media
 - `src/config/site.ts` — 11 lines · site · Exports site
 
 ## src/content/notes/complex
-- `src/content/notes/complex/assignment-1.md` — 764 lines · title: "第一次作业"
+- `src/content/notes/complex/assignment-1.md` — 740 lines · title: "复变函数 - 第一次作业"
 
 ## src/content/notes/cpp/examples
 - `src/content/notes/cpp/examples/count-perfect-squares.md` — 54 lines · title: "完全平方数计数"
@@ -171,23 +171,32 @@ Generated 2026-10-12T15:51:08.147Z · 199 files · 32398 lines · 0.59s
 - `src/content/notes/machine-and-deep-learning/nndl/26-09-26-rnn.md` — 463 lines · title: "NNDL 26-09-26 循环神经网络练习"
 
 ## src/content/notes/machine-and-deep-learning/python
-- `src/content/notes/machine-and-deep-learning/python/machine-and-deep-learning.md` — 40 lines · title: "Machine & Deep Learning"
-- `src/content/notes/machine-and-deep-learning/python/numpy-dialogue-i.md` — 2952 lines · title: "Numpy 对话总结 I"
-- `src/content/notes/machine-and-deep-learning/python/numpy-dialogue-ii.md` — 175 lines · title: "Numpy 对话总结 II"
-- `src/content/notes/machine-and-deep-learning/python/numpy-examples.md` — 257 lines · title: "Numpy 综合案例"
-- `src/content/notes/machine-and-deep-learning/python/numpy-functions.md` — 332 lines · title: "Numpy 函数汇总"
-- `src/content/notes/machine-and-deep-learning/python/numpy-scipy-complex.md` — 270 lines · title: "Numpy, Scipy 复数总结"
-- `src/content/notes/machine-and-deep-learning/python/pandas-dialogue.md` — 157 lines · title: "Pandas 对话总结"
-- `src/content/notes/machine-and-deep-learning/python/pandas-functions.md` — 167 lines · title: "Pandas 函数汇总"
-- `src/content/notes/machine-and-deep-learning/python/python-misc-i.md` — 268 lines · title: "Python 杂记 I"
-- `src/content/notes/machine-and-deep-learning/python/python-misc-ii.md` — 159 lines · title: "Python 杂记 II"
-- `src/content/notes/machine-and-deep-learning/python/python-misc-iii.md` — 261 lines · title: "Python 杂记 III"
-- `src/content/notes/machine-and-deep-learning/python/python-misc-iv.md` — 219 lines · title: "Python 杂记 IV"
-- `src/content/notes/machine-and-deep-learning/python/python-misc-v.md` — 125 lines · title: "Python 杂记 V"
-- `src/content/notes/machine-and-deep-learning/python/python-misc-vi.md` — 455 lines · title: "Python 杂记 VI"
-- `src/content/notes/machine-and-deep-learning/python/python-misc-vii.md` — 301 lines · title: "Python 杂记 VII"
-- `src/content/notes/machine-and-deep-learning/python/python-misc-viii-path.md` — 157 lines · title: "Python 杂记 VIII - Path类常用方法"
-- `src/content/notes/machine-and-deep-learning/python/tensor-numpy-compare.md` — 342 lines · title: "Tensor & Numpy 函数对比"
+- `src/content/notes/machine-and-deep-learning/python/machine-and-deep-learning.md` — 41 lines · title: "Machine & Deep Learning"
+
+## src/content/notes/machine-and-deep-learning/python/misc
+- `src/content/notes/machine-and-deep-learning/python/misc/01-fromfunction.md` — 268 lines · title: "Python 杂记 01 - fromfunction 与可变参数"
+- `src/content/notes/machine-and-deep-learning/python/misc/02-assert-uniform.md` — 159 lines · title: "Python 杂记 02 - assert 与 tensor.uniform_"
+- `src/content/notes/machine-and-deep-learning/python/misc/03-plt-xlabel-hasattr.md` — 261 lines · title: "Python 杂记 03 - plt.xlabel 报错与 hasattr"
+- `src/content/notes/machine-and-deep-learning/python/misc/04-cat-stack.md` — 219 lines · title: "Python 杂记 04 - torch.cat 与 torch.stack"
+- `src/content/notes/machine-and-deep-learning/python/misc/05-squeeze-transpose.md` — 125 lines · title: "Python 杂记 05 - torch.squeeze 与转置"
+- `src/content/notes/machine-and-deep-learning/python/misc/06-partial-randperm.md` — 455 lines · title: "Python 杂记 06 - functools.partial 与 randperm"
+- `src/content/notes/machine-and-deep-learning/python/misc/07-sequential-flatten.md` — 301 lines · title: "Python 杂记 07 - nn.Sequential 与 flatten"
+- `src/content/notes/machine-and-deep-learning/python/misc/08-pathlib-os.md` — 183 lines · title: "Python 杂记 08 - pathlib 与 os"
+- `src/content/notes/machine-and-deep-learning/python/misc/09-path-methods.md` — 157 lines · title: "Python 杂记 09 - Path 常用方法"
+- `src/content/notes/machine-and-deep-learning/python/misc/10-ignore-index.md` — 112 lines · title: "Python 杂记 10 - ignore_index(-100) 与 CrossEntropy"
+- `src/content/notes/machine-and-deep-learning/python/misc/11-register-buffer.md` — 172 lines · title: "Python 杂记 11 - register_buffer"
+
+## src/content/notes/machine-and-deep-learning/python/numpy-things
+- `src/content/notes/machine-and-deep-learning/python/numpy-things/numpy-dialogue-i.md` — 2952 lines · title: "Numpy 对话总结 I"
+- `src/content/notes/machine-and-deep-learning/python/numpy-things/numpy-dialogue-ii.md` — 175 lines · title: "Numpy 对话总结 II"
+- `src/content/notes/machine-and-deep-learning/python/numpy-things/numpy-examples.md` — 257 lines · title: "Numpy 综合案例"
+- `src/content/notes/machine-and-deep-learning/python/numpy-things/numpy-functions.md` — 332 lines · title: "Numpy 函数汇总"
+- `src/content/notes/machine-and-deep-learning/python/numpy-things/numpy-scipy-complex.md` — 270 lines · title: "Numpy, Scipy 复数总结"
+- `src/content/notes/machine-and-deep-learning/python/numpy-things/tensor-numpy-compare.md` — 342 lines · title: "Tensor & Numpy 函数对比"
+
+## src/content/notes/machine-and-deep-learning/python/pandas
+- `src/content/notes/machine-and-deep-learning/python/pandas/pandas-dialogue.md` — 157 lines · title: "Pandas 对话总结"
+- `src/content/notes/machine-and-deep-learning/python/pandas/pandas-functions.md` — 167 lines · title: "Pandas 函数汇总"
 
 ## src/content/notes/physics
 - `src/content/notes/physics/ch10.md` — 467 lines · title: "第十章 波动 公式总结"
@@ -201,19 +210,6 @@ Generated 2026-10-12T15:51:08.147Z · 199 files · 32398 lines · 0.59s
 - `src/content/notes/physics/formulas-vol2.md` — 32 lines · title: "《物理学》下册公式总结"
 
 ## src/content/notes/signals/dcs
-- `src/content/notes/signals/dcs/ch2.md` — 667 lines · title: "第2章 数制与码制"
-- `src/content/notes/signals/dcs/ch3.md` — 921 lines · title: "第3章 逻辑函数及其简化"
-- `src/content/notes/signals/dcs/ch5.md` — 108 lines · title: "第5章 组合逻辑电路的分析与设计"
-- `src/content/notes/signals/dcs/dcs-exercises.md` — 16 lines · title: "《数字电路与系统》李文渊第2版 习题&解答"
-
-## src/content/notes/signals/signals-and-systems
-- `src/content/notes/signals/signals-and-systems/reading-notes.md` — 869 lines · title: "信号与系统阅读随记"
-
-## src/content/notes/signals/signals-and-systems/ss-qna
-- `src/content/notes/signals/signals-and-systems/ss-qna/ss-qna-01.md` — 34 lines · title: "SS-QNA-01"
-- `src/content/notes/signals/signals-and-systems/ss-qna/ss-qna-02.md` — 80 lines · title: "SS-QNA-02"
-- `src/content/notes/signals/signals-and-systems/ss-qna/ss-qna-03.md` — 38 lines · title: "SS-QNA-03"
-- `src/content/notes/signals/signals-and-systems/ss-qna/ss-qna-04.md` — 29 lines · title: "SS-QNA-04"
-- `src/content/notes/signals/si…
+- `src/content/notes/signals/dcs/c…
 (rendered map truncated at 16384 bytes)
 <!-- dsh-openwolf:end -->

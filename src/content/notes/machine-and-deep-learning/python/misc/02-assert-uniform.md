@@ -1,12 +1,12 @@
 ---
-title: "Python 杂记 II"
-slug: "machine-and-deep-learning/python/python-misc-ii"
+title: "Python 杂记 02 - assert 与 tensor.uniform_"
+slug: "machine-and-deep-learning/python/misc/02-assert-uniform"
 description: "assert 是 Python 的 断言语句 ，用于在代码里声明\"这里某个条件必须成立\"，如果条件不成立就立刻抛异常终止程序。"
 publishDate: "2026-08-27"
 createdAt: "2026-08-27T00:00:00Z"
 updatedDate: "2026-08-30T09:28:08"
 tags: ["python","machine-learning"]
-series: ["Machine & Deep Learning","Python"]
+series: ["Machine & Deep Learning","Python","Python 杂记"]
 ---
 
 # `Assert` 
