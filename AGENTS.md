@@ -2,7 +2,7 @@
 
 <!-- dsh-openwolf:start -->
 # Code Map
-Generated 2026-10-13T14:21:46.004Z · 202 files · 32903 lines · 0.59s
+Generated 2026-10-13T14:47:15.503Z · 202 files · 32913 lines · 0.35s
 
 ## ./
 - `CHANGES.md` — 645 lines · 第一阶段目标是忠实迁移，以下是相对原源码的全部偏离及原因。
@@ -163,15 +163,15 @@ Generated 2026-10-13T14:21:46.004Z · 202 files · 32903 lines · 0.59s
 - `src/content/notes/english/words-summary/math-vocab/stage-8-linear-algebra.md` — 91 lines · title: "Stage 8 - Linear Algebra"
 - `src/content/notes/english/words-summary/math-vocab/stage-9-probability-and-statistics.md` — 107 lines · title: "Stage 9 - Probability & Statistics"
 
+## src/content/notes/machine-and-deep-learning
+- `src/content/notes/machine-and-deep-learning/machine-and-deep-learning.md` — 51 lines · title: "Machine & Deep Learning"
+
 ## src/content/notes/machine-and-deep-learning/nndl
 - `src/content/notes/machine-and-deep-learning/nndl/26-09-03-logistic.md` — 305 lines · title: "NNDL 26-09-03 Logistic回归练习"
 - `src/content/notes/machine-and-deep-learning/nndl/26-09-08-fnn-1.md` — 343 lines · title: "NNDL 26-09-08 前馈神经网络练习（第一部分）"
 - `src/content/notes/machine-and-deep-learning/nndl/26-09-08-fnn-2.md` — 395 lines · title: "NNDL 26-09-08 前馈神经网络练习（第二部分）"
 - `src/content/notes/machine-and-deep-learning/nndl/26-09-16-cnn.md` — 685 lines · title: "NNDL 26-09-16 卷积神经网络练习"
 - `src/content/notes/machine-and-deep-learning/nndl/26-09-26-rnn.md` — 463 lines · title: "NNDL 26-09-26 循环神经网络练习"
-
-## src/content/notes/machine-and-deep-learning/python
-- `src/content/notes/machine-and-deep-learning/python/machine-and-deep-learning.md` — 41 lines · title: "Machine & Deep Learning"
 
 ## src/content/notes/machine-and-deep-learning/python/misc
 - `src/content/notes/machine-and-deep-learning/python/misc/01-fromfunction.md` — 268 lines · title: "Python 杂记 01 - fromfunction 与可变参数"
@@ -210,6 +210,6 @@ Generated 2026-10-13T14:21:46.004Z · 202 files · 32903 lines · 0.59s
 - `src/content/notes/physics/formulas-vol2.md` — 32 lines · title: "《物理学》下册公式总结"
 
 ## src/content/notes/signals/dcs
-- `src/content/notes/signals/dcs/c…
+- `src/content/notes/signals/dcs/ch2.md` — 667 l…
 (rendered map truncated at 16384 bytes)
 <!-- dsh-openwolf:end -->
