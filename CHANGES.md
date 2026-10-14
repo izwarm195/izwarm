@@ -657,6 +657,18 @@
   出现 20 次（19 个网站提交日 + 1 个图例色块），金框规则在
   `dist/_astro/index.*.css` 中为 `.notes-cal-day[data-web="1"]{box-shadow:0 0 0 1px var(--cal-gold)}`。
 
+## 44. 热力图版式：年份左上、下方左图右图例（图例竖条）
+
+- **版式**：日历块从「年份 → 网格 → 图例（横排）」改成 **年份在左上角，下方一行左侧是网格、
+  右侧是图例**。图例整条顺时针转 90°：三项从上到下排，每一项自身也转过来（色块在上、图标在下）。
+- **沾满**：`.notes-calendar-body` 是 `display:flex; align-items:stretch`，图例列
+  `justify-content: space-between` —— 首项贴齐网格顶、末项贴齐网格底，正好占满网格那一列的高度
+  （实测网格 86px 高，图例也是 86px，首项 y=480、末项底 y=566）。
+- **连带**：图例搬到右侧后，原来那行占位小格 `.notes-cal-gap` 删除（侧栏因此矮了 28.8px，
+  530.8 → 502）。网格宽度从 243 降到 223（让出 8px 间距 + 12px 图例列），格子 5.9px → 5.3px。
+- **验证**：`npm run build` **154 页**；headless Edge + iframe 探针读到
+  `.notes-calendar-head h2` 在 x=58/y=454（左上），网格 x=58 w=223，图例 x=289 w=12 h=86。
+
 ## 验证方式汇总
 
 - TypeScript 检查：`npm run typecheck`

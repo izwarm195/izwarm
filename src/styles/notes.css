@@ -315,7 +315,16 @@ html {
 /* 一年 = 12 行（月）× 31 列（日），行内按自然日滑动。
    不再用 53 列的年份条 + min-width 撑宽：窄侧栏里那套每行右侧会被裁掉，
    滚动条又是隐藏的，看起来就像"某些天没有热力"。 */
+/* 下方一行：左图（网格）右图例；年份标签在最上方（见 .notes-calendar-head）。
+   图例从网格底下搬到网格右侧后，原来那行占位小格（.notes-cal-gap）就没有意义了。 */
+.notes-calendar-body {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
 .notes-calendar-grid {
+  flex: 1 1 auto;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -351,20 +360,23 @@ html {
 .notes-cal-day[data-web='1'] {
   box-shadow: 0 0 0 1px var(--cal-gold);
 }
-/* 图例与网格之间空出的那一行小格：占位用，不可见也不可点 */
-.notes-cal-gap {
-  visibility: hidden;
-}
+/* 图例：原先是网格下方一条横排，顺时针转 90° 后变成贴着网格右侧的竖条。
+   flex-direction: column 让三项从上到下排；每个小项自身也转过了 90°
+   （原来是「色块在左、图标在右」，现在是色块在上、图标在下）。
+   justify-content: space-between 让首项贴齐网格顶、末项贴齐网格底 —— 即"恰好沾满"。 */
 .notes-cal-legend {
+  flex: none;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 14px;
-  margin-top: 2px;
+  justify-content: space-between;
+  gap: 4px;
 }
 .notes-cal-legend-item {
   display: inline-flex;
+  flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 3px;
 }
 .notes-cal-swatch {
   flex: none;
