@@ -33,7 +33,7 @@ html {
      左栏宽度不再用 clamp 猜，而是反过来由它决定：
      左栏 = 热力图 + 网格/图例间距 + 图例竖条 + 左栏自身的左右内边距 —— 正好装下，不多不少。
      这样热力图钉死格距，侧栏宽度永远跟着它走，两边不会再互相将就。 */
-  --cal-cell: 6px; /* 单个格子的边长（含金框在内仍是这个尺寸） */
+  --cal-cell: 7px; /* 单个格子的边长（含金框在内仍是这个尺寸） */
   --cal-gap: 2px; /* 格子之间的缝 */
   --cal-space: 8px; /* 网格与图例之间的间距 */
   --cal-legend-w: 12px; /* 图例竖条宽度 */
@@ -369,10 +369,16 @@ html {
 .notes-cal-day[data-web='1'] {
   box-shadow: 0 0 0 1px var(--cal-gold);
 }
-/* 图例：原先是网格下方一条横排，顺时针转 90° 后变成贴着网格右侧的竖条。
+/* 站点的第一篇文章：整格填金（深浅、色相、金框全部让位）。
+   写在 data-kind / data-web 之后 —— 选择器特异性相同，靠顺序压过它们。 */
+.notes-cal-day[data-first='1'] {
+  background: var(--cal-gold);
+}
+/* 图例：原是网格下方一条横排，顺时针转 90° 后变成贴着网格右侧的竖条。
    flex-direction: column 让三项从上到下排；每个小项自身也转过了 90°
    （原来是「色块在左、图标在右」，现在是色块在上、图标在下）。
-   justify-content: space-between 让首项贴齐网格顶、末项贴齐网格底 —— 即"恰好沾满"。
+   三项连着排、用普通 gap 分隔 —— 不要 space-between：那会把首项顶到网格最上、
+   末项拽到最下，三项之间隔着几十像素的空白，看着像硬凑出来的对称。
    宽度钉死成 --cal-legend-w：左栏宽度是照这个数字算出来的。 */
 .notes-cal-legend {
   flex: none;
@@ -380,8 +386,8 @@ html {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 4px;
+  justify-content: flex-start;
+  gap: 6px;
 }
 .notes-cal-legend-item {
   display: inline-flex;

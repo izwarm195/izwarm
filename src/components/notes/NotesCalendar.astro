@@ -1,5 +1,5 @@
 ---
-import { getCalendarData, getCalendarYears, url } from '../../lib/notes';
+import { formatDate, getCalendarData, getCalendarYears, url } from '../../lib/notes';
 import type { CalendarDay, CommitActivity, Note } from '../../lib/notes';
 import { icon } from '../../config/media';
 import activity from '../../config/commit-activity.json';
@@ -20,6 +20,16 @@ const base = Astro.url.pathname;
 
 /** 当天提交总数：Obsidian 库 + 网站仓库。三个信号里，深度只认这一条 */
 const commitsOf = (day: CalendarDay): number => day.commits + day.webCommits;
+
+/**
+ * 站点第一篇文章的日期（全部笔记里最早的 publishDate）。
+ * 这一天不看提交深浅、也不描金框，整格填成金色 —— 它是这条时间轴的起点，
+ * 是"哪一天开始有东西"的锚点，任何一个热力档位都表达不了这件事。
+ * 只有切到它所在的那一年才看得见（年份切换是按年取数据的）。
+ */
+const firstDate: string | null = notes.length
+  ? formatDate(notes.reduce((min, n) => (n.data.publishDate < min ? n.data.publishDate : min), notes[0].data.publishDate))
+  : null;
 
 /** 亮度基准：全年单日最大提交数（下面的百分比按它归一） */
 const maxCommits = calendar.days.reduce((max, day) => Math.max(max, commitsOf(day)), 0);
@@ -111,15 +121,25 @@ const legend = [
         // 网站仓库的提交另算第三件事，用金框标（data-web），不动底色。
         const kind = day.notes > 0 ? 'article' : commitsOf(day) > 0 ? 'commit' : 'empty';
         const web = day.webCommits > 0 ? '1' : undefined;
+        // 第一篇文章那一天整格填金（不看深浅），见 firstDate 的注释
+        const first = day.date === firstDate ? '1' : undefined;
         const style = `grid-column:${col};grid-row:${row};--cal-pct:${shade(commitsOf(day))}%`;
         if (kind === 'empty') {
           return <span class="notes-cal-day" data-kind="empty" style={style} aria-hidden="true" />;
         }
-        const tip = tipFor(day);
+        const tip = first ? `第一篇文章 · ${tipFor(day)}` : tipFor(day);
         // 只有有文章的日子能点进归档：纯提交的日子在归档里没有落点
         if (kind === 'commit') {
           return (
-            <span class="notes-cal-day" data-kind="commit" data-web={web} style={style} title={tip} aria-label={tip} />
+            <span
+              class="notes-cal-day"
+              data-kind="commit"
+              data-web={web}
+              data-first={first}
+              style={style}
+              title={tip}
+              aria-label={tip}
+            />
           );
         }
         return (
@@ -127,6 +147,7 @@ const legend = [
             class="notes-cal-day"
             data-kind="article"
             data-web={web}
+            data-first={first}
             style={style}
             href={`${url('/notes/archive/')}#${day.date}`}
             title={tip}
