@@ -2,10 +2,10 @@
 
 <!-- dsh-openwolf:start -->
 # Code Map
-Generated 2026-10-13T14:47:15.503Z · 202 files · 32913 lines · 0.35s
+Generated 2026-10-14T14:36:55.854Z · 203 files · 33046 lines · 0.81s
 
 ## ./
-- `CHANGES.md` — 645 lines · 第一阶段目标是忠实迁移，以下是相对原源码的全部偏离及原因。
+- `CHANGES.md` — 667 lines · 第一阶段目标是忠实迁移，以下是相对原源码的全部偏离及原因。
 - `README.md` — 295 lines · 基于 Astro + TypeScript 重建的个人主页（第一阶段：首页一比一迁移）。
 - `astro.config.mjs` — 44 lines · export default defineConfig({
 - `package-lock.json` — 0 lines · [file too large]
@@ -13,7 +13,7 @@ Generated 2026-10-13T14:47:15.503Z · 202 files · 32913 lines · 0.35s
 - `tsconfig.json` — 5 lines · {
 
 ## docs
-- `docs/content-frontmatter.md` — 215 lines · > 目标：Obsidian 私有库 → 同步脚本 → Astro 站点。本文定义“公开笔记”在网站侧使用的
+- `docs/content-frontmatter.md` — 222 lines · > 目标：Obsidian 私有库 → 同步脚本 → Astro 站点。本文定义“公开笔记”在网站侧使用的
 
 ## public
 - `public/avatar.svg` — 5 lines · <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="izwarm">
@@ -57,7 +57,7 @@ Generated 2026-10-13T14:47:15.503Z · 202 files · 32913 lines · 0.35s
 
 ## scripts
 - `scripts/slug-aliases.mjs` — 89 lines · SEGMENT_ALIASES · Exports SEGMENT_ALIASES
-- `scripts/sync-obsidian.mjs` — 1177 lines · ROOTS, SKIP_DIRS, _posArg, VAULT, OUT, MANIFEST · const ROOTS = [
+- `scripts/sync-obsidian.mjs` — 1209 lines · ROOTS, SKIP_DIRS, _posArg, VAULT, OUT, MANIFEST · const ROOTS = [
 
 ## src
 - `src/content.config.ts` — 43 lines · notes, projects, works, collections · Defines a zod schema in content.config.ts
@@ -75,7 +75,7 @@ Generated 2026-10-13T14:47:15.503Z · 202 files · 32913 lines · 0.35s
 - `src/components/notes/ArchiveList.astro` — 56 lines · interface Props {
 - `src/components/notes/ArticleActions.astro` — 41 lines · <section class="article-actions" aria-label="文章操作">
 - `src/components/notes/ArticleSidebar.astro` — 57 lines · interface Props {
-- `src/components/notes/NotesCalendar.astro` — 121 lines · interface Props {
+- `src/components/notes/NotesCalendar.astro` — 152 lines · interface Props {
 - `src/components/notes/NotesRail.astro` — 39 lines · interface Props {
 - `src/components/notes/NotesShell.astro` — 36 lines · const NOTES_STATES = ['home', 'article', 'archive', 'tags'];
 - `src/components/notes/NotesSidebar.astro` — 18 lines · interface Props {
@@ -86,11 +86,12 @@ Generated 2026-10-13T14:47:15.503Z · 202 files · 32913 lines · 0.35s
 - `src/components/notes/TocTree.astro` — 32 lines · interface Props {
 
 ## src/config
-- `src/config/commit-activity.json` — 37 lines · {
+- `src/config/commit-activity.json` — 38 lines · {
 - `src/config/created-dates.json` — 114 lines · {
 - `src/config/friends.ts` — 34 lines · FriendLink, displayHost · Exports FriendLink, friends, displayHost
 - `src/config/media.ts` — 41 lines · base, MEDIA_BASE, icon, media · Exports MEDIA_BASE, icon, media
 - `src/config/site.ts` — 11 lines · site · Exports site
+- `src/config/web-commit-activity.json` — 21 lines · {
 
 ## src/content/notes/complex
 - `src/content/notes/complex/assignment-1.md` — 740 lines · title: "复变函数 - 第一次作业"
@@ -209,7 +210,6 @@ Generated 2026-10-13T14:47:15.503Z · 202 files · 32913 lines · 0.35s
 - `src/content/notes/physics/ch9.md` — 403 lines · title: "第九章 振动 公式总结"
 - `src/content/notes/physics/formulas-vol2.md` — 32 lines · title: "《物理学》下册公式总结"
 
-## src/content/notes/signals/dcs
-- `src/content/notes/signals/dcs/ch2.md` — 667 l…
+## src/content/notes/signa…
 (rendered map truncated at 16384 bytes)
 <!-- dsh-openwolf:end -->

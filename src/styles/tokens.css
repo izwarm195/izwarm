@@ -8,8 +8,11 @@
   --text-dim: #9a9ea8;
   --metal-highlight: #c8ccd6;
   /* 笔记区的强调色：链接、悬停、写作热力图的「有文章」色。
-     站点唯一的彩色，深浅由 --cal-pct 在 .notes-cal-day 里调（见 notes.css）。 */
+     深浅由 --cal-pct 在 .notes-cal-day 里调（见 notes.css）。 */
   --accent: #7fc0c0;
+  /* 热力图里「网站仓库当天也提交过」的金框：只在热力图上用，别拿去当第二个强调色。
+     深色底上要够亮才认得出是一个框。 */
+  --cal-gold: #d8b45a;
   --edge-line: rgba(255, 255, 255, 0.08);
   --grain-opacity: 0.06;
   --transition-speed: 1.1s;
@@ -24,6 +27,8 @@
   --metal-highlight: #3a3c42;
   /* 浅色主题下同样要能当"颜色"用：原青绿在浅底上太淡，压深一档 */
   --accent: #2f8f8f;
+  /* 浅底上亮金看不清，同样压深（并偏褐）保住"金色"这个读法 */
+  --cal-gold: #9a7415;
   --edge-line: rgba(0, 0, 0, 0.08);
   --grain-opacity: 0.04;
 }

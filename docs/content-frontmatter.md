@@ -144,16 +144,23 @@ cover: /media/video-cover-dark.jpg
 
 ## 6. 热力图（Notes 首页日历）数据来源
 
-热力图强度 = **当日 vault 提交数 + 当日创建/修改过的笔记数**：
+热力图的三条信号（色相 / 深浅 / 金框）来自三个不同的数据源：
 
-- **提交数**：同步脚本用 `git log` 遍历白名单根目录的历史，生成
-  `src/config/commit-activity.json`（`YYYY-MM-DD → 提交数`）。vault 不可用或无 git 历史时
-  脚本会告警并保留原文件，不会静默沿用旧数据。
-- **编辑数**：来自笔记自身的 `createdAt` / `updatedDate`（即 `updated_at`）。
-  只按提交数着色时，"写了笔记但那天没有备份提交"的日子会整片空白，
-  持续写作看起来就像热力图没更新，所以两者相加决定档位。
+- **有没有文章（色相）**：来自站点自己的笔记数据 —— 当日 `publishDate` 的笔记数。
+  有文章走主题色 `--accent`，只有提交走白色，都没有则是空格子。
+- **提交深浅**：`git log` 按天统计的提交数，两份同构数据相加后按全年最大值归一。
+  - vault 提交：同步脚本遍历白名单根目录的历史，生成
+    `src/config/commit-activity.json`（`YYYY-MM-DD → 提交数`）。
+  - 网站仓库提交：同一个脚本对整个网站仓库跑一遍 `git log`，生成
+    `src/config/web-commit-activity.json`。CI 里 `actions/checkout` 必须
+    `fetch-depth: 0`，否则只克隆到一个提交，这份数据会退化成 1 天。
+  - 任一份取不到 git 历史时脚本会告警并保留原文件，不会静默沿用旧数据。
+- **金框（第三件事）**：网站仓库当天有提交的格子加一圈 `--cal-gold`。
+  底色已经被"有没有文章"占住，所以这一条只用边框表达，不改颜色。
+  图例第三项即此项。
 
-因此热力图能反映真实写作日，而不是 vault 的备份提交日（vault 常是隔几天批量备份一次）。
+**编辑数不再参与着色**：笔记的 `createdAt` / `updatedDate`（即 `updated_at`）
+仍会算进日历（`CalendarDay.touched`），但强度轴只认提交总数。
 
 > 安全闸：同步脚本在"一个候选笔记都没有"（vault 路径写错/未检出）时会告警并**不做任何写入**，
 > 不会清空 `src/content/notes/`。

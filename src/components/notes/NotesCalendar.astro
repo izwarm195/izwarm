@@ -1,8 +1,9 @@
 ---
 import { getCalendarData, getCalendarYears, url } from '../../lib/notes';
-import type { CommitActivity, Note } from '../../lib/notes';
+import type { CalendarDay, CommitActivity, Note } from '../../lib/notes';
 import { icon } from '../../config/media';
 import activity from '../../config/commit-activity.json';
+import webActivity from '../../config/web-commit-activity.json';
 
 interface Props {
   notes: Note[];
@@ -10,26 +11,41 @@ interface Props {
 
 const { notes } = Astro.props;
 const act = activity as CommitActivity;
-const years = getCalendarYears(notes, act);
+const webAct = webActivity as CommitActivity;
+const years = getCalendarYears(notes, { ...act, ...webAct });
 const requested = Number(Astro.url.searchParams.get('year'));
 const year = years.includes(requested) ? requested : (years[0] ?? new Date().getUTCFullYear());
-const calendar = getCalendarData(notes, year, act);
+const calendar = getCalendarData(notes, year, act, webAct);
 const base = Astro.url.pathname;
 
+/** 当天提交总数：Obsidian 库 + 网站仓库。三个信号里，深度只认这一条 */
+const commitsOf = (day: CalendarDay): number => day.commits + day.webCommits;
+
 /** 亮度基准：全年单日最大提交数（下面的百分比按它归一） */
-const maxCommits = calendar.days.reduce((max, day) => Math.max(max, day.commits), 0);
+const maxCommits = calendar.days.reduce((max, day) => Math.max(max, commitsOf(day)), 0);
 
 /**
  * 提交数 → 着色强度（32%~100%）。
- * 两种含义共用同一个强度轴，只是底色不同：
+ * 三种含义共用同一个强度轴，只是底色不同：
  * - 有文章的日子：主题色（--accent）；
  * - 没有文章但有提交的日子：白色。
  * 暗端留 32%：近黑底板上再暗就与空格子分不开；
  * 用 sqrt 而不是线性：vault 的提交数集中在 1~2，线性会让绝大多数格子挤在暗端。
+ * 网站仓库的提交只额外加一圈金边（见 notes.css 的 [data-web]），不换底色：
+ * 底色已经被「有没有文章」占住了，两个信号挤同一块颜色会互相淹没。
  */
 function shade(commits: number): number {
   if (commits <= 0 || maxCommits <= 0) return 32;
   return Math.round((32 + 68 * Math.sqrt(commits / maxCommits)) * 10) / 10;
+}
+
+/** 悬停文案：三个信号各自说清楚，缺的那项不占位（否则每天都是同一串 0） */
+function tipFor(day: CalendarDay): string {
+  const parts = [day.date];
+  if (day.notes > 0) parts.push(`${day.notes} 篇`);
+  parts.push(`Obsidian ${day.commits} 次提交`);
+  if (day.webCommits > 0) parts.push(`网站 ${day.webCommits} 次提交`);
+  return parts.join(' · ');
 }
 
 /**
@@ -47,12 +63,20 @@ const legend = [
   {
     kind: 'article',
     iconName: 'note',
-    tip: '有文章：深浅按当日提交数',
+    tip: '有文章：深浅按当日提交总数（Obsidian + 网站）',
+    web: false,
   },
   {
     kind: 'commit',
     iconName: 'circled-check',
-    tip: '只提交、没有文章：深浅同样按当日提交数',
+    tip: '只提交、没有文章：深浅同样按当日提交总数',
+    web: false,
+  },
+  {
+    kind: 'commit',
+    iconName: 'external-link',
+    tip: '金框：这天网站仓库（izwarm）也有提交',
+    web: true,
   },
 ] as const;
 ---
@@ -79,23 +103,25 @@ const legend = [
       <div class="notes-cal-row">
         {days.map((day) => {
           // 颜色只说两件事：这天有没有文章（色相）、提交了多少（深浅）。
-          const kind = day.notes > 0 ? 'article' : day.commits > 0 ? 'commit' : 'empty';
-          const style = `grid-column:${Number(day.date.slice(-2))};--cal-pct:${shade(day.commits)}%`;
+          // 网站仓库的提交另算第三件事，用金框标（data-web），不动底色。
+          const kind = day.notes > 0 ? 'article' : commitsOf(day) > 0 ? 'commit' : 'empty';
+          const web = day.webCommits > 0 ? '1' : undefined;
+          const style = `grid-column:${Number(day.date.slice(-2))};--cal-pct:${shade(commitsOf(day))}%`;
           if (kind === 'empty') {
             return <span class="notes-cal-day" data-kind="empty" style={style} aria-hidden="true" />;
           }
-          const tip =
-            kind === 'article'
-              ? `${day.date} · ${day.notes} 篇 · ${day.commits} 次提交`
-              : `${day.date} · ${day.commits} 次提交`;
+          const tip = tipFor(day);
           // 只有有文章的日子能点进归档：纯提交的日子在归档里没有落点
           if (kind === 'commit') {
-            return <span class="notes-cal-day" data-kind="commit" style={style} title={tip} aria-label={tip} />;
+            return (
+              <span class="notes-cal-day" data-kind="commit" data-web={web} style={style} title={tip} aria-label={tip} />
+            );
           }
           return (
             <a
               class="notes-cal-day"
               data-kind="article"
+              data-web={web}
               style={style}
               href={`${url('/notes/archive/')}#${day.date}`}
               title={tip}
@@ -113,7 +139,12 @@ const legend = [
   <div class="notes-cal-legend">
     {legend.map((item) => (
       <span class="notes-cal-legend-item" title={item.tip}>
-        <span class="notes-cal-day notes-cal-swatch" data-kind={item.kind} style="--cal-pct:100%" />
+        <span
+          class="notes-cal-day notes-cal-swatch"
+          data-kind={item.kind}
+          data-web={item.web ? '1' : undefined}
+          style="--cal-pct:100%"
+        />
         <img class="notes-cal-legend-icon" src={icon(item.iconName)} alt="" width="12" height="12" />
       </span>
     ))}

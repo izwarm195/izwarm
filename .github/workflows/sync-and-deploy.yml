@@ -24,6 +24,8 @@ jobs:
     steps:
       - name: Checkout website repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 完整历史：热力图要用本站自己的提交历史生成 web-commit-activity.json
 
       - name: Setup Node
         uses: actions/setup-node@v4

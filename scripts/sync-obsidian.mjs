@@ -31,6 +31,10 @@ const OUT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../src/c
 const MANIFEST = path.resolve(path.dirname(OUT), '../config/created-dates.json');
 // 每日提交数（热力图数据源）：由 vault git 历史生成，YYYY-MM-DD → 当日提交数
 const ACTIVITY = path.resolve(path.dirname(MANIFEST), 'commit-activity.json');
+// 网站仓库自己的每日提交数（同构的第二份）：热力图上表现为一圈金框
+const WEB_ACTIVITY = path.resolve(path.dirname(MANIFEST), 'web-commit-activity.json');
+// 网站仓库根目录：按脚本自身位置定位，不受 cwd 影响
+const WEB_REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 // 子路径部署（GitHub Pages 的 /izwarm/）时，站内链接带上 base 前缀；本地为空
 const SITE_BASE = (process.env.ASTRO_BASE ?? '').replace(/\/$/, '');
 
@@ -209,36 +213,63 @@ function gitDate(vault, rel, first) {
 }
 
 /**
- * 每日提交数：统计 vault 历史中触及任一白名单根目录的提交，按作者日期计天。
- * 返回值 Map<YYYY-MM-DD, number>；vault 不是 git 仓库时返回空 Map。
+ * git log 输出（每行一个作者日期）→ Map<YYYY-MM-DD, number>。
+ * 两处提交统计共用同一套解析，避免一处按作者日期、另一处按别的格式对不上。
  */
-function vaultCommitActivity(vault, roots) {
+function countCommitDays(out) {
   const days = new Map();
-  try {
-    const args = ['-C', vault, 'log', '--format=%aI', '--', ...roots];
-    const out = execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 }).trim();
-    for (const line of out ? out.split('\n') : []) {
-      const day = line.slice(0, 10);
-      if (/^\d{4}-\d{2}-\d{2}$/.test(day)) days.set(day, (days.get(day) ?? 0) + 1);
-    }
-  } catch {
-    /* 忽略：vault 无 git 历史时热力图数据为空 */
+  for (const line of (out ?? '').trim() ? out.trim().split('\n') : []) {
+    const day = line.slice(0, 10);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(day)) days.set(day, (days.get(day) ?? 0) + 1);
   }
   return days;
 }
 
-async function writeActivity(vault, roots) {
-  const days = vaultCommitActivity(vault, roots);
+/**
+ * 每日提交数：统计 vault 历史中触及任一白名单根目录的提交，按作者日期计天。
+ * 返回值 Map<YYYY-MM-DD, number>；vault 不是 git 仓库时返回空 Map。
+ */
+function vaultCommitActivity(vault, roots) {
+  try {
+    const args = ['-C', vault, 'log', '--format=%aI', '--', ...roots];
+    return countCommitDays(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 }));
+  } catch {
+    /* 忽略：vault 无 git 历史时热力图数据为空 */
+    return new Map();
+  }
+}
+
+/**
+ * 网站仓库自己的每日提交数：热力图上给这些日子描金框。
+ * 不加 pathspec —— 网站仓库的每个提交都算「网站层面」的动作。
+ * 坑：CI 里 actions/checkout 默认 fetch-depth: 1，只克隆一个提交，
+ * 工作流里网站仓库那步必须 fetch-depth: 0，否则这里只数得到 1 天。
+ */
+function webCommitActivity(repo) {
+  try {
+    const args = ['-C', repo, 'log', '--format=%aI'];
+    return countCommitDays(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 }));
+  } catch {
+    return new Map();
+  }
+}
+
+/** 写一份 activity JSON；days 为空时保留旧文件，但必须出声（静默保留最难排查） */
+async function writeActivityFile(file, days, warn) {
   if (days.size === 0) {
-    // vault 不可用/无 git 历史时保留旧数据，但必须出声：静默保留正是
-    // "热力图一直没更新"最难排查的形态
-    console.warn(`warn: ${vault} 无可用 git 历史，热力图提交数据未刷新（保留原文件）`);
+    console.warn(`warn: ${warn}，热力图数据未刷新（保留原文件）`);
     return;
   }
   const sorted = [...days.entries()].sort((a, b) => a[0].localeCompare(b[0]));
-  await fs.mkdir(path.dirname(ACTIVITY), { recursive: true });
-  await fs.writeFile(ACTIVITY, JSON.stringify(Object.fromEntries(sorted), null, 2) + '\n', 'utf8');
-  console.log(`activity: ${sorted.length} 天 → ${path.relative(process.cwd(), ACTIVITY)}`);
+  await fs.mkdir(path.dirname(file), { recursive: true });
+  await fs.writeFile(file, JSON.stringify(Object.fromEntries(sorted), null, 2) + '\n', 'utf8');
+  console.log(`activity: ${sorted.length} 天 → ${path.relative(process.cwd(), file)}`);
+}
+
+async function writeActivity(vault, roots) {
+  // vault 不可用/无 git 历史时保留旧数据：静默保留正是"热力图一直没更新"最难排查的形态
+  await writeActivityFile(ACTIVITY, vaultCommitActivity(vault, roots), `${vault} 无可用 git 历史`);
+  await writeActivityFile(WEB_ACTIVITY, webCommitActivity(WEB_REPO), `${WEB_REPO} 无可用 git 历史`);
 }
 
 function firstParagraph(body) {
@@ -1170,6 +1201,7 @@ function selftest() {
 async function activityOnly() {
   await writeActivity(VAULT, ROOTS);
   console.log(`activity: ${ACTIVITY}`);
+  console.log(`activity: ${WEB_ACTIVITY}`);
 }
 
 if (process.argv.includes('--selftest')) selftest();

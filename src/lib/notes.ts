@@ -234,18 +234,25 @@ export interface CalendarDay {
   notes: number;
   /** 当日创建或修改过的笔记数：来自笔记真实时间（frontmatter updated_at / 创建时间） */
   touched: number;
-  /** 当日提交数（vault git 历史，来自同步脚本生成的 commit-activity.json） */
+  /** 当日 Obsidian 库提交数（vault git 历史，来自同步脚本生成的 commit-activity.json） */
   commits: number;
+  /** 当日网站仓库提交数（本站 git 历史，来自 web-commit-activity.json） */
+  webCommits: number;
 }
 export interface CalendarData {
   year: number;
   days: CalendarDay[];
 }
 
-/** 每日提交数映射：YYYY-MM-DD → 当日 commit 数 */
+/** 每日提交数映射：YYYY-MM-DD → 当日 commit 数（vault 与网站仓库各一份） */
 export type CommitActivity = Record<string, number>;
 
-export function getCalendarData(notes: Note[], year: number, activity: CommitActivity): CalendarData {
+export function getCalendarData(
+  notes: Note[],
+  year: number,
+  activity: CommitActivity,
+  webActivity: CommitActivity = {},
+): CalendarData {
   const noteCounts = new Map<string, number>();
   /** 当天有"写入"的笔记数：创建时间 ∪ 修改时间（同一篇同日只记一次） */
   const touchedCounts = new Map<string, number>();
@@ -272,6 +279,7 @@ export function getCalendarData(notes: Note[], year: number, activity: CommitAct
         notes: noteCounts.get(key) ?? 0,
         touched: touchedCounts.get(key) ?? 0,
         commits: activity[key] ?? 0,
+        webCommits: webActivity[key] ?? 0,
       });
     }
   }

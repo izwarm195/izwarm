@@ -345,6 +345,12 @@ html {
 .notes-cal-day[data-kind='empty'] {
   opacity: 0.35;
 }
+/* 第三件事：这天网站仓库（izwarm）也提交过 —— 底色已经被「有没有文章」占住，
+   只加一圈金边。用 box-shadow 而不是 border：31 列的行宽是 1fr 均分的，
+   border 会把格子撑大从而挤歪整行。1px 在 8~11px 的小格子上刚好成为一圈框。 */
+.notes-cal-day[data-web='1'] {
+  box-shadow: 0 0 0 1px var(--cal-gold);
+}
 /* 图例与网格之间空出的那一行小格：占位用，不可见也不可点 */
 .notes-cal-gap {
   visibility: hidden;

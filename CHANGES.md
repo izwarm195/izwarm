@@ -635,6 +635,28 @@
   高亮 Friends），友链卡四个部位与 `data-friend-copy` 均正常输出，卡片样式进了
   `dist/_astro/index.*.css`，复制逻辑进了 NotesShell 的脚本包。
 
+## 43. 热力图加第三个信号：网站仓库提交（金框）
+
+- **背景**：热力图原来只有两个信号 —— 色相（这天有没有文章）、深浅（当天 vault 提交数）。
+  网站仓库自己的提交完全不可见，"今天改了半天站点"和"今天什么都没干"长得一样。
+- **数据**：新增 `src/config/web-commit-activity.json`，与 `commit-activity.json` 同构，
+  由 `scripts/sync-obsidian.mjs` 里的 `webCommitActivity()` 对整个网站仓库跑
+  `git log --format=%aI` 生成（不加 pathspec：网站仓库的每个提交都算网站层面的动作）。
+  两份统计共用 `countCommitDays()` 解析，`writeActivityFile()` 落盘，取不到历史时都只告警不覆盖。
+- **渲染**：`CalendarDay` 增加 `webCommits`；深浅改为按 `commits + webCommits` 归一
+  （`commitsOf()`），当天有网站提交的格子加 `data-web="1"`，CSS 用
+  `box-shadow: 0 0 0 1px var(--cal-gold)` 描一圈金框 —— 底色已经被"有没有文章"占住，
+  两个信号挤同一块颜色会互相淹没，所以第三件事只走边框。
+  用 box-shadow 而不是 border：31 列的行宽是 `1fr` 均分的，border 会把格子撑大、挤歪整行。
+  图例补第三项（金色描边的白色格子 + external-link 图标），tooltip 补"网站 N 次提交"。
+- **主题色**：新增 `--cal-gold`（深色 `#d8b45a` / 浅色 `#9a7415`），只在热力图上用，
+  不当第二个强调色；浅色主题压深是为了在浅底上仍读得出"金色"。
+- **CI**：工作流里网站仓库那步 `actions/checkout` 必须 `fetch-depth: 0`（已加注释）。
+  默认的 1 只克隆到一个提交，这份数据会静默退化成 1 天。
+- **验证**：`npm run build` 通过，**154 页**；`dist/notes/index.html` 里 `data-web="1"`
+  出现 20 次（19 个网站提交日 + 1 个图例色块），金框规则在
+  `dist/_astro/index.*.css` 中为 `.notes-cal-day[data-web="1"]{box-shadow:0 0 0 1px var(--cal-gold)}`。
+
 ## 验证方式汇总
 
 - TypeScript 检查：`npm run typecheck`
