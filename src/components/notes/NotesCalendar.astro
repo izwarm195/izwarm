@@ -49,15 +49,21 @@ function tipFor(day: CalendarDay): string {
 }
 
 /**
- * 按月份切成 12 行 × 31 列（列 = 日），行内不再带月份数字标签。
- * 原来的 53 列「一年一条」布局配 min-width: 420/560px，而左侧栏只有 206~286px，
- * 于是每行右侧被裁掉、滚动条又是隐藏的 —— 表现为「9-2、9-3 有，9-6 往后全黑」，
- * 其实格子都在，只是被裁在可视区外。12 行月份矩阵宽度天然贴合侧栏，不再有裁切。
+ * 顺时针转 90°：12 行（月）× 31 列（日）→ 31 行（日）× 12 列（月）。
+ * 顺时针的映射是「上边 → 右边」：1 月原来在最上一行，转完落在最右一列（12 月落在最左一列）；
+ * 日号原来在同一行里从左往右，转完变成从上往下（1 号在最上、31 号在最下）。
+ * 不再按月份切行：整个网格是一个 12 列的 CSS grid，每个格子自己写 grid-column / grid-row。
+ * DOM 顺序按「行优先」（先第 1 天那一行的 12 个月，再第 2 天……），
+ * 这样 Tab 的顺序和眼睛读的顺序一致。
  */
-const calendarMonths = Array.from({ length: 12 }, (_, m) => ({
-  month: m + 1,
-  days: calendar.days.filter((d) => d.month === m),
-}));
+const byMonth = Array.from({ length: 12 }, (_, m) => calendar.days.filter((d) => d.month === m));
+const cells: (CalendarDay & { row: number; col: number })[] = [];
+for (let day = 1; day <= 31; day++) {
+  for (let col = 1; col <= 12; col++) {
+    const cell = byMonth[12 - col][day - 1]; // 列 12 = 1 月，列 1 = 12 月
+    if (cell) cells.push({ ...cell, row: day, col });
+  }
+}
 
 const legend = [
   {
@@ -100,45 +106,34 @@ const legend = [
   </div>
   <div class="notes-calendar-body">
     <div class="notes-calendar-grid">
-      {calendarMonths.map(({ days }) => (
-        <div class="notes-cal-row">
-          {days.map((day) => {
-            // 颜色只说两件事：这天有没有文章（色相）、提交了多少（深浅）。
-            // 网站仓库的提交另算第三件事，用金框标（data-web），不动底色。
-            const kind = day.notes > 0 ? 'article' : commitsOf(day) > 0 ? 'commit' : 'empty';
-            const web = day.webCommits > 0 ? '1' : undefined;
-            const style = `grid-column:${Number(day.date.slice(-2))};--cal-pct:${shade(commitsOf(day))}%`;
-            if (kind === 'empty') {
-              return <span class="notes-cal-day" data-kind="empty" style={style} aria-hidden="true" />;
-            }
-            const tip = tipFor(day);
-            // 只有有文章的日子能点进归档：纯提交的日子在归档里没有落点
-            if (kind === 'commit') {
-              return (
-                <span
-                  class="notes-cal-day"
-                  data-kind="commit"
-                  data-web={web}
-                  style={style}
-                  title={tip}
-                  aria-label={tip}
-                />
-              );
-            }
-            return (
-              <a
-                class="notes-cal-day"
-                data-kind="article"
-                data-web={web}
-                style={style}
-                href={`${url('/notes/archive/')}#${day.date}`}
-                title={tip}
-                aria-label={tip}
-              />
-            );
-          })}
-        </div>
-      ))}
+      {cells.map(({ row, col, ...day }) => {
+        // 颜色只说两件事：这天有没有文章（色相）、提交了多少（深浅）。
+        // 网站仓库的提交另算第三件事，用金框标（data-web），不动底色。
+        const kind = day.notes > 0 ? 'article' : commitsOf(day) > 0 ? 'commit' : 'empty';
+        const web = day.webCommits > 0 ? '1' : undefined;
+        const style = `grid-column:${col};grid-row:${row};--cal-pct:${shade(commitsOf(day))}%`;
+        if (kind === 'empty') {
+          return <span class="notes-cal-day" data-kind="empty" style={style} aria-hidden="true" />;
+        }
+        const tip = tipFor(day);
+        // 只有有文章的日子能点进归档：纯提交的日子在归档里没有落点
+        if (kind === 'commit') {
+          return (
+            <span class="notes-cal-day" data-kind="commit" data-web={web} style={style} title={tip} aria-label={tip} />
+          );
+        }
+        return (
+          <a
+            class="notes-cal-day"
+            data-kind="article"
+            data-web={web}
+            style={style}
+            href={`${url('/notes/archive/')}#${day.date}`}
+            title={tip}
+            aria-label={tip}
+          />
+        );
+      })}
     </div>
     {/* 图例竖条：贴着网格右侧，三项在网格高度内均分（恰好沾满） */}
     <div class="notes-cal-legend">

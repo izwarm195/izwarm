@@ -29,7 +29,17 @@ html {
 }
 
 .notes-shell {
-  --notes-left: clamp(250px, 20vw, 330px);
+  /* 热力图（顺时针转 90° 后的竖条）的自然尺寸：12 列（月）× 31 行（日）。
+     左栏宽度不再用 clamp 猜，而是反过来由它决定：
+     左栏 = 热力图 + 网格/图例间距 + 图例竖条 + 左栏自身的左右内边距 —— 正好装下，不多不少。
+     这样热力图钉死格距，侧栏宽度永远跟着它走，两边不会再互相将就。 */
+  --cal-cell: 6px; /* 单个格子的边长（含金框在内仍是这个尺寸） */
+  --cal-gap: 2px; /* 格子之间的缝 */
+  --cal-space: 8px; /* 网格与图例之间的间距 */
+  --cal-legend-w: 12px; /* 图例竖条宽度 */
+  --cal-w: calc(12 * var(--cal-cell) + 11 * var(--cal-gap));
+  --notes-left-pad: 45px; /* .notes-left 左右内边距合计（22 + 22）+ 1px 右边框 */
+  --notes-left: calc(var(--cal-w) + var(--cal-space) + var(--cal-legend-w) + var(--notes-left-pad));
   --rail-gap: 20px;      /* 与 home.css 保持一致 */
   --w-size: 66px;        /* JS 会用真实 W 宽覆盖 */
   --w-size-h: 44px;      /* JS 会用真实 W 高覆盖 */
@@ -184,7 +194,9 @@ html {
 .notes-sidebar {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  /* 左栏收窄后整列变高（热力图从 86px 变成 246px 高，统计卡还改成了单列），
+     把卡片间距从 30 收到 20，保证整列仍在视口内、不出滚动条。 */
+  gap: 20px;
 }
 
 .notes-section-label {
@@ -256,13 +268,16 @@ html {
 }
 
 /* ---- 统计 ---- */
+/* 左栏现在只有 113px 内容宽（由热力图 94 + 图例 12 + 间距 8 反推得来），
+   两列放不下「371,701」这种字数统计（实测两列要 168px），会横向溢出到正文上，
+   所以改成单列。 */
 .notes-stats {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr;
   gap: 10px;
 }
 .notes-stat {
-  padding: 14px 12px;
+  padding: 10px 10px;
   background: var(--bg-obsidian-soft);
   border: 1px solid var(--edge-line);
 }
@@ -312,32 +327,25 @@ html {
   color: var(--text-primary);
   background: var(--bg-obsidian-soft);
 }
-/* 一年 = 12 行（月）× 31 列（日），行内按自然日滑动。
-   不再用 53 列的年份条 + min-width 撑宽：窄侧栏里那套每行右侧会被裁掉，
-   滚动条又是隐藏的，看起来就像"某些天没有热力"。 */
 /* 下方一行：左图（网格）右图例；年份标签在最上方（见 .notes-calendar-head）。
-   图例从网格底下搬到网格右侧后，原来那行占位小格（.notes-cal-gap）就没有意义了。 */
+   两者都是定宽（尺寸来自 .notes-shell 上的 --cal-* 变量），不再撑满侧栏 ——
+   侧栏宽度反过来由它们算出来。 */
 .notes-calendar-body {
   display: flex;
   align-items: stretch;
-  gap: 8px;
+  gap: var(--cal-space);
 }
+/* 顺时针转 90° 后整个网格是一个 CSS grid：12 列（月）× 31 行（日）。
+   每个格子自己在内联样式里写 grid-column / grid-row（见 NotesCalendar.astro），
+   行是隐式的、由 grid-auto-rows 生成，列数固定所以宽度是确定的。 */
 .notes-calendar-grid {
-  flex: 1 1 auto;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.notes-cal-row {
+  flex: none;
   display: grid;
-  /* 31 列对应 1~31 号，没有月份标签列 */
-  grid-template-columns: repeat(31, minmax(0, 1fr));
-  gap: 2px;
-  align-items: center;
+  grid-template-columns: repeat(12, var(--cal-cell));
+  grid-auto-rows: var(--cal-cell);
+  gap: var(--cal-gap);
 }
 .notes-cal-day {
-  aspect-ratio: 1;
   border-radius: 2px;
   background: var(--bg-obsidian-soft);
   display: block;
@@ -355,17 +363,20 @@ html {
   opacity: 0.35;
 }
 /* 第三件事：这天网站仓库（izwarm）也提交过 —— 底色已经被「有没有文章」占住，
-   只加一圈金边。用 box-shadow 而不是 border：31 列的行宽是 1fr 均分的，
-   border 会把格子撑大从而挤歪整行。1px 在 8~11px 的小格子上刚好成为一圈框。 */
+   只加一圈金边。用 box-shadow 而不是 border：border 会把格子撑大，
+   而这套网格的列宽是 --cal-cell 定死的，撑大会挤歪整列/整行
+   （左栏宽度又是照 --cal-cell 反推出来的，更动不得）。 */
 .notes-cal-day[data-web='1'] {
   box-shadow: 0 0 0 1px var(--cal-gold);
 }
 /* 图例：原先是网格下方一条横排，顺时针转 90° 后变成贴着网格右侧的竖条。
    flex-direction: column 让三项从上到下排；每个小项自身也转过了 90°
    （原来是「色块在左、图标在右」，现在是色块在上、图标在下）。
-   justify-content: space-between 让首项贴齐网格顶、末项贴齐网格底 —— 即"恰好沾满"。 */
+   justify-content: space-between 让首项贴齐网格顶、末项贴齐网格底 —— 即"恰好沾满"。
+   宽度钉死成 --cal-legend-w：左栏宽度是照这个数字算出来的。 */
 .notes-cal-legend {
   flex: none;
+  width: var(--cal-legend-w);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1735,6 +1746,9 @@ html {
     overflow-y: auto;
     overflow-x: hidden;
     overscroll-behavior-y: contain;
+    /* 手机上左栏是整宽的，热力图再钉死 6px 就只剩一条细缝；
+       放大格子让竖条在整宽侧栏里仍占得住视觉重心（--notes-left 在手机上不被使用）。 */
+    --cal-cell: 14px;
   }
   .notes-col {
     overflow: visible;

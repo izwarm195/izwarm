@@ -2,10 +2,10 @@
 
 <!-- dsh-openwolf:start -->
 # Code Map
-Generated 2026-10-14T14:50:36.783Z · 203 files · 33064 lines · 0.52s
+Generated 2026-10-14T15:01:04.316Z · 203 files · 33112 lines · 0.48s
 
 ## ./
-- `CHANGES.md` — 667 lines · 第一阶段目标是忠实迁移，以下是相对原源码的全部偏离及原因。
+- `CHANGES.md` — 706 lines · 第一阶段目标是忠实迁移，以下是相对原源码的全部偏离及原因。
 - `README.md` — 295 lines · 基于 Astro + TypeScript 重建的个人主页（第一阶段：首页一比一迁移）。
 - `astro.config.mjs` — 44 lines · export default defineConfig({
 - `package-lock.json` — 0 lines · [file too large]
@@ -75,7 +75,7 @@ Generated 2026-10-14T14:50:36.783Z · 203 files · 33064 lines · 0.52s
 - `src/components/notes/ArchiveList.astro` — 56 lines · interface Props {
 - `src/components/notes/ArticleActions.astro` — 41 lines · <section class="article-actions" aria-label="文章操作">
 - `src/components/notes/ArticleSidebar.astro` — 57 lines · interface Props {
-- `src/components/notes/NotesCalendar.astro` — 158 lines · interface Props {
+- `src/components/notes/NotesCalendar.astro` — 153 lines · interface Props {
 - `src/components/notes/NotesRail.astro` — 39 lines · interface Props {
 - `src/components/notes/NotesShell.astro` — 36 lines · const NOTES_STATES = ['home', 'article', 'archive', 'tags'];
 - `src/components/notes/NotesSidebar.astro` — 18 lines · interface Props {

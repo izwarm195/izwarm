@@ -669,6 +669,33 @@
 - **验证**：`npm run build` **154 页**；headless Edge + iframe 探针读到
   `.notes-calendar-head h2` 在 x=58/y=454（左上），网格 x=58 w=223，图例 x=289 w=12 h=86。
 
+## 45. 热力图整体顺时针转 90°，左栏宽度改为"正好装下热力图 + 图例"
+
+- **旋转**：网格从 12 行（月）× 31 列（日）转成 **31 行（日）× 12 列（月）**。
+  顺时针的映射是"上边→右边"：1 月原来在最上一行，转完落在最右一列（12 月在最左一列）；
+  日号原来在行内从左往右，转完从上往下（1 号最上、31 号最下）。
+  实现上不再按月份切行，整个网格就是一个 12 列的 CSS grid，每个格子在内联样式里写
+  `grid-column`/`grid-row`；DOM 顺序按行优先（先第 1 天那 12 个月，再第 2 天……），
+  Tab 顺序与阅读顺序一致。
+- **左栏宽度由热力图反推**：`.notes-shell` 新增 `--cal-cell`/`--cal-gap`/`--cal-space`/
+  `--cal-legend-w`，`--notes-left = 12*cell + 11*gap + 间距 + 图例宽 + 左栏内边距与边框(45px)`。
+  原来那句 `clamp(250px, 20vw, 330px)` 删掉 —— 现在两边不会再互相将就：
+  热力图钉死格距，侧栏跟着它走。实测左栏 159px、内容区 114px = 网格 94 + 间距 8 + 图例 12。
+- **连带（都是窄栏逼出来的）**：
+  - `.notes-stats` 从 2 列改单列 —— 两列放不下「371,701」这种字数统计（实测要 168px），
+    会横向溢出到正文上；
+  - `.notes-stat` 内边距 14/12 → 10/10，`.notes-sidebar` gap 30 → 20：
+    旋转后热力图高了 160px（86 → 246）加上统计卡变单列，整列会顶出视口出滚动条，
+    收完这两处后整列 818px < 可用 856px，不滚动。
+- **手机端**：≤900px 时左栏是整宽的，热力图钉死 6px 会只剩一条细缝，
+  媒体查询里把 `--cal-cell` 提到 14px（`--notes-left` 在手机上不使用）。
+- **验证**：`npm run build` **154 页**；headless Edge + iframe 探针读到网格 94×246、
+  图例 12×246（同高）、左栏 159px、内容区 114px，`.notes-profile`/`.notes-stats`/
+  `.notes-calendar-body` 全部 `scrollWidth == clientWidth`（无横向溢出），
+  左栏 `scrollHeight == clientHeight`（无纵向滚动）；
+  `dist/notes/index.html` 里 `2026-08-07` 是 `grid-column:5;grid-row:7`
+  （8 月 = 月序 7 → 列 12−7 = 5；7 号 → 第 7 行），顺时针映射正确。
+
 ## 验证方式汇总
 
 - TypeScript 检查：`npm run typecheck`
