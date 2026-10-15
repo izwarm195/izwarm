@@ -390,6 +390,8 @@ function showPreview(slug: string | null): void {
   items.forEach((item) => {
     item.hidden = item.dataset.preview !== want;
   });
+  // 上一篇的滚动位置留给下一篇没有意义（长摘要会把下一篇的标题顶到卡片外）
+  items[0].parentElement?.scrollTo(0, 0);
 }
 
 /** 显示某一天的活动详情；返回是否真的切换了（没有这一天的数据就返回 false） */
@@ -401,7 +403,10 @@ function showDay(date: string | null): boolean {
   if (![...bodies].some((body) => body.dataset.day === want)) return false;
   shownDay = want;
   bodies.forEach((body) => {
-    body.hidden = body.dataset.day !== want;
+    const active = body.dataset.day === want;
+    body.hidden = !active;
+    // 同上：换了一天，列表从头看起
+    if (active) body.querySelector<HTMLElement>('.home-day-rows')?.scrollTo(0, 0);
   });
   return true;
 }

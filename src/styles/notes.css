@@ -535,6 +535,12 @@ html {
   gap: 20px;
   height: 100%;
 }
+/* 预览与详情用 hidden 做切换，而 author 的 display:block / flex 会盖掉 [hidden]
+   自带的 display:none（UA 样式）—— 不显式补回来，113 篇预览和 60 天详情会全部叠在一起。
+   coffee-modal 踩过同一个坑（见 global.css）。 */
+.home-board [hidden] {
+  display: none !important;
+}
 .home-col {
   min-width: 0;
   min-height: 0;
