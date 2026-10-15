@@ -1,3 +1,16 @@
+/* CMU 的"文本斜体"面（KaTeX_Main-Italic = cmti）重挂成一个**正体**字族。
+   为什么绕这一下：font-family 没法只让西文斜、中文正 —— 斜体靠 font-style 继承，
+   而中文（宋体/仿宋/楷体）都只有正体面，一请求 italic 浏览器就给它合成假斜体。
+   挂成正体之后，西文用它（字形本身带斜度），中文没有对应字形、自然落到后面的宋体，
+   两边都不触发合成。字体文件直接取自 KaTeX 包（Vite 会把它打进产物并加哈希）。 */
+@font-face {
+  font-family: 'IZWarm CMU Italic';
+  src: url('../../node_modules/katex/dist/fonts/KaTeX_Main-Italic.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
 /* 主题变量（深色 / 浅色）——与原站 :root 规则一致 */
 :root {
   /* 让浏览器用深色绘制画布与滚动条拖尾，移动端首屏/回弹区不会闪白 */
@@ -16,11 +29,11 @@
   --edge-line: rgba(255, 255, 255, 0.08);
   --grain-opacity: 0.06;
   --transition-speed: 1.1s;
-  /* 衬线栈：英文/数字走 KaTeX 自带的 CMU（italic 面就是 cmti），中文没有对应字形，
-     自然落到后面的宋体 → 仿宋 → 楷体。给「izwarm」、统计数字和 Home 整页用。
+  /* 衬线栈：英文/数字走上面那个"斜体当正体"的 CMU 字族，中文落到宋体 → 仿宋 → 楷体。
+     给「izwarm」、统计数字和 Home 整页用。
      中英文名都写：SimSun 与「宋体」在不同浏览器里认的不是同一个名字。
      深浅两个主题共用，不需要各自覆盖。 */
-  --font-math: KaTeX_Main, 'CMU Serif', Georgia, SimSun, '宋体', FangSong, '仿宋', KaiTi, '楷体', serif;
+  --font-math: 'IZWarm CMU Italic', 'CMU Serif', Georgia, SimSun, '宋体', FangSong, '仿宋', KaiTi, '楷体', serif;
 }
 
 [data-theme='light'] {

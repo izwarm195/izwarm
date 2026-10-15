@@ -242,7 +242,6 @@ html {
 }
 .notes-name {
   font-family: var(--font-math);
-  font-style: italic;
   font-size: 18px;
   letter-spacing: 0.04em;
 }
@@ -316,7 +315,6 @@ html {
   flex: 1 1 auto;
   min-width: 0;
   font-family: var(--font-math);
-  font-style: italic;
   font-size: 18px;
   font-weight: 400;
   text-align: right;
@@ -524,13 +522,12 @@ html {
   color: var(--text-primary);
 }
 
-/* Home（笔记首页）整页换字体：英文与数字用 CMU serif italic，中文落到宋体 → 仿宋 → 楷体。
-   font-synthesis: none 是关键 —— 宋体/仿宋/楷体都只有正体，不关掉合成的话浏览器会把
-   中文拉成假的斜体（观感极差）；关掉之后 English 用 CMU 的真斜体面，中文保持正体。
-   只圈 home 状态：文章页的正文、大纲仍走原来的无衬线。 */
+/* Home（笔记首页）整页换字体：英文与数字走 --font-math（CMU 的斜体面被当正体挂着），
+   中文落到宋体 → 仿宋 → 楷体 —— 两边都不斜。
+   只圈 home 状态：文章页的正文、大纲仍走原来的无衬线。
+   font-synthesis: none 是兜底：万一哪块自己要 italic，也别让中文被合成假斜体。 */
 .notes-shell[data-notes-state='home'] {
   font-family: var(--font-math);
-  font-style: italic;
   font-synthesis: none;
 }
 
@@ -550,6 +547,19 @@ html {
    coffee-modal 踩过同一个坑（见 global.css）。 */
 .home-board [hidden] {
   display: none !important;
+}
+/* 各模块自己滚（互不干扰），但不画滚动条 —— 与左栏 .notes-col 同一套做法 */
+.home-board .home-col,
+.home-board .home-preview-window,
+.home-board .home-day-rows,
+.home-board .home-link-list {
+  scrollbar-width: none;
+}
+.home-board .home-col::-webkit-scrollbar,
+.home-board .home-preview-window::-webkit-scrollbar,
+.home-board .home-day-rows::-webkit-scrollbar,
+.home-board .home-link-list::-webkit-scrollbar {
+  display: none;
 }
 .home-col {
   min-width: 0;
@@ -609,7 +619,6 @@ html {
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
-  scrollbar-width: thin;
 }
 .home-preview-item {
   display: flex;
@@ -674,11 +683,13 @@ html {
   letter-spacing: 0.04em;
   font-variant-numeric: tabular-nums;
 }
-/* 热力图那一格：与网格里同一套颜色、同一个边长；描一圈淡边，7px 的小方块才立得住 */
+/* 热力图那一格：底色与金框直接复用网格那一套（data-kind / data-web / --cal-pct），
+   只是放大到与左边日期同高 —— 7px 的小方块摆在详情里，根本看不出是什么颜色。 */
 .home-day-swatch {
   flex: none;
-  outline: 1px solid var(--edge-line);
-  outline-offset: 2px;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 4px;
 }
 .home-day-rows {
   display: flex;
@@ -687,7 +698,6 @@ html {
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
-  scrollbar-width: thin;
 }
 .home-day-label {
   display: flex;
@@ -754,7 +764,6 @@ html {
   min-height: 0;
   overflow-y: auto;
   list-style: none;
-  scrollbar-width: thin;
 }
 .home-link-list a {
   display: block;

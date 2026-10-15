@@ -405,7 +405,7 @@ export interface HomeDay {
   /** 当天第一次出现的（子）系列 / 标签 */
   series: string[];
   tags: string[];
-  /** 当天发表 + 更新的文章字数合计 */
+  /** 当天发表的文章字数合计（更新的不算：一篇改一行也会把全文重算一遍，数字虚高） */
   words: number;
 }
 
@@ -494,10 +494,7 @@ export function getHomeBoard(
       commits,
       series: [...seriesFirst].filter(([, day]) => day === d.date).map(([name]) => name),
       tags: [...tagFirst].filter(([, day]) => day === d.date).map(([name]) => name),
-      words: [...published, ...updated].reduce(
-        (sum, note) => sum + countWords(note.body ?? ''),
-        0
-      ),
+      words: published.reduce((sum, note) => sum + countWords(note.body ?? ''), 0),
     });
   }
   days.sort((a, b) => b.date.localeCompare(a.date));
