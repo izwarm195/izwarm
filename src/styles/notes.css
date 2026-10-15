@@ -40,6 +40,9 @@ html {
   --cal-w: calc(12 * var(--cal-cell) + 11 * var(--cal-gap));
   --notes-left-pad: 45px; /* .notes-left 左右内边距合计（22 + 22）+ 1px 右边框 */
   --notes-left: calc(var(--cal-w) + var(--cal-space) + var(--cal-legend-w) + var(--notes-left-pad));
+  /* 文章页左栏（大纲 / 同系列）用的宽度：171px 里中文章节名一行只放得下八九个字，
+     进文章时动画展开到这一档，回首页再动画收回去。 */
+  --notes-left-wide: clamp(220px, 19vw, 300px);
   --rail-gap: 20px;      /* 与 home.css 保持一致 */
   --w-size: 66px;        /* JS 会用真实 W 宽覆盖 */
   --w-size-h: 44px;      /* JS 会用真实 W 高覆盖 */
@@ -51,6 +54,21 @@ html {
   overflow: hidden;
   background: transparent; /* 保留底板的半透明磨砂玻璃效果，不覆盖背景 */
   color: var(--text-primary);
+}
+
+/* 进文章 / 回首页时左栏宽度做动画：抽屉拉开、文章放进来，回去时收回原位。
+   只在桌面（手机上 .notes-shell 是 flex 单列，根本不用这些列宽）。
+   transition 只在底板静止时挂上（.is-settled）：W → Notes 那套开合动画是 JS 逐帧
+   改写网格列的，转场跟着掺和会打架。 */
+.notes-panel.is-settled .notes-shell {
+  transition: grid-template-columns 360ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.notes-shell[data-notes-state='article'] {
+  grid-template-columns: var(--notes-left-wide) minmax(0, 1fr) var(--notes-rail);
+}
+/* 先展开左栏、再长出正文卡：错开一点，读起来才是「拉开抽屉 → 放文章」而不是同时挤 */
+.notes-shell[data-notes-state='article'] .notes-main.notes-swap-in {
+  animation-delay: 140ms;
 }
 
 .notes-col {
@@ -1856,6 +1874,7 @@ html {
   .notes-main.notes-swap-in {
     animation: none;
   }
+  .notes-shell,
   .notes-shell *,
   .notes-rail *,
   .notes-panel {
