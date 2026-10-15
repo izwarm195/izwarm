@@ -2,7 +2,7 @@
 
 <!-- dsh-openwolf:start -->
 # Code Map
-Generated 2026-10-15T08:53:08.063Z · 210 files · 32373 lines · 1.85s
+Generated 2026-10-15T08:55:19.786Z · 209 files · 32361 lines · 2.86s
 
 ## ./
 - `CHANGES.md` — 706 lines · 第一阶段目标是忠实迁移，以下是相对原源码的全部偏离及原因。
@@ -56,7 +56,6 @@ Generated 2026-10-15T08:53:08.063Z · 210 files · 32373 lines · 1.85s
 - `public/media/icons/triangle-exclaimation.svg` — 0 lines · <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M13.752 2.111c-.…
 
 ## scripts
-- `scripts/_order3.mjs` — 12 lines · h, titles, pick · const h = readFileSync('dist/notes/index.html', 'utf8');
 - `scripts/slug-aliases.mjs` — 90 lines · SEGMENT_ALIASES · Exports SEGMENT_ALIASES
 - `scripts/sync-obsidian.mjs` — 1237 lines · ROOTS, SKIP_DIRS, _posArg, VAULT, OUT, MANIFEST · const ROOTS = [
 
@@ -208,6 +207,8 @@ Generated 2026-10-15T08:53:08.063Z · 210 files · 32373 lines · 1.85s
 
 ## src/content/notes/physics
 - `src/content/notes/physics/ch10.md` — 467 lines · title: "第十章 波动 公式总结"
-- `src/content/notes/physics/ch11.md` — 696 lines · title: "第十一章 光学 公式…
+- `src/content/notes/physics/ch11.md` — 696 lines · title: "第十一章 光学 公式总结"
+- `src/content/notes/physics/ch12.md` — 348 lines · title: "第十二章 气体动理论 公式总结"
+- `src/content/notes/physics/ch…
 (rendered map truncated at 16384 bytes)
 <!-- dsh-openwolf:end -->
