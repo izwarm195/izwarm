@@ -19,8 +19,8 @@ const items = [
 <section class="notes-stats" aria-label="Notes 统计">
   {items.map((item) => (
     <div class="w-shape notes-stat">
-      <b>{item.value}</b>
-      <span>{item.label}</span>
+      <span class="notes-stat-label">{item.label}</span>
+      <b class="notes-stat-value">{item.value}</b>
     </div>
   ))}
 </section>

@@ -16,6 +16,10 @@
   --edge-line: rgba(255, 255, 255, 0.08);
   --grain-opacity: 0.06;
   --transition-speed: 1.1s;
+  /* 数学体衬线栈：KaTeX 自带的 CMU 字体（KaTeX_Main 的 italic 面就是 cmti），
+     给「izwarm」和统计数字当字体 —— 与正文公式同一套字，一眼看得出是一家。
+     深浅两个主题共用，不需要各自覆盖。 */
+  --font-math: KaTeX_Main, 'CMU Serif', Georgia, serif;
 }
 
 [data-theme='light'] {
