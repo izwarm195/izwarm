@@ -125,9 +125,9 @@ const legend = [
         const first = day.date === firstDate ? '1' : undefined;
         const style = `grid-column:${col};grid-row:${row};--cal-pct:${shade(commitsOf(day))}%`;
         // 格子只干一件事：点了看那一天的详情（见 scripts/notes.ts 的委托），不再跳归档。
-        // 没有活动的日子同样能点，详情会照实说那天什么都没有。
+        // 没有活动的日子不给 data-date —— 它没有详情可看，点也不该有反应。
         if (kind === 'empty') {
-          return <span class="notes-cal-day" data-kind="empty" data-date={day.date} style={style} aria-hidden="true" />;
+          return <span class="notes-cal-day" data-kind="empty" style={style} aria-hidden="true" />;
         }
         const tip = first ? `第一篇文章 · ${tipFor(day)}` : tipFor(day);
         // 有活动的日子用 <button>：Enter / 空格照常可用，键盘不会退化成只能点鼠标

@@ -72,12 +72,51 @@ export async function getPublishedNotes(includeDraft = false): Promise<Note[]> {
   return sortNotes(list);
 }
 
-/** 稳定排序：order → 创建时间（同日从早到晚）→ slug */
+/** vault 里标了 moc 标签的总目录笔记：同一系列里它是索引，永远排最后 */
+function isMoc(note: Note): boolean {
+  return note.data.tags.includes('moc');
+}
+
+/**
+ * 标题里的「序号」：第X章 / 第X节 / 第X次（中文数字也认）、开头的「01」、
+ * 中间的「Python 杂记 09 …」「Stage 3 …」这类独立数字、结尾的罗马数字「对话总结 II」。
+ * 抽不出序号就返回 null —— 这些笔记维持原来的时间顺序（很多笔记的时间就是它的顺序，
+ * 比如「CE 26-07-09 数字反转」这类，标题里已经没有日期了）。
+ */
+function titleNumber(title: string): number | null {
+  const chapter = title.match(/第\s*([一二三四五六七八九十百\d]+)\s*[章节次篇讲课]/);
+  if (chapter) {
+    const raw = chapter[1];
+    return /^\d+$/.test(raw) ? parseInt(raw, 10) : chineseNumeral(raw);
+  }
+  // 中间那个独立数字：两边要有空白或右侧是连接符，别把「SS-QNA-01」这种编号里的数当序号
+  const middle = title.match(/(?:^|\s)(\d{1,4})(?=\s|[-–—]|$)/);
+  if (middle) return parseInt(middle[1], 10);
+  const roman = title.match(/\s(I{1,3}|IV|V|VI)$/);
+  if (roman) return ['I', 'II', 'III', 'IV', 'V', 'VI'].indexOf(roman[1]) + 1;
+  return null;
+}
+
+/**
+ * 稳定排序：order → moc 垫底 → 序号（第 9 章在 第 10 章前面，中文数字也认）
+ * → 创建时间（同日从早到晚）→ slug。
+ * 「有号」的永远排在「没号」的前面：章节在前，附录 / 阅读随记这类垫在章节之后。
+ */
 export function sortNotes(notes: Note[]): Note[] {
   return [...notes].sort((a, b) => {
     const ao = a.data.order ?? Number.MAX_SAFE_INTEGER;
     const bo = b.data.order ?? Number.MAX_SAFE_INTEGER;
     if (ao !== bo) return ao - bo;
+    const am = isMoc(a) ? 1 : 0;
+    const bm = isMoc(b) ? 1 : 0;
+    if (am !== bm) return am - bm;
+    const an = titleNumber(a.data.title);
+    const bn = titleNumber(b.data.title);
+    if (an !== bn) {
+      if (an === null) return 1;
+      if (bn === null) return -1;
+      return an - bn;
+    }
     const created = creationTime(a) - creationTime(b);
     if (created !== 0) return created;
     return smartCompare(a.slug, b.slug);
@@ -480,6 +519,8 @@ export function getHomeBoard(
     const published = byPublish.get(d.date) ?? [];
     const updated = byTouch.get(d.date) ?? [];
     const commits = webCommits[d.date] ?? [];
+    // 没有任何活动的日子不进详情：热力图上那些空格子点不动，也就不需要它们的一天
+    if (published.length === 0 && updated.length === 0 && commits.length === 0) continue;
     const commitsToday = dayCommits(d);
     days.push({
       date: d.date,
@@ -497,10 +538,6 @@ export function getHomeBoard(
     });
   }
   days.sort((a, b) => b.date.localeCompare(a.date));
-  // 默认展示「最近一个有活动的日子」；整年都没活动时才退到那年的最后一天
-  const active = days.find(
-    (day) => day.published.length > 0 || day.updated.length > 0 || day.commits.length > 0
-  );
 
   const previewOf = (note: Note): HomePreview => ({
     slug: note.slug,
@@ -532,7 +569,8 @@ export function getHomeBoard(
     latest,
     previews,
     days,
-    defaultDate: active?.date ?? days[0]?.date ?? null,
+    // days 已按日期倒序，第一条就是最近一个有活动的日子
+    defaultDate: days[0]?.date ?? null,
     defaultSlug: defaultNote?.slug ?? null,
   };
 }
