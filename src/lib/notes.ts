@@ -386,12 +386,12 @@ export interface HomePreview {
   excerpt: string;
 }
 
-/** 「单日详情」一天的全部数据 */
+/** 「单日详情」一天的全部数据（整年每一天都有，没活动的日子三栏为空、占比条为 0） */
 export interface HomeDay {
   date: string;
   month: number;
-  /** 与热力图格子一致：有文章 = article，只有提交 = commit */
-  kind: 'article' | 'commit';
+  /** 与热力图格子一致：有文章 = article，只有提交 = commit，什么都没有 = empty */
+  kind: 'article' | 'commit' | 'empty';
   /** 与热力图格子一致的着色强度 */
   pct: number;
   /** 当天网站仓库是否也提交过（金框） */
@@ -480,12 +480,11 @@ export function getHomeBoard(
     const published = byPublish.get(d.date) ?? [];
     const updated = byTouch.get(d.date) ?? [];
     const commits = webCommits[d.date] ?? [];
-    if (published.length === 0 && updated.length === 0 && commits.length === 0) continue;
     const commitsToday = dayCommits(d);
     days.push({
       date: d.date,
       month: d.month,
-      kind: d.notes > 0 ? 'article' : 'commit',
+      kind: d.notes > 0 ? 'article' : commitsToday > 0 ? 'commit' : 'empty',
       pct: shadeFor(commitsToday, maxCommits),
       web: d.webCommits > 0,
       first: d.date === firstDate,
@@ -498,6 +497,10 @@ export function getHomeBoard(
     });
   }
   days.sort((a, b) => b.date.localeCompare(a.date));
+  // 默认展示「最近一个有活动的日子」；整年都没活动时才退到那年的最后一天
+  const active = days.find(
+    (day) => day.published.length > 0 || day.updated.length > 0 || day.commits.length > 0
+  );
 
   const previewOf = (note: Note): HomePreview => ({
     slug: note.slug,
@@ -529,7 +532,7 @@ export function getHomeBoard(
     latest,
     previews,
     days,
-    defaultDate: days[0]?.date ?? null,
+    defaultDate: active?.date ?? days[0]?.date ?? null,
     defaultSlug: defaultNote?.slug ?? null,
   };
 }

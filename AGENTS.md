@@ -2,7 +2,7 @@
 
 <!-- dsh-openwolf:start -->
 # Code Map
-Generated 2026-10-15T08:16:53.798Z · 209 files · 32329 lines · 2.07s
+Generated 2026-10-15T08:36:26.990Z · 209 files · 32323 lines · 1.13s
 
 ## ./
 - `CHANGES.md` — 706 lines · 第一阶段目标是忠实迁移，以下是相对原源码的全部偏离及原因。
@@ -70,7 +70,7 @@ Generated 2026-10-15T08:16:53.798Z · 209 files · 32329 lines · 2.07s
 
 ## src/components/home
 - `src/components/home/ArticlePreview.astro` — 39 lines · interface Props {
-- `src/components/home/DayDetail.astro` — 103 lines · interface Props {
+- `src/components/home/DayDetail.astro` — 106 lines · interface Props {
 - `src/components/home/HomeBoard.astro` — 83 lines · interface Props {
 - `src/components/home/Landing.astro` — 108 lines · interface Props {
 
@@ -78,7 +78,7 @@ Generated 2026-10-15T08:16:53.798Z · 209 files · 32329 lines · 2.07s
 - `src/components/notes/ArchiveList.astro` — 56 lines · interface Props {
 - `src/components/notes/ArticleActions.astro` — 41 lines · <section class="article-actions" aria-label="文章操作">
 - `src/components/notes/ArticleSidebar.astro` — 57 lines · interface Props {
-- `src/components/notes/NotesCalendar.astro` — 177 lines · interface Props {
+- `src/components/notes/NotesCalendar.astro` — 165 lines · interface Props {
 - `src/components/notes/NotesRail.astro` — 39 lines · interface Props {
 - `src/components/notes/NotesShell.astro` — 36 lines · const NOTES_STATES = ['home', 'article', 'archive', 'tags'];
 - `src/components/notes/NotesSidebar.astro` — 18 lines · interface Props {

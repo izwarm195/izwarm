@@ -376,6 +376,14 @@ html {
   background: var(--bg-obsidian-soft);
   display: block;
   text-decoration: none;
+  /* 有活动的日子是 <button>（键盘可达）：清掉浏览器默认的按钮描边与内边距 */
+  border: 0;
+  padding: 0;
+  font: inherit;
+}
+/* 网格里的格子都能点（点了看那天详情，不再跳归档） */
+.notes-calendar-grid .notes-cal-day {
+  cursor: pointer;
 }
 /* 一个热力格只说两件事：色相 = 这天有没有文章，深浅 = 当天提交数（--cal-pct，
    由组件按全年最大值归一后写在内联样式里）。空格子保持原来的暗格，不可点。 */
@@ -522,11 +530,12 @@ html {
   color: var(--text-primary);
 }
 
-/* Home（笔记首页）整页换字体：英文与数字走 --font-math（CMU 的斜体面被当正体挂着），
+/* 整个面板统一字体：英文与数字走 --font-math（CMU 的斜体面被当正体挂着），
    中文落到宋体 → 仿宋 → 楷体 —— 两边都不斜。
-   只圈 home 状态：文章页的正文、大纲仍走原来的无衬线。
-   font-synthesis: none 是兜底：万一哪块自己要 italic，也别让中文被合成假斜体。 */
-.notes-shell[data-notes-state='home'] {
+   首页、文章、归档、标签、Projects / Works / About 全都吃这一条。
+   font-synthesis: none 是兜底：万一哪块自己要 italic，也别让中文被合成假斜体。
+   代码块、公式、大纲里的等宽片段不受影响：它们各自声明了字体。 */
+.notes-shell {
   font-family: var(--font-math);
   font-synthesis: none;
 }
@@ -691,6 +700,18 @@ html {
   height: 1.5em;
   border-radius: 4px;
 }
+/* 微微发光：用格子自己的色系打光，看着像"这天的活动还亮着"。
+   有活动的日子才有光；描金的那些天金框与金光合成一条 shadow。 */
+.home-day-swatch[data-kind='article'] {
+  box-shadow: 0 0 14px -2px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+.home-day-swatch[data-kind='commit'] {
+  box-shadow: 0 0 14px -2px rgba(255, 255, 255, 0.32);
+}
+.home-day-swatch[data-web='1'],
+.home-day-swatch[data-first='1'] {
+  box-shadow: 0 0 0 1px var(--cal-gold), 0 0 16px -1px var(--cal-gold);
+}
 .home-day-rows {
   display: flex;
   flex-direction: column;
@@ -753,6 +774,21 @@ html {
   font-size: 11px;
   line-height: 1.7;
   color: var(--text-dim);
+}
+.home-day-created {
+  overflow-wrap: break-word;
+}
+/* 字数：标签贴左、数字贴右（去掉原来的【】，数字用 CMU 并右端对齐成一列） */
+.home-day-words {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+.home-day-words b {
+  font-family: var(--font-math);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ---- 右区：音乐 / 精选 / 最新 ---- */
@@ -1068,13 +1104,14 @@ html {
   width: 30px;
   height: 30px;
   padding: 0;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  /* 与代码块/公式块同一条规矩：不描边，靠底色分出来 */
+  border: 0;
   border-radius: 8px 8px 8px 0;
   background: rgba(255, 255, 255, 0.06);
   color: #a4aab5;
   cursor: pointer;
   opacity: 0;
-  transition: opacity 0.18s ease, background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+  transition: opacity 0.18s ease, background 0.18s ease, color 0.18s ease;
 }
 .article-body pre:hover .code-copy,
 .article-body .math-block:hover .code-copy,
@@ -1084,7 +1121,6 @@ html {
 .article-body .code-copy:hover {
   color: #f0f2f5;
   background: rgba(127, 192, 192, 0.18);
-  border-color: rgba(127, 192, 192, 0.5);
 }
 .article-body .code-copy img {
   display: block;
@@ -1323,16 +1359,16 @@ html {
   line-height: 1;
   color: var(--text-dim);
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  /* 与代码块/公式块、复制按钮同一条规矩：不描边 */
+  border: 0;
   border-radius: 10px 10px 10px 0;
   cursor: pointer;
-  transition: color 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+  transition: color 0.18s ease, background 0.18s ease;
 }
 .action-btn:hover,
 .action-btn:focus-visible {
   color: #f0f2f5;
   background: rgba(127, 192, 192, 0.18);
-  border-color: rgba(127, 192, 192, 0.5);
 }
 /* 图标与代码复制按钮同一套处理：黑描边图标反色提亮 */
 .action-btn .action-icon {
