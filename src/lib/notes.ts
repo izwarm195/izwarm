@@ -349,10 +349,30 @@ export function resolveCalendarYear(
   return years.includes(requested) ? requested : (years[0] ?? new Date().getUTCFullYear());
 }
 
-/** 摘要：优先 frontmatter 的 description，缺省回退正文首段（只为兜底，正常都有） */
-export function noteExcerpt(note: Note, max = 220): string {
-  const raw = (note.data.description ?? note.body ?? '').replace(/\s+/g, ' ').trim();
-  return raw.length > max ? raw.slice(0, max) + '…' : raw;
+/** 正文 → 纯文本（只给摘要用）：代码块、行间公式、HTML 标签、markdown 记号一律剔掉 */
+function plainText(md: string, max = 900): string {
+  return md
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/\$\$[\s\S]*?\$\$/g, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1')
+    .replace(/[*_`>#|=\-\\$[\]]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, max);
+}
+
+/**
+ * 预览摘要：先 frontmatter 的 description，不够长就接着往下取正文（去掉重复的首段）。
+ * description 本身就是正文第一段，直接拼接会原样重复一遍，所以先在正文里把它切掉。
+ */
+export function noteExcerpt(note: Note, max = 300): string {
+  const desc = (note.data.description ?? '').replace(/\s+/g, ' ').trim();
+  if (desc.length >= max) return desc.slice(0, max) + '…';
+  const body = plainText(note.body ?? '');
+  const rest = desc && body.startsWith(desc) ? body.slice(desc.length) : body;
+  const text = `${desc} ${rest}`.replace(/\s+/g, ' ').trim();
+  return text.length > max ? text.slice(0, max) + '…' : text;
 }
 
 /** 侧栏预览卡要用的一篇笔记的全部字段（构建期算好，前端只做显示 / 隐藏） */

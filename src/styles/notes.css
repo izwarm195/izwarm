@@ -524,6 +524,16 @@ html {
   color: var(--text-primary);
 }
 
+/* Home（笔记首页）整页换字体：英文与数字用 CMU serif italic，中文落到宋体 → 仿宋 → 楷体。
+   font-synthesis: none 是关键 —— 宋体/仿宋/楷体都只有正体，不关掉合成的话浏览器会把
+   中文拉成假的斜体（观感极差）；关掉之后 English 用 CMU 的真斜体面，中文保持正体。
+   只圈 home 状态：文章页的正文、大纲仍走原来的无衬线。 */
+.notes-shell[data-notes-state='home'] {
+  font-family: var(--font-math);
+  font-style: italic;
+  font-synthesis: none;
+}
+
 /* ---- 主页工作台：中间栏里的三区（左：预览 + 单日详情 / 中：系列框 / 右：音乐 + 精选 + 最新） ----
    三区各自滚动，互不干扰；只在够宽的屏幕上并排，窄屏只留中间的系列框（与改造前一致）。
    卡片统一一套形状与颜色：同圆角、同描边、同磨砂底 —— 右栏三块因此天然是一个家族。 */
@@ -574,9 +584,10 @@ html {
   flex-direction: column;
   min-height: 0;
   padding: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  /* 与代码块/公式块同一条规矩：不描边，靠底色把模块分出来 */
+  border: 0;
   border-radius: 16px 16px 16px 0; /* 与系列窗、文章卡同一套 W 形圆角 */
-  background: rgba(26, 28, 33, 0.55);
+  background: rgba(20, 22, 27, 0.62); /* 比系列窗稍深一档，新加的块退到系列框后面去 */
   backdrop-filter: blur(18px) saturate(1.02) brightness(0.86);
   -webkit-backdrop-filter: blur(18px) saturate(1.02) brightness(0.86);
   color: var(--text-primary);
@@ -601,7 +612,10 @@ html {
   scrollbar-width: thin;
 }
 .home-preview-item {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  /* 短摘要也把模块撑满（顶到卡片下沿），长的照常滚 —— 不留半张空卡 */
+  min-height: 100%;
   text-decoration: none;
   color: inherit;
 }
@@ -631,6 +645,8 @@ html {
   white-space: nowrap;
 }
 .home-preview-excerpt {
+  flex: 1 1 auto;
+  min-height: 0;
   font-size: 12.5px;
   line-height: 1.75;
   color: var(--text-dim);
