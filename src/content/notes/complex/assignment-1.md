@@ -1,5 +1,5 @@
 ---
-title: "复变函数 - 第一次作业"
+title: "复变函数 - 第1次作业"
 slug: "complex/assignment-1"
 publishDate: "2026-10-12"
 createdAt: "2026-10-12T00:00:00Z"

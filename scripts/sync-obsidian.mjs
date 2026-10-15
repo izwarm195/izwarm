@@ -204,9 +204,18 @@ async function walk(dir, vaultRel = '') {
   return out;
 }
 
+/**
+ * 某个 vault 文件在 git 历史里的日期。
+ * first=true 取「首次提交」（即文件被创建的提交），否则取最后一次。
+ *
+ * --follow 不能省：vault 侧改笔记标题会连带改文件名，而 git 看到的是一个新路径。
+ * 不跟重命名的话，首次提交就落到「改名那一天」，网站上表现为这篇老笔记
+ * 突然变成今天新发的文章（创建时间清单也按路径做键，同样会失配）。
+ * --follow 只对单个 pathspec 生效，这里正好只传一个路径。
+ */
 function gitDate(vault, rel, first) {
   try {
-    const args = ['-C', vault, 'log', first ? '--diff-filter=A' : '-1', '--format=%aI', '--', rel];
+    const args = ['-C', vault, 'log', '--follow', first ? '--diff-filter=A' : '-1', '--format=%aI', '--', rel];
     const out = execFileSync('git', args, { encoding: 'utf8' }).trim();
     return out.split('\n')[0] || null;
   } catch {

@@ -2,7 +2,7 @@
 
 <!-- dsh-openwolf:start -->
 # Code Map
-Generated 2026-10-15T08:55:19.786Z · 209 files · 32361 lines · 2.86s
+Generated 2026-10-15T10:05:51.201Z · 210 files · 32442 lines · 0.15s
 
 ## ./
 - `CHANGES.md` — 706 lines · 第一阶段目标是忠实迁移，以下是相对原源码的全部偏离及原因。
@@ -56,8 +56,8 @@ Generated 2026-10-15T08:55:19.786Z · 209 files · 32361 lines · 2.86s
 - `public/media/icons/triangle-exclaimation.svg` — 0 lines · <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M13.752 2.111c-.…
 
 ## scripts
-- `scripts/slug-aliases.mjs` — 90 lines · SEGMENT_ALIASES · Exports SEGMENT_ALIASES
-- `scripts/sync-obsidian.mjs` — 1237 lines · ROOTS, SKIP_DIRS, _posArg, VAULT, OUT, MANIFEST · const ROOTS = [
+- `scripts/slug-aliases.mjs` — 94 lines · SEGMENT_ALIASES · Exports SEGMENT_ALIASES
+- `scripts/sync-obsidian.mjs` — 1246 lines · ROOTS, SKIP_DIRS, _posArg, VAULT, OUT, MANIFEST · const ROOTS = [
 
 ## src
 - `src/content.config.ts` — 43 lines · notes, projects, works, collections · Defines a zod schema in content.config.ts
@@ -89,17 +89,18 @@ Generated 2026-10-15T08:55:19.786Z · 209 files · 32361 lines · 2.86s
 - `src/components/notes/TocTree.astro` — 32 lines · interface Props {
 
 ## src/config
-- `src/config/commit-activity.json` — 38 lines · {
-- `src/config/created-dates.json` — 115 lines · {
+- `src/config/commit-activity.json` — 39 lines · {
+- `src/config/created-dates.json` — 116 lines · {
 - `src/config/featured.ts` — 10 lines · Exports featuredTitles
 - `src/config/friends.ts` — 34 lines · FriendLink, displayHost · Exports FriendLink, friends, displayHost
 - `src/config/media.ts` — 41 lines · base, MEDIA_BASE, icon, media · Exports MEDIA_BASE, icon, media
 - `src/config/site.ts` — 11 lines · site · Exports site
-- `src/config/web-commit-activity.json` — 22 lines · {
-- `src/config/web-commits.json` — 101 lines · {
+- `src/config/web-commit-activity.json` — 23 lines · {
+- `src/config/web-commits.json` — 113 lines · {
 
 ## src/content/notes/complex
-- `src/content/notes/complex/assignment-1.md` — 740 lines · title: "复变函数 - 第一次作业"
+- `src/content/notes/complex/assignment-1.md` — 740 lines · title: "复变函数 - 第1次作业"
+- `src/content/notes/complex/assignment-2.md` — 53 lines · title: "复变函数 - 第2次作业"
 
 ## src/content/notes/cpp/examples
 - `src/content/notes/cpp/examples/count-perfect-squares.md` — 54 lines · title: "完全平方数计数"
@@ -208,7 +209,6 @@ Generated 2026-10-15T08:55:19.786Z · 209 files · 32361 lines · 2.86s
 ## src/content/notes/physics
 - `src/content/notes/physics/ch10.md` — 467 lines · title: "第十章 波动 公式总结"
 - `src/content/notes/physics/ch11.md` — 696 lines · title: "第十一章 光学 公式总结"
-- `src/content/notes/physics/ch12.md` — 348 lines · title: "第十二章 气体动理论 公式总结"
-- `src/content/notes/physics/ch…
+- `src/content/notes/physic…
 (rendered map truncated at 16384 bytes)
 <!-- dsh-openwolf:end -->

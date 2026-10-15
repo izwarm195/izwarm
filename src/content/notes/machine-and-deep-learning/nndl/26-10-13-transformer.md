@@ -1,17 +1,17 @@
 ---
 title: "NNDL 26-10-13 手写 Transformer"
 slug: "machine-and-deep-learning/nndl/26-10-13-transformer"
-description: "——手写一个 Encoder–Decoder Transformer 做英译中：三种注意力的形状与掩码、预热 + 余弦退火、两个参数组的权重衰减，以及六个\"为什么不这么写\""
+description: "——手写一个 Encoder–Decoder Transformer 做英译中：三种注意力、学习率调度、两个参数组的权重衰减，以及复盘。"
 publishDate: "2026-10-13"
 createdAt: "2026-10-13T00:00:00Z"
-updatedDate: "2026-10-14T21:00:05"
+updatedDate: "2026-10-15T17:59:38"
 tags: ["NNDL","PyTorch","python","machine-learning"]
 series: ["Machine & Deep Learning","NNDL"]
 ---
 
-——手写一个 Encoder–Decoder Transformer 做英译中：三种注意力的形状与掩码、预热 + 余弦退火、两个参数组的权重衰减，以及六个"为什么不这么写"
+——手写一个 Encoder–Decoder Transformer 做英译中：三种注意力、学习率调度、两个参数组的权重衰减，以及复盘。
 
-承接 [NNDL 26-09-26 循环神经网络练习](/notes/machine-and-deep-learning/nndl/26-09-26-rnn/)：上一次把"循环 + 门控"这条线走通了，这一部分换成**注意力**——依旧手写，不用 `nn.Transformer` / `nn.MultiheadAttention`。任务是用 Tatoeba 的 3 万句英中平行语料训一个字符级翻译模型：源长 64、目标长 32、4 层、4 头、128 维，20000 步。练习目标有三个：**把三种注意力的 Q/K/V 来源和掩码讲清楚、把训练调度（预热 + 余弦退火 + 分组权重衰减）补齐、回答六个"能不能换个写法"的问题**。
+承接 [NNDL 26-09-26 循环神经网络练习](/notes/machine-and-deep-learning/nndl/26-09-26-rnn/)：上一次实现了LSTM的"循环 + 门控"机制，这一次，不用 `nn.Transformer` / `nn.MultiheadAttention`。任务是训一个字符级翻译模型：源长 64、目标长 32、4 层、4 头、128 维，20000 步。希望能弄清三种注意力的 Q/K/V 和掩码，把训练调度（预热 + 余弦退火 + 分组权重衰减）补齐，并总结思考。
 
 # 一、公式总结
 
