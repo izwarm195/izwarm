@@ -351,6 +351,92 @@ if (shellEl && 'fetch' in window) {
   });
 }
 
+// ---------- 主页工作台：悬停预览任意文章 / 点热力图换日 ----------
+// 两件事的数据在构建期就全部写进了 HTML（见 lib/notes.ts 的 getHomeBoard），
+// 这里只做显示 / 隐藏，不请求也不渲染。
+// 全部走 document 委托：SPA 换页会把 [data-notes-region] 里的节点整体换掉，
+// 绑在节点上的监听下一次就没了（系列树踩过这个坑）；委托天然不受换页影响。
+const calBase = import.meta.env.BASE_URL.replace(/\/$/, '') + '/notes';
+
+/** 文章链接 → 笔记 slug；归档 / 标签 / 年份切换这些都不是文章，返回 null */
+function noteSlugFromHref(href: string | null): string | null {
+  if (!href) return null;
+  const path = href.split(/[?#]/)[0];
+  if (!path.startsWith(calBase + '/')) return null;
+  const rest = path.slice(calBase.length + 1).replace(/\/$/, '');
+  if (!rest || rest === 'archive' || rest === 'tags' || rest.startsWith('tags/')) return null;
+  return rest;
+}
+
+/** undefined = 还没同步过（换页后要重新同步一次），null = 没有可显示的目标 */
+let shownPreview: string | null | undefined;
+let shownDay: string | null | undefined;
+
+function defaultPreviewSlug(): string | null {
+  return document.querySelector<HTMLElement>('.home-preview-item[data-default]')?.dataset.preview ?? null;
+}
+
+function defaultDayDate(): string | null {
+  return document.querySelector<HTMLElement>('.home-day-body:not([hidden])')?.dataset.day ?? null;
+}
+
+/** 显示某篇的预览；slug 为 null 时回到默认那篇 */
+function showPreview(slug: string | null): void {
+  const want = slug ?? defaultPreviewSlug();
+  if (want === shownPreview) return;
+  const items = document.querySelectorAll<HTMLElement>('.home-preview-item');
+  if (items.length === 0) return;
+  shownPreview = want;
+  items.forEach((item) => {
+    item.hidden = item.dataset.preview !== want;
+  });
+}
+
+/** 显示某一天的活动详情；返回是否真的切换了（没有这一天的数据就返回 false） */
+function showDay(date: string | null): boolean {
+  const bodies = document.querySelectorAll<HTMLElement>('.home-day-body');
+  if (bodies.length === 0) return false;
+  const want = date ?? defaultDayDate();
+  if (want === shownDay) return true;
+  if (![...bodies].some((body) => body.dataset.day === want)) return false;
+  shownDay = want;
+  bodies.forEach((body) => {
+    body.hidden = body.dataset.day !== want;
+  });
+  return true;
+}
+
+document.addEventListener(
+  'pointerover',
+  (e) => {
+    const link = (e.target as HTMLElement | null)?.closest?.('a');
+    showPreview(link ? noteSlugFromHref(link.getAttribute('href')) : null);
+  },
+  true
+);
+
+// 键盘走到哪篇也换预览（Tab 进系列树时鼠标未必在）
+document.addEventListener('focusin', (e) => {
+  const link = (e.target as HTMLElement | null)?.closest?.('a');
+  if (link) showPreview(noteSlugFromHref(link.getAttribute('href')));
+});
+
+// 点热力图某一天 → 换成那天的详情。带修饰键 / 中键仍走原来的归档链接，
+// 想「在新标签页打开归档」不受影响。
+document.addEventListener('click', (e) => {
+  const cell = (e.target as HTMLElement | null)?.closest?.<HTMLElement>('.notes-cal-day[data-date]');
+  if (!cell) return;
+  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  if (!showDay(cell.dataset.date ?? null)) return;
+  e.preventDefault();
+});
+
+// 换页后两处的「当前项」缓存作废：新页面上的默认项要重新同步一次
+document.addEventListener('izwarm:panel-swap', () => {
+  shownPreview = undefined;
+  shownDay = undefined;
+});
+
 // ---------- 文章底部操作底板：分享链接 / 请我喝咖啡 ----------
 // 走 document 委托而不是给按钮单独绑监听：文章页 SPA 换页时区域内容会被整体替换，
 // 绑在元素上的监听下一次换页就丢了（系列树踩过这个坑）。

@@ -1,15 +1,13 @@
 ---
 title: "Machine & Deep Learning"
 slug: "machine-and-deep-learning/machine-and-deep-learning"
-description: "Machine & Deep Learning 的总目录。Python 分三个子系列（Numpy Things / Pandas / Python 杂记），NNDL 单独一组，与网站左栏的系列树一一对应。"
+description: "Numpy 函数汇总"
 publishDate: "2026-07-26"
 createdAt: "2026-07-26T00:00:00Z"
-updatedDate: "2026-10-13T22:46:40"
+updatedDate: "2026-10-13T23:09:16"
 tags: ["machine-learning","python","moc"]
 series: ["Machine & Deep Learning"]
 ---
-
-Machine & Deep Learning 的总目录。Python 分三个子系列（Numpy Things / Pandas / Python 杂记），NNDL 单独一组，与网站左栏的系列树一一对应。
 
 ## Python
 
@@ -48,4 +46,5 @@ Machine & Deep Learning 的总目录。Python 分三个子系列（Numpy Things 
 - [NNDL 26-09-08 前馈神经网络练习（第二部分）](/notes/machine-and-deep-learning/nndl/26-09-08-fnn-2/)
 - [NNDL 26-09-16 卷积神经网络练习](/notes/machine-and-deep-learning/nndl/26-09-16-cnn/)
 - [NNDL 26-09-26 循环神经网络练习](/notes/machine-and-deep-learning/nndl/26-09-26-rnn/)
+- [NNDL 26-10-13 手写 Transformer](/notes/machine-and-deep-learning/nndl/26-10-13-transformer/)
 

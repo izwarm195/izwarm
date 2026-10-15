@@ -490,6 +490,252 @@ html {
   color: var(--text-primary);
 }
 
+/* ---- 主页工作台：中间栏里的三区（左：预览 + 单日详情 / 中：系列框 / 右：音乐 + 精选 + 最新） ----
+   三区各自滚动，互不干扰；只在够宽的屏幕上并排，窄屏只留中间的系列框（与改造前一致）。
+   卡片统一一套形状与颜色：同圆角、同描边、同磨砂底 —— 右栏三块因此天然是一个家族。 */
+.home-board {
+  --home-left: 232px;  /* 左区：预览与详情要放得下一行标题 */
+  --home-right: 196px; /* 右区：三个链接块 */
+  display: flex;
+  align-items: stretch;
+  gap: 20px;
+  height: 100%;
+}
+.home-col {
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+}
+.home-col::-webkit-scrollbar {
+  display: none;
+}
+.home-col-left,
+.home-col-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  /* 卡片各滚各的（内部窗口滚），整列不滚 —— 上下两块的位置不会互相顶动 */
+  overflow: hidden;
+}
+.home-col-left {
+  flex: 0 0 var(--home-left);
+}
+.home-col-right {
+  flex: 0 0 var(--home-right);
+}
+.home-col-mid {
+  flex: 1 1 auto;
+}
+
+.home-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px 16px 16px 0; /* 与系列窗、文章卡同一套 W 形圆角 */
+  background: rgba(26, 28, 33, 0.55);
+  backdrop-filter: blur(18px) saturate(1.02) brightness(0.86);
+  -webkit-backdrop-filter: blur(18px) saturate(1.02) brightness(0.86);
+  color: var(--text-primary);
+}
+/* 左栏两块、右栏精选与最新都平分剩余的列高；音乐块是固定高度的小块 */
+.home-col-left > .home-card,
+.home-col-right > .home-card {
+  flex: 1 1 0;
+}
+.home-col-right > .home-music {
+  flex: 0 0 auto;
+}
+.home-music-body {
+  min-height: 56px; /* 播放器还没接进来，先把块的位置与形状占住 */
+}
+
+/* ---- 左区上：文章预览（同一时刻只显示一篇，切换只是换个 hidden） ---- */
+.home-preview-window {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.home-preview-item {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+.home-preview-title {
+  margin-bottom: 6px;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.45;
+}
+.home-preview-item:hover .home-preview-title {
+  color: var(--accent);
+}
+.home-preview-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 8px;
+  margin-bottom: 9px;
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+}
+.home-preview-series {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.home-preview-excerpt {
+  font-size: 12.5px;
+  line-height: 1.75;
+  color: var(--text-dim);
+}
+
+/* ---- 左区下：单日详情 ---- */
+.home-day-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.home-day-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex: none;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--edge-line);
+}
+.home-day-date {
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+/* 热力图那一格：与网格里同一套颜色、同一个边长；描一圈淡边，7px 的小方块才立得住 */
+.home-day-swatch {
+  flex: none;
+  outline: 1px solid var(--edge-line);
+  outline-offset: 2px;
+}
+.home-day-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.home-day-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+}
+/* 占比条：一条无边框的细条，主题色；未占满的部分是淡底（GitHub 那种拼块读法）。
+   填充比例直接写在内联样式的 --bar 上，一个元素搞定，不需要 track + fill 两层。 */
+.home-day-bar {
+  flex: 1 1 auto;
+  min-width: 20px;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(
+    to right,
+    var(--accent) var(--bar, 0%),
+    rgba(255, 255, 255, 0.1) var(--bar, 0%)
+  );
+}
+.home-day-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  list-style: none;
+}
+.home-day-list a {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--text-dim);
+  text-decoration: none;
+}
+.home-day-list a:hover {
+  color: var(--accent);
+}
+/* 提交主题一条一行，放不下就省略，不折行（折行会把一天的提交拉成一大段） */
+.home-day-commits li {
+  overflow: hidden;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-dim);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.home-day-foot {
+  flex: none;
+  padding-top: 8px;
+  border-top: 1px solid var(--edge-line);
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--text-dim);
+}
+
+/* ---- 右区：音乐 / 精选 / 最新 ---- */
+.home-link-list {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  list-style: none;
+  scrollbar-width: thin;
+}
+.home-link-list a {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+.home-link-list a:hover .home-link-title {
+  color: var(--accent);
+}
+.home-link-title {
+  display: block;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.home-link-date {
+  display: block;
+  margin-top: 3px;
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 窄屏（笔记本竖屏 / 平板 / 手机）：卸掉新增的两区，只留中间的系列框 */
+@media (max-width: 1199px) {
+  .home-board {
+    display: block;
+  }
+  .home-col-left,
+  .home-col-right {
+    display: none;
+  }
+  .home-col-mid {
+    height: 100%;
+  }
+}
+
 /* ---- 右栏 W 导航 ---- */
 .notes-rail {
   position: relative;

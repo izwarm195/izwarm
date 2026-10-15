@@ -2,7 +2,7 @@
 
 <!-- dsh-openwolf:start -->
 # Code Map
-Generated 2026-10-14T15:16:40.828Z · 203 files · 33139 lines · 0.65s
+Generated 2026-10-15T04:36:09.981Z · 209 files · 34672 lines · 1.29s
 
 ## ./
 - `CHANGES.md` — 706 lines · 第一阶段目标是忠实迁移，以下是相对原源码的全部偏离及原因。
@@ -56,8 +56,8 @@ Generated 2026-10-14T15:16:40.828Z · 203 files · 33139 lines · 0.65s
 - `public/media/icons/triangle-exclaimation.svg` — 0 lines · <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M13.752 2.111c-.…
 
 ## scripts
-- `scripts/slug-aliases.mjs` — 89 lines · SEGMENT_ALIASES · Exports SEGMENT_ALIASES
-- `scripts/sync-obsidian.mjs` — 1209 lines · ROOTS, SKIP_DIRS, _posArg, VAULT, OUT, MANIFEST · const ROOTS = [
+- `scripts/slug-aliases.mjs` — 90 lines · SEGMENT_ALIASES · Exports SEGMENT_ALIASES
+- `scripts/sync-obsidian.mjs` — 1237 lines · ROOTS, SKIP_DIRS, _posArg, VAULT, OUT, MANIFEST · const ROOTS = [
 
 ## src
 - `src/content.config.ts` — 43 lines · notes, projects, works, collections · Defines a zod schema in content.config.ts
@@ -69,13 +69,16 @@ Generated 2026-10-14T15:16:40.828Z · 203 files · 33139 lines · 0.65s
 - `src/components/common/PanelRail.astro` — 66 lines · interface Props {
 
 ## src/components/home
+- `src/components/home/ArticlePreview.astro` — 39 lines · interface Props {
+- `src/components/home/DayDetail.astro` — 103 lines · interface Props {
+- `src/components/home/HomeBoard.astro` — 83 lines · interface Props {
 - `src/components/home/Landing.astro` — 108 lines · interface Props {
 
 ## src/components/notes
 - `src/components/notes/ArchiveList.astro` — 56 lines · interface Props {
 - `src/components/notes/ArticleActions.astro` — 41 lines · <section class="article-actions" aria-label="文章操作">
 - `src/components/notes/ArticleSidebar.astro` — 57 lines · interface Props {
-- `src/components/notes/NotesCalendar.astro` — 174 lines · interface Props {
+- `src/components/notes/NotesCalendar.astro` — 176 lines · interface Props {
 - `src/components/notes/NotesRail.astro` — 39 lines · interface Props {
 - `src/components/notes/NotesShell.astro` — 36 lines · const NOTES_STATES = ['home', 'article', 'archive', 'tags'];
 - `src/components/notes/NotesSidebar.astro` — 18 lines · interface Props {
@@ -87,11 +90,13 @@ Generated 2026-10-14T15:16:40.828Z · 203 files · 33139 lines · 0.65s
 
 ## src/config
 - `src/config/commit-activity.json` — 38 lines · {
-- `src/config/created-dates.json` — 114 lines · {
+- `src/config/created-dates.json` — 115 lines · {
+- `src/config/featured.ts` — 10 lines · Exports featuredTitles
 - `src/config/friends.ts` — 34 lines · FriendLink, displayHost · Exports FriendLink, friends, displayHost
 - `src/config/media.ts` — 41 lines · base, MEDIA_BASE, icon, media · Exports MEDIA_BASE, icon, media
 - `src/config/site.ts` — 11 lines · site · Exports site
-- `src/config/web-commit-activity.json` — 21 lines · {
+- `src/config/web-commit-activity.json` — 22 lines · {
+- `src/config/web-commits.json` — 101 lines · {
 
 ## src/content/notes/complex
 - `src/content/notes/complex/assignment-1.md` — 740 lines · title: "复变函数 - 第一次作业"
@@ -165,14 +170,15 @@ Generated 2026-10-14T15:16:40.828Z · 203 files · 33139 lines · 0.65s
 - `src/content/notes/english/words-summary/math-vocab/stage-9-probability-and-statistics.md` — 107 lines · title: "Stage 9 - Probability & Statistics"
 
 ## src/content/notes/machine-and-deep-learning
-- `src/content/notes/machine-and-deep-learning/machine-and-deep-learning.md` — 51 lines · title: "Machine & Deep Learning"
+- `src/content/notes/machine-and-deep-learning/machine-and-deep-learning.md` — 50 lines · title: "Machine & Deep Learning"
 
 ## src/content/notes/machine-and-deep-learning/nndl
-- `src/content/notes/machine-and-deep-learning/nndl/26-09-03-logistic.md` — 305 lines · title: "NNDL 26-09-03 Logistic回归练习"
-- `src/content/notes/machine-and-deep-learning/nndl/26-09-08-fnn-1.md` — 343 lines · title: "NNDL 26-09-08 前馈神经网络练习（第一部分）"
-- `src/content/notes/machine-and-deep-learning/nndl/26-09-08-fnn-2.md` — 395 lines · title: "NNDL 26-09-08 前馈神经网络练习（第二部分）"
-- `src/content/notes/machine-and-deep-learning/nndl/26-09-16-cnn.md` — 685 lines · title: "NNDL 26-09-16 卷积神经网络练习"
-- `src/content/notes/machine-and-deep-learning/nndl/26-09-26-rnn.md` — 463 lines · title: "NNDL 26-09-26 循环神经网络练习"
+- `src/content/notes/machine-and-deep-learning/nndl/26-09-03-logistic.md` — 280 lines · title: "NNDL 26-09-03 Logistic回归练习"
+- `src/content/notes/machine-and-deep-learning/nndl/26-09-08-fnn-1.md` — 312 lines · title: "NNDL 26-09-08 前馈神经网络练习（第一部分）"
+- `src/content/notes/machine-and-deep-learning/nndl/26-09-08-fnn-2.md` — 418 lines · title: "NNDL 26-09-08 前馈神经网络练习（第二部分）"
+- `src/content/notes/machine-and-deep-learning/nndl/26-09-16-cnn.md` — 637 lines · title: "NNDL 26-09-16 卷积神经网络练习"
+- `src/content/notes/machine-and-deep-learning/nndl/26-09-26-rnn.md` — 448 lines · title: "NNDL 26-09-26 循环神经网络练习"
+- `src/content/notes/machine-and-deep-learning/nndl/26-10-13-transformer.md` — 727 lines · title: "NNDL 26-10-13 手写 Transformer"
 
 ## src/content/notes/machine-and-deep-learning/python/misc
 - `src/content/notes/machine-and-deep-learning/python/misc/01-fromfunction.md` — 268 lines · title: "Python 杂记 01 - fromfunction 与可变参数"
@@ -203,13 +209,6 @@ Generated 2026-10-14T15:16:40.828Z · 203 files · 33139 lines · 0.65s
 - `src/content/notes/physics/ch10.md` — 467 lines · title: "第十章 波动 公式总结"
 - `src/content/notes/physics/ch11.md` — 696 lines · title: "第十一章 光学 公式总结"
 - `src/content/notes/physics/ch12.md` — 348 lines · title: "第十二章 气体动理论 公式总结"
-- `src/content/notes/physics/ch13.md` — 492 lines · title: "第十三章 热力学基础 公式总结"
-- `src/content/notes/physics/ch14.md` — 385 lines · title: "第十四章 相对论 公式总结"
-- `src/content/notes/physics/ch15.md` — 687 lines · title: "第十五章 量子物理 公式总结"
-- `src/content/notes/physics/ch16.md` — 232 lines · title: "第十六章 原子核与粒子物理简介 公式总结"
-- `src/content/notes/physics/ch9.md` — 403 lines · title: "第九章 振动 公式总结"
-- `src/content/notes/physics/formulas-vol2.md` — 32 lines · title: "《物理学》下册公式总结"
-
-## src/content/notes/signa…
+- `src/content/notes/physics/ch…
 (rendered map truncated at 16384 bytes)
 <!-- dsh-openwolf:end -->

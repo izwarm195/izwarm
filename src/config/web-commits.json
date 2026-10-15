@@ -1,0 +1,101 @@
+{
+  "2026-08-07": [
+    "Adding Shift between Home & Notes",
+    "Initial commit: izwarm homepage (Astro + TypeScript)"
+  ],
+  "2026-08-08": [
+    "fixed note panel",
+    "Fixing slide",
+    "simplified code",
+    "Refining NotesToHome",
+    "Refining slideWtoNotes",
+    "Fixing slideWtoNotes",
+    "Refining slideWtoNotes"
+  ],
+  "2026-08-10": [
+    "Add GitHub Actions auto-publish and base-aware URLs",
+    "Add KaTeX math, wikilink conversion, calendar year switch",
+    "Unify rail geometry: W centered in rail, rail-gap alignment",
+    "Fix W corner geometry and BGM toggle position",
+    "Build Notes workspace in the frosted panel with seamless navigation",
+    "Add Obsidian content pipeline and notes list rendering"
+  ],
+  "2026-08-11": [
+    "Fix rail hover menu, expand blur, KaTeX version alignment, indented-code blocks",
+    "Fix dark article theme, math block parsing, W slide and hover",
+    "Apply review: KaTeX strict mode, region SPA swap, W rail-seed transition, Obsidian article card",
+    "Match profile icons to GitHub brightness; enlarge netease glyph",
+    "Use user-provided bilibili/netease icons in profile buttons",
+    "Fix creation dates, series in-place accordion, CI link prefix",
+    "Render leaf sub-series as expandable tree nodes",
+    "Fix archive dates/order, TOC jump, floating series accordion"
+  ],
+  "2026-08-12": [
+    "Add Zest callout icons, math/code copy, series hover and ordering fixes"
+  ],
+  "2026-08-15": [
+    "Redesign archive as article-style timeline; sync tag pages",
+    "Add loading screen: media-ready gate, logo-ring progress bar",
+    "Add letter FX: invert flash on expand, hover glow, teal press",
+    "Replace blanket dedent with context-aware list re-indentation"
+  ],
+  "2026-08-16": [
+    "Add FTP deploy to virtual host"
+  ],
+  "2026-08-18": [
+    "feat: add Projects/Works/About pages, panel nav; sync notes; deploy workflow cleanup"
+  ],
+  "2026-08-22": [
+    "ci: restore FTP deploy to virtual host (v4.4.0, continue-on-error)"
+  ],
+  "2026-09-03": [
+    "chore: sync published notes from Obsidian vault (26-09-03)",
+    "feat: commit-based notes heatmap, archive date dedup, first-load speedup, series hover fix"
+  ],
+  "2026-09-04": [
+    "style: unify horizontal scrollbars in code/table/formula blocks to translucent rounded gray"
+  ],
+  "2026-09-24": [
+    "feat(mobile): 手机端适配（≤900px），桌面端（>900px）一行未动",
+    "fix(notes): 热力图按真实写作日着色；文章大纲纳入一级标题",
+    "chore(notes): 同步 Obsidian 笔记（数据至 26-09-16）"
+  ],
+  "2026-09-26": [
+    "style(notes): 收款卡改为严格按原图 50% 显示（355x382.5）",
+    "style(notes): 收款卡按原尺寸显示、文章操作按钮文案缩短",
+    "feat(notes): 文章底部操作底板（分享链接 / 请我喝咖啡）+ 爱发电收款卡改图",
+    "fix(notes): 就地返回后点字母只剩背景、回笔记时下栏不换、Obsidian 单换行、热力图月份数字",
+    "fix(notes): 热力图被横向裁切、返回首页就地展开、新增数字电路与系统子系列",
+    "fix(notes): 手机端系列栏失效、热力图口径、字母音效、返回首页展开态、底栏按钮等比缩小",
+    "feat(audio): 默认 BGM 改为关闭，只由喇叭点击触发"
+  ],
+  "2026-09-29": [
+    "feat(notes): 新增物理公式总结系列（Physics 加入白名单）"
+  ],
+  "2026-10-01": [
+    "fix(notes): \\tag 编号真正贴到卡片右侧（.katex 也要放开 position:relative）",
+    "fix(notes): 公式编号 \\\\tag 不再叠在公式右端"
+  ],
+  "2026-10-06": [
+    "feat(about): About 拆成 izwarm / Friends 两个模块，新增友链卡"
+  ],
+  "2026-10-08": [
+    "feat(notes): 新增「提议」按钮（复制反馈邮箱）+ 修正答案折叠高亮圆角",
+    "feat(notes): 习题答案折叠块 + 短 ASCII slug"
+  ],
+  "2026-10-12": [
+    "feat(notes): 折叠 callout 转 <details>（公式照常渲染）+ 新系列 Complex"
+  ],
+  "2026-10-13": [
+    "feat(notes): Machine & Deep Learning 总目录提到分类层，成为与 Python / NNDL 并列的一篇",
+    "feat(notes): Python 拆成三个子系列（Numpy Things / Pandas / Python 杂记）",
+    "feat(notes): 写作热力图改为「文章 × 提交」复合模式 + 大纲次级标题可展开"
+  ],
+  "2026-10-14": [
+    "feat(notes): 第一篇文章整格填金；图例三项改为连着排（去掉 space-between 的硬对称）",
+    "feat(notes): 热力图整体顺时针转 90°（31 行日 × 12 列月），左栏宽度改为正好装下热力图+图例",
+    "feat(notes): 热力图版式改为「年份左上 + 左图右图例」，图例转成竖条并沾满网格高度",
+    "chore(notes): 热力图图例悬停提示改为「文章发表 / 文章修改 / 网页开发」",
+    "feat(notes): 热力图加第三个信号——网站仓库提交描金框，深浅改按 Obsidian+网站提交总数"
+  ]
+}

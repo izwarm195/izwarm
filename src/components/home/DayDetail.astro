@@ -1,0 +1,103 @@
+---
+import { noteUrl } from '../../lib/notes';
+import type { HomeDay } from '../../lib/notes';
+
+interface Props {
+  days: HomeDay[];
+  /** 默认展示的一天：最近一个有活动的日子 */
+  defaultDate: string | null;
+}
+
+const { days, defaultDate } = Astro.props;
+
+/** 占比条：当天这一类占「发表 + 更新 + 网页」总数的比例（GitHub 那种拼块读法） */
+const share = (n: number, total: number): number => (total > 0 ? Math.round((n / total) * 100) : 0);
+const num = (n: number): string => n.toLocaleString('zh-Hans-CN');
+---
+
+{/*
+  活动日的详情同样在构建期全部渲染好，点热力图格子只切 hidden（见 scripts/notes.ts）。
+  上：日期 + 那一格热力图（同色同大小）；中：发表 / 更新 / 网页三栏，有则显示；
+  下：当天新建的（子）系列与标签、字数合计。
+*/}
+<section class="home-card home-day" aria-label="单日活动详情">
+  {days.length === 0 ? (
+    <p class="notes-empty">这一年还没有活动记录。</p>
+  ) : (
+    days.map((day) => {
+      const total = day.published.length + day.updated.length + day.commits.length;
+      const foot = [
+        day.series.length > 0 ? `创建了新系列【${day.series.join('、')}】` : null,
+        day.tags.length > 0 ? `新标签【${day.tags.join('、')}】` : null,
+        `字数【${num(day.words)}】`,
+      ].filter((part): part is string => part !== null);
+      return (
+        <div class="home-day-body" data-day={day.date} hidden={day.date !== defaultDate}>
+          <header class="home-day-head">
+            <time class="home-day-date" datetime={day.date}>
+              {day.date}
+            </time>
+            <span
+              class="notes-cal-day home-day-swatch"
+              data-kind={day.kind}
+              data-web={day.web ? '1' : undefined}
+              data-first={day.first ? '1' : undefined}
+              style={`--cal-pct:${day.pct}%`}
+              aria-hidden="true"
+            />
+          </header>
+
+          <div class="home-day-rows">
+            {day.published.length > 0 && (
+              <section class="home-day-row">
+                <h3 class="home-day-label">
+                  <span>发表文章</span>
+                  <span class="home-day-bar" style={`--bar:${share(day.published.length, total)}%`} />
+                </h3>
+                <ul class="home-day-list">
+                  {day.published.map((note) => (
+                    <li>
+                      <a href={noteUrl(note)}>{note.data.title}</a>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {day.updated.length > 0 && (
+              <section class="home-day-row">
+                <h3 class="home-day-label">
+                  <span>更新文章</span>
+                  <span class="home-day-bar" style={`--bar:${share(day.updated.length, total)}%`} />
+                </h3>
+                <ul class="home-day-list">
+                  {day.updated.map((note) => (
+                    <li>
+                      <a href={noteUrl(note)}>{note.data.title}</a>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {day.commits.length > 0 && (
+              <section class="home-day-row">
+                <h3 class="home-day-label">
+                  <span>网页开发</span>
+                  <span class="home-day-bar" style={`--bar:${share(day.commits.length, total)}%`} />
+                </h3>
+                <ul class="home-day-list home-day-commits">
+                  {day.commits.map((subject) => (
+                    <li title={subject}>{subject}</li>
+                  ))}
+                </ul>
+              </section>
+            )}
+          </div>
+
+          <footer class="home-day-foot">{foot.join(' | ')}</footer>
+        </div>
+      );
+    })
+  )}
+</section>

@@ -33,6 +33,8 @@ const MANIFEST = path.resolve(path.dirname(OUT), '../config/created-dates.json')
 const ACTIVITY = path.resolve(path.dirname(MANIFEST), 'commit-activity.json');
 // 网站仓库自己的每日提交数（同构的第二份）：热力图上表现为一圈金框
 const WEB_ACTIVITY = path.resolve(path.dirname(MANIFEST), 'web-commit-activity.json');
+// 网站仓库每日提交主题：主页「单日详情」的网页开发一栏要逐条列出来，光有计数不够
+const WEB_COMMITS = path.resolve(path.dirname(MANIFEST), 'web-commits.json');
 // 网站仓库根目录：按脚本自身位置定位，不受 cwd 影响
 const WEB_REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 // 子路径部署（GitHub Pages 的 /izwarm/）时，站内链接带上 base 前缀；本地为空
@@ -254,6 +256,30 @@ function webCommitActivity(repo) {
   }
 }
 
+/**
+ * 网站仓库每日的提交主题：Map<YYYY-MM-DD, string[]>。
+ * 用 %x1f（ASCII 单元分隔符）分隔日期与主题 —— 主题里有空格、中文、冒号，
+ * 拿空格或制表符切都会切坏。只取首行（-s 的 subject），不取正文。
+ */
+function webCommitMessages(repo) {
+  try {
+    const args = ['-C', repo, 'log', '--format=%aI%x1f%s'];
+    const out = execFileSync('git', args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
+    const byDay = new Map();
+    for (const line of out.split('\n')) {
+      const [iso, subject] = line.split('\x1f');
+      const day = (iso ?? '').slice(0, 10);
+      const text = (subject ?? '').trim();
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(day) || !text) continue;
+      if (!byDay.has(day)) byDay.set(day, []);
+      byDay.get(day).push(text);
+    }
+    return byDay;
+  } catch {
+    return new Map();
+  }
+}
+
 /** 写一份 activity JSON；days 为空时保留旧文件，但必须出声（静默保留最难排查） */
 async function writeActivityFile(file, days, warn) {
   if (days.size === 0) {
@@ -270,6 +296,7 @@ async function writeActivity(vault, roots) {
   // vault 不可用/无 git 历史时保留旧数据：静默保留正是"热力图一直没更新"最难排查的形态
   await writeActivityFile(ACTIVITY, vaultCommitActivity(vault, roots), `${vault} 无可用 git 历史`);
   await writeActivityFile(WEB_ACTIVITY, webCommitActivity(WEB_REPO), `${WEB_REPO} 无可用 git 历史`);
+  await writeActivityFile(WEB_COMMITS, webCommitMessages(WEB_REPO), `${WEB_REPO} 无可用 git 历史`);
 }
 
 function firstParagraph(body) {
@@ -1202,6 +1229,7 @@ async function activityOnly() {
   await writeActivity(VAULT, ROOTS);
   console.log(`activity: ${ACTIVITY}`);
   console.log(`activity: ${WEB_ACTIVITY}`);
+  console.log(`activity: ${WEB_COMMITS}`);
 }
 
 if (process.argv.includes('--selftest')) selftest();

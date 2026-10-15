@@ -1,0 +1,83 @@
+---
+/**
+ * 主页工作台：中间栏里的三区布局 —— 左（预览 + 单日详情）、中（系列框）、右（音乐 / 精选 / 最新）。
+ * 只在够宽的屏幕上出现（见 notes.css 的 .home-board 断点）；窄屏只留中间的系列框，和改造前一样。
+ */
+import SeriesExplorer from '../notes/SeriesExplorer.astro';
+import ArticlePreview from './ArticlePreview.astro';
+import DayDetail from './DayDetail.astro';
+import { featuredTitles } from '../../config/featured';
+import { formatDate, getHomeBoard, noteUrl, resolveCalendarYear } from '../../lib/notes';
+import type { CommitActivity, Note } from '../../lib/notes';
+import activity from '../../config/commit-activity.json';
+import webActivity from '../../config/web-commit-activity.json';
+import webCommits from '../../config/web-commits.json';
+
+interface Props {
+  notes: Note[];
+}
+
+const { notes } = Astro.props;
+const act = activity as CommitActivity;
+const webAct = webActivity as CommitActivity;
+// 和左侧热力图看同一年：热力图按 ?year= 切年，这里必须跟着走，否则点格子找不到对应的一天
+const year = resolveCalendarYear(
+  Number(Astro.url.searchParams.get('year')),
+  notes,
+  { ...act, ...webAct }
+);
+const board = getHomeBoard(notes, year, act, webAct, webCommits as Record<string, string[]>, featuredTitles);
+---
+
+<div class="home-board">
+  <div class="home-col home-col-left">
+    <ArticlePreview previews={board.previews} defaultSlug={board.defaultSlug} />
+    <DayDetail days={board.days} defaultDate={board.defaultDate} />
+  </div>
+
+  <div class="home-col home-col-mid">
+    <SeriesExplorer notes={notes} />
+  </div>
+
+  <div class="home-col home-col-right">
+    {/* 音乐播放器：先占好位置与形状，内容随后再补 */}
+    <section class="home-card home-music" aria-label="音乐播放器">
+      <h2 class="notes-section-label">音乐</h2>
+      <div class="home-music-body"></div>
+    </section>
+
+    {board.featured.length > 0 && (
+      <section class="home-card home-picks" aria-label="精选文章">
+        <h2 class="notes-section-label">精选文章</h2>
+        <ul class="home-link-list">
+          {board.featured.map((note) => (
+            <li>
+              <a href={noteUrl(note)}>
+                <span class="home-link-title">{note.data.title}</span>
+                <time class="home-link-date" datetime={formatDate(note.data.publishDate)}>
+                  {formatDate(note.data.publishDate)}
+                </time>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <section class="home-card home-latest" aria-label="最新文章">
+      <h2 class="notes-section-label">最新文章</h2>
+      <ul class="home-link-list">
+        {board.latest.map((note) => (
+          <li>
+            <a href={noteUrl(note)}>
+              <span class="home-link-title">{note.data.title}</span>
+              <time class="home-link-date" datetime={formatDate(note.data.publishDate)}>
+                {formatDate(note.data.publishDate)}
+              </time>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  </div>
+</div>

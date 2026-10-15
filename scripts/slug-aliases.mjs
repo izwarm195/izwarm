@@ -38,6 +38,7 @@ export const SEGMENT_ALIASES = {
   'NNDL 26-09-08 前馈神经网络练习（第二部分）': '26-09-08-fnn-2',
   'NNDL 26-09-16 卷积神经网络练习': '26-09-16-cnn',
   'NNDL 26-09-26 循环神经网络练习': '26-09-26-rnn',
+  'NNDL 26-10-13 手写 Transformer': '26-10-13-transformer',
 
   // ---- Python / Numpy / Pandas ----
   // Python 下分了三个子系列目录（Numpy Things / Pandas / Python 杂记，见 vault 的 MOC）：

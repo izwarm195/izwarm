@@ -314,3 +314,205 @@ export function getCalendarYears(notes: Note[], activity: CommitActivity): numbe
 export function formatDate(d: Date): string {
   return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
 }
+
+// ---------- 主页工作台 ----------
+
+/** 当天提交总数：Obsidian 库 + 网站仓库。热力图与单日详情共用它当深浅基准 */
+export function dayCommits(d: { commits: number; webCommits: number }): number {
+  return d.commits + d.webCommits;
+}
+
+/**
+ * 提交数 → 着色强度（32%~100%，sqrt 归一）。
+ * 热力图格子和「单日详情」里那一个格子必须同色，所以两边都走这一个函数。
+ */
+export function shadeFor(commits: number, maxCommits: number): number {
+  if (commits <= 0 || maxCommits <= 0) return 32;
+  return Math.round((32 + 68 * Math.sqrt(commits / maxCommits)) * 10) / 10;
+}
+
+/** 站点第一篇文章的日期：整格填金那一天 */
+export function firstArticleDate(notes: Note[]): string | null {
+  if (notes.length === 0) return null;
+  return formatDate(
+    notes.reduce((min, n) => (n.data.publishDate < min ? n.data.publishDate : min), notes[0].data.publishDate)
+  );
+}
+
+/** 日历年份：?year= 有效就用它，否则最新的一年（热力图与主页其余模块必须同一年） */
+export function resolveCalendarYear(
+  requested: number,
+  notes: Note[],
+  activity: CommitActivity
+): number {
+  const years = getCalendarYears(notes, activity);
+  return years.includes(requested) ? requested : (years[0] ?? new Date().getUTCFullYear());
+}
+
+/** 摘要：优先 frontmatter 的 description，缺省回退正文首段（只为兜底，正常都有） */
+export function noteExcerpt(note: Note, max = 220): string {
+  const raw = (note.data.description ?? note.body ?? '').replace(/\s+/g, ' ').trim();
+  return raw.length > max ? raw.slice(0, max) + '…' : raw;
+}
+
+/** 侧栏预览卡要用的一篇笔记的全部字段（构建期算好，前端只做显示 / 隐藏） */
+export interface HomePreview {
+  slug: string;
+  href: string;
+  title: string;
+  date: string;
+  series: string;
+  words: number;
+  excerpt: string;
+}
+
+/** 「单日详情」一天的全部数据 */
+export interface HomeDay {
+  date: string;
+  month: number;
+  /** 与热力图格子一致：有文章 = article，只有提交 = commit */
+  kind: 'article' | 'commit';
+  /** 与热力图格子一致的着色强度 */
+  pct: number;
+  /** 当天网站仓库是否也提交过（金框） */
+  web: boolean;
+  /** 是不是第一篇文章那天（整格金） */
+  first: boolean;
+  published: Note[];
+  updated: Note[];
+  /** 当天网站仓库的提交主题，一条一行 */
+  commits: string[];
+  /** 当天第一次出现的（子）系列 / 标签 */
+  series: string[];
+  tags: string[];
+  /** 当天发表 + 更新的文章字数合计 */
+  words: number;
+}
+
+export interface HomeBoard {
+  featured: Note[];
+  latest: Note[];
+  previews: HomePreview[];
+  days: HomeDay[];
+  /** 默认展示的一天：最近一个有活动的日子（Obsidian 或网站） */
+  defaultDate: string | null;
+  /** 默认预览的文章：精选第一篇，缺省退回最新一篇 */
+  defaultSlug: string | null;
+}
+
+/**
+ * 主页工作台（左预览 / 左详情 / 中系列 / 右三块）的全部数据。
+ *
+ * 全部构建期算完直接写进 HTML，前端只做显示 / 隐藏两件事 ——
+ * 悬停预览要即时，点热力图要即时，没有一次网络往返。
+ */
+export function getHomeBoard(
+  notes: Note[],
+  year: number,
+  activity: CommitActivity,
+  webActivity: CommitActivity,
+  webCommits: Record<string, string[]>,
+  featuredTitles: string[]
+): HomeBoard {
+  const calendar = getCalendarData(notes, year, activity, webActivity);
+  const maxCommits = calendar.days.reduce((max, day) => Math.max(max, dayCommits(day)), 0);
+  const firstDate = firstArticleDate(notes);
+
+  // 同一天可能有多篇：按创建时间早→晚，和归档里的顺序一致
+  const byPublish = new Map<string, Note[]>();
+  const byTouch = new Map<string, Note[]>();
+  for (const note of notes) {
+    const published = formatDate(note.data.publishDate);
+    if (!byPublish.has(published)) byPublish.set(published, []);
+    byPublish.get(published)!.push(note);
+
+    const touched = new Set<string>();
+    for (const d of [note.data.createdAt, note.data.updatedDate]) {
+      if (d) touched.add(formatDate(d));
+    }
+    // 当天发表的就不再重复算成「更新」
+    for (const day of touched) {
+      if (day === published) continue;
+      if (!byTouch.has(day)) byTouch.set(day, []);
+      byTouch.get(day)!.push(note);
+    }
+  }
+
+  // 系列 / 标签的「创建日」= 它底下最早一篇文章的发布日期
+  const seriesFirst = new Map<string, string>();
+  const tagFirst = new Map<string, string>();
+  const keepEarliest = (map: Map<string, string>, key: string, date: string): void => {
+    const prev = map.get(key);
+    if (prev === undefined || date < prev) map.set(key, date);
+  };
+  for (const note of notes) {
+    const date = formatDate(note.data.publishDate);
+    let path = '';
+    for (const seg of note.data.series) {
+      path = path ? `${path} / ${seg}` : seg;
+      keepEarliest(seriesFirst, path, date);
+    }
+    for (const tag of note.data.tags) keepEarliest(tagFirst, tag, date);
+  }
+
+  const days: HomeDay[] = [];
+  for (const d of calendar.days) {
+    const published = byPublish.get(d.date) ?? [];
+    const updated = byTouch.get(d.date) ?? [];
+    const commits = webCommits[d.date] ?? [];
+    if (published.length === 0 && updated.length === 0 && commits.length === 0) continue;
+    const commitsToday = dayCommits(d);
+    days.push({
+      date: d.date,
+      month: d.month,
+      kind: d.notes > 0 ? 'article' : 'commit',
+      pct: shadeFor(commitsToday, maxCommits),
+      web: d.webCommits > 0,
+      first: d.date === firstDate,
+      published,
+      updated,
+      commits,
+      series: [...seriesFirst].filter(([, day]) => day === d.date).map(([name]) => name),
+      tags: [...tagFirst].filter(([, day]) => day === d.date).map(([name]) => name),
+      words: [...published, ...updated].reduce(
+        (sum, note) => sum + countWords(note.body ?? ''),
+        0
+      ),
+    });
+  }
+  days.sort((a, b) => b.date.localeCompare(a.date));
+
+  const previewOf = (note: Note): HomePreview => ({
+    slug: note.slug,
+    href: noteUrl(note),
+    title: note.data.title,
+    date: formatDate(note.data.publishDate),
+    series: note.data.series.join(' / '),
+    words: countWords(note.body ?? ''),
+    excerpt: noteExcerpt(note),
+  });
+
+  const byTitle = new Map(notes.map((note) => [note.data.title, note]));
+  const featured = featuredTitles
+    .map((title) => byTitle.get(title))
+    .filter((note): note is Note => note !== undefined);
+
+  const latest = [...notes]
+    .sort(
+      (a, b) =>
+        b.data.publishDate.valueOf() - a.data.publishDate.valueOf() || creationTime(b) - creationTime(a)
+    )
+    .slice(0, 3);
+
+  const previews = notes.map(previewOf);
+  const defaultNote = featured[0] ?? latest[0] ?? null;
+
+  return {
+    featured,
+    latest,
+    previews,
+    days,
+    defaultDate: days[0]?.date ?? null,
+    defaultSlug: defaultNote?.slug ?? null,
+  };
+}

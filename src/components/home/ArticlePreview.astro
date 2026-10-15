@@ -1,0 +1,39 @@
+---
+import type { HomePreview } from '../../lib/notes';
+
+interface Props {
+  previews: HomePreview[];
+  /** 默认展示的一篇（精选第一篇） */
+  defaultSlug: string | null;
+}
+
+const { previews, defaultSlug } = Astro.props;
+---
+
+{/*
+  全部文章的预览都在这里，构建期渲染好，同一时刻只显示一篇。
+  悬停 / 聚焦任意文章链接时由 scripts/notes.ts 切到对应那篇，离开链接就回到默认那篇 ——
+  不请求、不渲染，切换只是换个 hidden。
+*/}
+<section class="home-card home-preview" aria-label="文章预览">
+  <h2 class="notes-section-label">文章预览</h2>
+  <div class="home-preview-window">
+    {previews.map((item) => (
+      <a
+        class="home-preview-item"
+        data-preview={item.slug}
+        data-default={item.slug === defaultSlug ? '1' : undefined}
+        href={item.href}
+        hidden={item.slug !== defaultSlug}
+      >
+        <h3 class="home-preview-title">{item.title}</h3>
+        <p class="home-preview-meta">
+          <time datetime={item.date}>{item.date}</time>
+          {item.series && <span class="home-preview-series">{item.series}</span>}
+          <span>{item.words.toLocaleString('zh-Hans-CN')} 字</span>
+        </p>
+        <p class="home-preview-excerpt">{item.excerpt}</p>
+      </a>
+    ))}
+  </div>
+</section>
