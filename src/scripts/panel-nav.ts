@@ -182,7 +182,11 @@ export function initTocMath(): void {
     const heading = document.getElementById(link.getAttribute('href')?.slice(1) ?? '');
     if (!heading || heading.querySelector('.katex') === null) return;
     const flat = link.textContent ?? '';
-    const cloned = Array.from(heading.childNodes, (child) => child.cloneNode(true) as ChildNode);
+    // 标题里现在还夹着一枚折叠按钮（rehype-section-fold 注入）：它是空的，
+    // 但克隆进目录会多出一个点不动的按钮，先摘掉
+    const cloned = Array.from(heading.childNodes, (child) => child.cloneNode(true) as ChildNode).filter(
+      (node) => !(node instanceof HTMLElement && node.classList.contains('art-sec-toggle'))
+    );
     // 标题里的链接/图片不该跟着进目录（链接套链接是非法结构，图会撑破侧栏）
     cloned.forEach((node) => {
       if (!(node instanceof HTMLElement)) return;
@@ -192,6 +196,49 @@ export function initTocMath(): void {
     link.replaceChildren(...cloned);
     link.dataset.math = '1';
     link.setAttribute('aria-label', flat);
+  });
+}
+
+// ---------- 正文分节的展开 / 收起（结构见 lib/rehype-section-fold.mjs） ----------
+/**
+ * 折起 / 摊开一节。状态只有一个 class（is-collapsed），动画全在 CSS 里
+ * （grid-template-rows 1fr ↔ 0fr + 淡出），这里不写内联样式、不测高度。
+ *
+ * 按钮是标题的第一个子节点，用 :scope 限定在"本节自己的标题"上：
+ * 不加 :scope 的话，收起的会是后代分节里的第一枚按钮。
+ */
+export function setSectionCollapsed(section: HTMLElement, collapsed: boolean): void {
+  section.classList.toggle('is-collapsed', collapsed);
+  const toggle = section.querySelector<HTMLButtonElement>(
+    ':scope > :is(h1, h2, h3, h4, h5, h6) > .art-sec-toggle'
+  );
+  if (!toggle) return;
+  toggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+  toggle.setAttribute('aria-label', collapsed ? '展开本节' : '收起本节');
+}
+
+/**
+ * 摊开 el 所在的整条分节链（大纲 / 锚点跳到折叠节里的标题时用）。
+ *
+ * instant=true 时这一下不播动画：跳转要的是"最终位置"，动画期间布局一直在变，
+ * 平滑滚动会瞄着中途的位置落下去，滚完还差一截。
+ */
+export function expandSectionsTo(el: Element | null, instant = false): void {
+  const chain: HTMLElement[] = [];
+  for (let node = el?.closest<HTMLElement>('.art-sec') ?? null; node; ) {
+    chain.push(node);
+    node = node.parentElement?.closest<HTMLElement>('.art-sec') ?? null;
+  }
+  const folded = chain.filter((section) => section.classList.contains('is-collapsed'));
+  if (folded.length === 0) return;
+  if (instant) folded.forEach((section) => section.classList.add('is-instant'));
+  folded.forEach((section) => setSectionCollapsed(section, false));
+  if (!instant) return;
+  // 过渡是"当前样式"上的属性，加 class 后要先把这一帧的无过渡状态落实，再放开，
+  // 否则这一节接下来的手动收起会一起失去动画
+  void document.body.offsetWidth;
+  requestAnimationFrame(() => {
+    folded.forEach((section) => section.classList.remove('is-instant'));
   });
 }
 
@@ -517,6 +564,10 @@ export async function loadPageIntoPanel(
   initAnswerFolds();
   if (hash) {
     const target = document.getElementById(hash.slice(1));
-    if (target) target.scrollIntoView({ block: 'start' });
+    if (target) {
+      // 目标可能在收起的节里：先瞬时摊开沿路各节，再按最终位置滚过去
+      expandSectionsTo(target, true);
+      target.scrollIntoView({ block: 'start' });
+    }
   }
 }

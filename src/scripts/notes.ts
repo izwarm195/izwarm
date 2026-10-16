@@ -9,6 +9,7 @@
  */
 import {
   copyText,
+  expandSectionsTo,
   initAnswerFolds,
   initCodeCopy,
   initToc,
@@ -17,6 +18,7 @@ import {
   isPanelPath,
   loadPageIntoPanel,
   prefetchPage,
+  setSectionCollapsed,
   syncArticleFolds,
   NOTES_STATES,
 } from './panel-nav';
@@ -284,7 +286,26 @@ document.addEventListener('click', (e) => {
   const target = document.getElementById(id);
   if (!target) return;
   e.preventDefault();
+  // 目标标题可能落在收起的节里（同级大纲项各自可单独收起）：先瞬时摊开，
+  // 否则滚过去只看到一条灰色的标题
+  expandSectionsTo(target, true);
   target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+});
+
+// ---------- 正文分节：点标题整行展开 / 收起 ----------
+// 委托到 document：SPA 换页把正文整片换掉也不会失效。
+// 标题右侧那枚按钮只是键盘 / 读屏入口与视觉提示，鼠标点标题任意处同样生效
+// （按钮在标题内部，走的也是这一条路径，所以只会折叠一次）。
+// 两个例外：标题里若嵌了链接（markdown 允许），点链接照旧跳转；
+// 拖选标题文字收尾时也会冒出一个 click，这时选区没塌陷，不能当成折叠意图。
+document.addEventListener('click', (e) => {
+  const target = e.target as HTMLElement | null;
+  const head = target?.closest?.<HTMLElement>('h1, h2, h3, h4, h5, h6') ?? null;
+  const section = head?.parentElement ?? null;
+  if (!head || !section?.classList.contains('art-sec')) return;
+  if (target?.closest?.('a')) return;
+  if (window.getSelection()?.isCollapsed === false) return;
+  setSectionCollapsed(section, !section.classList.contains('is-collapsed'));
 });
 
 // ---------- 面板内部无缝导航 ----------

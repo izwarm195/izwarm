@@ -1042,6 +1042,111 @@ html {
   font-size: 0.85em;
   margin: 1em 0 0.4em;
 }
+
+/* ---- 正文分节折叠（结构由 src/lib/rehype-section-fold.mjs 生成） ----
+   每个标题开一个 .art-sec：标题留在外面（收起时化成灰、继续当锚点），
+   内容装进 .art-sec-body > .art-sec-inner。默认全展开、无 is-collapsed，
+   禁用 JS 时这就是一篇普通全文。
+
+   收起靠 grid-template-rows 1fr → 0fr 过渡：高度自动算，不必测量 scrollHeight，
+   下方内容跟着平滑上滑；.art-sec-inner 负责裁剪 + 淡出。
+   底下两条"补偿"规则是包两层盒子换来的，删掉就会和折叠前的排版不一样：
+   - .art-sec-inner 的 overflow:hidden 让它成了 BFC，盒内最后一个元素的下外边距
+     再也塌不出去，只能清零 —— 节间距本来就由下一节标题的上外边距（更小的那个被
+     更大的压掉之后就等于它）决定，两边一致；
+   - 正文第一个标题本来由 `.article-body > :first-child` 抹掉上外边距，现在隔了一层，
+     要顺着下沉一级。 */
+.article-body .art-sec-body {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.28s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.article-body .art-sec-body > .art-sec-inner {
+  min-height: 0;
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity 0.22s ease, visibility 0s linear 0s;
+}
+.article-body .art-sec.is-collapsed > .art-sec-body {
+  grid-template-rows: 0fr;
+}
+.article-body .art-sec.is-collapsed > .art-sec-body > .art-sec-inner {
+  opacity: 0;
+  /* 收起后正文既不显示也不能被 Tab 进去；等淡出走完再切，免得动画半途跳掉 */
+  visibility: hidden;
+  transition: opacity 0.22s ease, visibility 0s linear 0.24s;
+}
+.article-body > .art-sec:first-child > :first-child {
+  margin-top: 0;
+}
+.article-body .art-sec-inner > :last-child {
+  margin-bottom: 0;
+}
+/* 大纲跳到折叠节里的标题时先把沿路各节瞬时摊开（不播动画），滚动才不会落空 */
+.article-body .art-sec.is-instant > .art-sec-body {
+  transition: none;
+}
+
+/* 标题右侧的展开 / 收起按钮：与侧栏大纲里那枚次级标题按钮同一套语言（› 转 90°）。
+   展开时朝下、收起时朝右，方向只看 aria-expanded。
+   点击目标是整行标题（见 scripts/notes.ts），这枚按钮只是键盘 / 读屏的入口与视觉提示。 */
+.article-body .art-sec > :is(h1, h2, h3, h4, h5, h6) {
+  position: relative;
+  padding-right: 32px;
+  cursor: pointer;
+  transition: color 0.24s ease, text-shadow 0.3s ease;
+}
+/* 悬停不改颜色，只"微微发光"：两层同色柔和外发光叠出光晕，
+   比一层硬阴影更像是被照亮，而不是变成另一个颜色 */
+.article-body .art-sec > :is(h1, h2, h3, h4, h5, h6):hover {
+  text-shadow: 0 0 15px rgba(127, 192, 192, 0.3), 0 0 4px rgba(127, 192, 192, 0.2);
+}
+.article-body .art-sec.is-collapsed > :is(h1, h2, h3, h4, h5, h6) {
+  color: #7c828d;
+}
+.article-body .art-sec-toggle {
+  position: absolute;
+  top: 0.12em;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px 8px 8px 0;
+  background: none;
+  color: #7f8695;
+  cursor: pointer;
+  opacity: 0.4;
+  transition: opacity 0.18s ease, color 0.18s ease, background 0.18s ease;
+}
+.article-body .art-sec-toggle::before {
+  content: '›';
+  font-size: 17px;
+  line-height: 1;
+  transform: rotate(90deg);
+  transition: transform 0.18s ease, text-shadow 0.3s ease;
+}
+.article-body .art-sec-toggle[aria-expanded='false']::before {
+  transform: rotate(0deg);
+}
+/* 鼠标悬停：只把按钮点亮成不透明 + 一点光晕，不换色（换色只留给键盘焦点） */
+.article-body :is(h1, h2, h3, h4, h5, h6):hover > .art-sec-toggle,
+.article-body .art-sec-toggle:hover {
+  opacity: 1;
+}
+.article-body :is(h1, h2, h3, h4, h5, h6):hover > .art-sec-toggle::before,
+.article-body .art-sec-toggle:hover::before,
+.article-body .art-sec-toggle:focus-visible::before {
+  text-shadow: 0 0 12px rgba(127, 192, 192, 0.45);
+}
+.article-body .art-sec-toggle:focus-visible {
+  color: #eef1f4;
+  background: rgba(127, 192, 192, 0.14);
+}
+
 .article-body p {
   margin: 0.9em 0;
 }
@@ -2213,6 +2318,20 @@ html {
   .article-body h5,
   .article-body h6 {
     scroll-margin-top: 14px;
+  }
+  /* 手机：折叠按钮做成 ≥44px 的触屏热区，往右上溢出一点，不把标题行撑高 */
+  .article-body .art-sec > :is(h1, h2, h3, h4, h5, h6) {
+    padding-right: 42px;
+  }
+  .article-body .art-sec-toggle {
+    top: -10px;
+    right: -8px;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px 10px 10px 0;
+  }
+  .article-body .art-sec-toggle::before {
+    font-size: 19px;
   }
   .article-body pre {
     margin: 1em 0;

@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import rehypeMathLatex from './src/lib/rehype-math-latex.mjs';
+import rehypeSectionFold from './src/lib/rehype-section-fold.mjs';
 import remarkObsidianBreaks from './src/lib/remark-obsidian-breaks.mjs';
 
 // 站点地址：静态构建时用于生成规范链接。
@@ -39,6 +40,9 @@ export default defineConfig({
           leqno: false,
         },
       ],
+      // 放最后：分节包装只按顶层标题切块，前面几个插件（公式壳、KaTeX）跑完再切，
+      // 免得把它们生成的节点也当成"内容"看待
+      rehypeSectionFold,
     ],
   },
 });
