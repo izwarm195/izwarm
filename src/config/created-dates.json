@@ -62,6 +62,7 @@
   "Machine & Deep Learning/NNDL/NNDL 26-09-16 卷积神经网络练习.md": "2026-09-16",
   "Machine & Deep Learning/NNDL/NNDL 26-09-26 循环神经网络练习.md": "2026-09-26",
   "Machine & Deep Learning/NNDL/NNDL 26-10-13 手写 Transformer.md": "2026-10-13",
+  "Machine & Deep Learning/NNDL/Transformer 视频演示 prompt.md": "2026-10-14",
   "Machine & Deep Learning/Python/Numpy Things/Numpy 函数汇总.md": "2026-07-26",
   "Machine & Deep Learning/Python/Numpy Things/Numpy 对话总结 I.md": "2026-07-29",
   "Machine & Deep Learning/Python/Numpy Things/Numpy 对话总结 II.md": "2026-08-02",
@@ -112,5 +113,13 @@
   "Physics/第十四章 相对论 公式总结.md": "2026-09-23",
   "Physics/第十章 波动 公式总结.md": "2026-09-23",
   "Complex/复变函数 - 第1次作业.md": "2026-10-12",
-  "Complex/复变函数 - 第2次作业.md": "2026-10-15"
+  "Complex/复变函数 - 第2次作业.md": "2026-10-15",
+  "Complex/复变函数定理公式总结/《复变函数》定理公式总结.md": "2026-10-17",
+  "Complex/复变函数定理公式总结/第一章 复数与复变函数 定理公式总结.md": "2026-10-17",
+  "Complex/复变函数定理公式总结/第七章 解析函数在科技中的应用选讲 定理公式总结.md": "2026-10-17",
+  "Complex/复变函数定理公式总结/第三章 复变函数的积分 定理公式总结.md": "2026-10-17",
+  "Complex/复变函数定理公式总结/第二章 解析函数 定理公式总结.md": "2026-10-17",
+  "Complex/复变函数定理公式总结/第五章 留数及其应用 定理公式总结.md": "2026-10-17",
+  "Complex/复变函数定理公式总结/第六章 共形映射 定理公式总结.md": "2026-10-17",
+  "Complex/复变函数定理公式总结/第四章 复变函数项级数 定理公式总结.md": "2026-10-17"
 }

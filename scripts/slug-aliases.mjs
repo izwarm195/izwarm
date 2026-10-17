@@ -28,6 +28,10 @@ export const SEGMENT_ALIASES = {
   '复变函数 - 第2次作业': 'assignment-2',
   '复变函数 - 第一次作业': 'assignment-1',
   '第一次作业': 'assignment-1',
+  // 定理公式总结在 vault 里自成一个子目录：目录名压成 formulas，
+  // 章节走规则（第一章 → ch1），MOC 沿用总目录的 toc —— 与物理「公式总结」同一套读法。
+  '复变函数定理公式总结': 'formulas',
+  '《复变函数》定理公式总结': 'toc',
 
   // ---- 信号与系统 ----
   'Signals & System 总目录': 'toc',

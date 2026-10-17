@@ -3,6 +3,7 @@ title: "复变函数 - 第2次作业"
 slug: "complex/assignment-2"
 publishDate: "2026-10-15"
 createdAt: "2026-10-15T00:00:00Z"
+updatedDate: "2026-10-17T19:15:00"
 tags: ["complex","复变函数","homework","math"]
 series: ["Complex"]
 ---
@@ -11,13 +12,13 @@ series: ["Complex"]
 
 ## 一. 简答题（共11题，60.8分）
 
-### 1. 下列函数何处可导?何处解析? (1) $f(z)=x^{2}-\mathrm{i} y$ ;
+### 1. 下列函数何处可导？何处解析？(1) $f(z)=x^{2}-\mathrm{i} y$ ;
 
-### 2. 下列函数何处可导?何处解析? (2) $f(z)=2 x^{3}+3 y^{3} \mathrm{i}$ ;
+### 2. 下列函数何处可导？何处解析？ (2) $f(z)=2 x^{3}+3 y^{3} \mathrm{i}$ ;
 
-### 3. 下列函数何处可导?何处解析? (3) $f(z)=x y^{2}+\mathrm{i} x^{2} y$ ;
+### 3. 下列函数何处可导？何处解析？(3) $f(z)=x y^{2}+\mathrm{i} x^{2} y$ ;
 
-### 4. 下列函数何处可导?何处解析? (4) $f(z)=\sin x \operatorname{xch} y+\mathrm{i} \cos x \operatorname{xsh} y$ .
+### 4. 下列函数何处可导？何处解析？(4) $f(z)=\sin x \operatorname{ch} y+\mathrm{i} \cos x \operatorname{sh} y$.
 
 ### 5. 判断下列命题的真假。若真，请给予证明;若假，请举例说明。 (1) 如果 $f(z)$ 在 $z_0$ 连续，那么 $f'(z_0)$ 存在;
 
