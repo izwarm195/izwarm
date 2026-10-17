@@ -1397,6 +1397,6 @@ ax.legend(); ax.grid(alpha=.2); fig.tight_layout(); plt.show()
 曲线在 43000 步处的竖虚线是 warm restart，dev 先被顶上去再回落。跨 tokenization 的最终指标见“最终模型结果”。
 
 # 七、视频记录
-> 完整代码（一）的录制和 Manim 演示视频的剪辑。演示视频制作 prompt：[Transformer 视频演示 prompt](/notes/machine-and-deep-learning/nndl/transformer-视频演示-prompt/)
+> 完整代码（一）的录制和 Manim 演示视频的剪辑。演示视频制作 prompt：[Transformer 视频演示 prompt](/notes/machine-and-deep-learning/nndl/transformer-video-prompt/)
 
 

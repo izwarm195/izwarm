@@ -1,6 +1,6 @@
 ---
 title: "Transformer 视频演示 prompt"
-slug: "machine-and-deep-learning/nndl/transformer-视频演示-prompt"
+slug: "machine-and-deep-learning/nndl/transformer-video-prompt"
 description: "使用 Manim 绘制可视化动画。"
 publishDate: "2026-10-14"
 createdAt: "2026-10-14T00:00:00Z"
