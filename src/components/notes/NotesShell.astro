@@ -4,12 +4,13 @@ import PanelRail from '../common/PanelRail.astro';
 
 /**
  * 面板内容容器：Notes 三栏工作台 / 两栏页面共用。
- * - Notes 状态（home / article / archive / tags）：左中右三栏，左栏由 slot 注入
+ * - Notes 状态（home / article / archive）：左中右三栏，左栏由 slot 注入
+ *   （标签已并进 archive，不再有独立的 tags 状态）
  * - 页面状态（projects / works / about）：两栏（内容 + 右栏字母导航），
  *   左栏容器保留为空（SPA 跨页替换时由 panel-nav 填入 Notes 侧栏内容）
  * - data-notes-region 区域约定供 fetch 替换与交互委托使用
  */
-const NOTES_STATES = ['home', 'article', 'archive', 'tags'];
+const NOTES_STATES = ['home', 'article', 'archive'];
 
 interface Props {
   active: string;

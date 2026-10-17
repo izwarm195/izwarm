@@ -1,30 +1,26 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Landing from '../../components/home/Landing.astro';
-import NotesSidebar from '../../components/notes/NotesSidebar.astro';
-import { getPublishedNotes, getTagsIndex, url } from '../../lib/notes';
+/**
+ * 旧地址：/notes/tags/ 已经并进归档（标签是归档页顶部的那一条）。
+ * 这里只留一个重定向存根，避免老链接 404。
+ */
+import { url } from '../../lib/notes';
 
-const notes = await getPublishedNotes();
-const tags = getTagsIndex(notes);
+const target = url('/notes/archive/');
 ---
 
-<BaseLayout title="标签 · izwarm">
-  <Landing open active="tags">
-    <Fragment slot="notes-left"><NotesSidebar notes={notes} /></Fragment>
-    <section slot="notes-main" class="article archive-panel" aria-label="全部标签">
-      <h1>tags</h1>
-      {tags.length === 0 ? (
-        <p class="notes-empty">暂无标签。</p>
-      ) : (
-        <div class="tags-cloud">
-          {tags.map((item) => (
-            <a class="w-shape" href={url(`/notes/tags/${encodeURIComponent(item.tag)}/`)}>
-              {item.tag}
-              <span class="count">{item.notes.length}</span>
-            </a>
-          ))}
-        </div>
-      )}
-    </section>
-  </Landing>
-</BaseLayout>
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <meta http-equiv="refresh" content={`0;url=${target}`} />
+    <link rel="canonical" href={target} />
+    <title>Archive · izwarm</title>
+  </head>
+  <body>
+    <script is:inline define:vars={{ target }}>
+      location.replace(target);
+    </script>
+    <a href={target}>Archive</a>
+  </body>
+</html>

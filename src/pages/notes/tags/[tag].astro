@@ -1,9 +1,9 @@
 ---
-import BaseLayout from '../../../layouts/BaseLayout.astro';
-import Landing from '../../../components/home/Landing.astro';
-import NotesSidebar from '../../../components/notes/NotesSidebar.astro';
-import ArchiveList from '../../../components/notes/ArchiveList.astro';
-import { getPublishedNotes } from '../../../lib/notes';
+/**
+ * 旧地址：/notes/tags/<tag>/ 已经并进归档 —— 现在是「归档页 + ?tag= 预筛选」。
+ * 这里只留一个重定向存根，避免老链接 404；落地页会自动把该标签筛上。
+ */
+import { getPublishedNotes, url } from '../../../lib/notes';
 
 export async function getStaticPaths() {
   const notes = await getPublishedNotes();
@@ -11,17 +11,23 @@ export async function getStaticPaths() {
   return tags.map((tag) => ({ params: { tag }, props: { tag } }));
 }
 
-const { tag } = Astro.props;
-const notes = await getPublishedNotes();
-const tagged = notes.filter((note) => note.data.tags.includes(tag));
+const { tag } = Astro.props as { tag: string };
+const target = url(`/notes/archive/?tag=${encodeURIComponent(tag)}`);
 ---
 
-<BaseLayout title={`#${tag} · izwarm`}>
-  <Landing open active="tags">
-    <Fragment slot="notes-left"><NotesSidebar notes={notes} /></Fragment>
-    <section slot="notes-main" class="article archive-panel" aria-label={`标签 ${tag}`}>
-      <h1>#{tag}</h1>
-      <ArchiveList notes={tagged} />
-    </section>
-  </Landing>
-</BaseLayout>
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <meta http-equiv="refresh" content={`0;url=${target}`} />
+    <link rel="canonical" href={target} />
+    <title>#{tag} · izwarm</title>
+  </head>
+  <body>
+    <script is:inline define:vars={{ target }}>
+      location.replace(target);
+    </script>
+    <a href={target}>#{tag}</a>
+  </body>
+</html>

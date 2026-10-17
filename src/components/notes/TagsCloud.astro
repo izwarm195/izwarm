@@ -1,0 +1,30 @@
+---
+/**
+ * 归档页顶部的标签条。
+ *
+ * 标签不再是独立页面（原来的 /notes/tags/ 已经并进归档）：这里只是归档上方的一排开关，
+ * 所以没有「Tags」小标题，也不做标题层级 —— 点任意标签，下方归档就地过滤，
+ * 逻辑在 scripts/archive-filter.ts。筛选状态会写进 URL 的 ?tag=。
+ */
+import type { TagIndex } from '../../lib/notes';
+
+interface Props {
+  tags: TagIndex[];
+  total: number;
+}
+
+const { tags, total } = Astro.props;
+---
+
+{tags.length > 0 && (
+  <div class="archive-tag-cloud" role="group" aria-label="按标签筛选归档">
+    <button type="button" class="tag-chip" data-tag="" aria-pressed="true">
+      全部<span class="count">{total}</span>
+    </button>
+    {tags.map((item) => (
+      <button type="button" class="tag-chip" data-tag={item.tag} aria-pressed="false">
+        {item.tag}<span class="count">{item.notes.length}</span>
+      </button>
+    ))}
+  </div>
+)}

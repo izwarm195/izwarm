@@ -9,8 +9,8 @@
  * 本模块只导出函数与常量，不执行 DOM 查询（无副作用），供两个脚本各自打包内联。
  */
 
-/** Notes 工作台的四个状态（三栏）；其余为两栏页面状态 */
-export const NOTES_STATES = ['home', 'article', 'archive', 'tags'] as const;
+/** Notes 工作台的三个状态（三栏）；其余为两栏页面状态。标签已并进 archive，没有 tags 状态 */
+export const NOTES_STATES = ['home', 'article', 'archive'] as const;
 export type PanelStateName = (typeof NOTES_STATES)[number] | 'projects' | 'works' | 'about';
 
 /** 字母 → 面板页面路径（站内绝对路径，不含 base；url() 会补 base 前缀） */
@@ -380,7 +380,6 @@ export function stateFromPath(url: string): string {
   if (seg[0] === 'notes') {
     if (seg.length <= 1) return 'home';
     if (seg[1] === 'archive') return 'archive';
-    if (seg[1] === 'tags') return 'tags';
     return 'article';
   }
   if (seg[0] === 'projects' || seg[0] === 'works' || seg[0] === 'about') return seg[0];

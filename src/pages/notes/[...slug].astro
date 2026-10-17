@@ -47,7 +47,7 @@ const answerCount = (note.body?.match(answerFoldRe) ?? []).length;
           )}
           {note.data.series.length > 0 && <span>{note.data.series.join(' / ')}</span>}
           {note.data.tags.map((tag) => (
-            <a href={url(`/notes/tags/${encodeURIComponent(tag)}/`)}>#{tag}</a>
+            <a href={url(`/notes/archive/?tag=${encodeURIComponent(tag)}`)}>#{tag}</a>
           ))}
           <span>{words} 字数</span>
         </div>

@@ -23,6 +23,7 @@ import {
   NOTES_STATES,
 } from './panel-nav';
 import { site } from '../config/site';
+import { initArchiveFilter } from './archive-filter';
 
 const shellEl = document.getElementById('notesShell');
 const notesBase = import.meta.env.BASE_URL.replace(/\/$/, '') + '/notes';
@@ -276,6 +277,11 @@ function syncSeriesTree(): void {
 document.addEventListener('izwarm:panel-swap', syncSeriesTree);
 syncSeriesTree();
 
+// 归档的标签筛选：初次载入 + 每次 SPA 换页后都要重新跑一遍
+// （换页会把归档节点整体换掉，筛选状态只存在 URL 里）
+document.addEventListener('izwarm:panel-swap', initArchiveFilter);
+initArchiveFilter();
+
 // ---------- 大纲：点击平滑滚动（并避免默认锚点跳转回顶） ----------
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -322,6 +328,8 @@ function panelTargetFor(link: HTMLAnchorElement): string | null {
   if (href.startsWith('#') || href.startsWith('?')) return null; // 页内锚点 / 年份切换走整页
   const state = shellEl?.dataset.notesState ?? '';
   if ((NOTES_STATES as readonly string[]).includes(state)) {
+    // /notes/tags/... 只是旧地址的重定向存根（标签已并进归档），不放进面板里替换
+    if (href === notesBase + '/tags' || href.startsWith(notesBase + '/tags/')) return null;
     return href === notesBase || href.startsWith(notesBase + '/') ? href : null;
   }
   const pageBase = panelBase + '/' + state + '/';

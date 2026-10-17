@@ -1,19 +1,31 @@
 ---
+/**
+ * 归档页：标签筛选条 + 时间线，两者是同一个页面。
+ * 标签在上、没有自己的小标题；点任意标签，下方归档就地过滤（scripts/archive-filter.ts）。
+ */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Landing from '../../components/home/Landing.astro';
 import NotesSidebar from '../../components/notes/NotesSidebar.astro';
+import TagsCloud from '../../components/notes/TagsCloud.astro';
 import ArchiveList from '../../components/notes/ArchiveList.astro';
-import { getPublishedNotes } from '../../lib/notes';
+import { getPublishedNotes, getTagsIndex } from '../../lib/notes';
 
 const notes = await getPublishedNotes();
+const tags = getTagsIndex(notes);
 ---
 
-<BaseLayout title="归档 · izwarm">
+<BaseLayout title="Archive · izwarm">
   <Landing open active="archive">
     <Fragment slot="notes-left"><NotesSidebar notes={notes} /></Fragment>
-    <section slot="notes-main" class="article archive-panel" aria-label="文章归档">
+    <section slot="notes-main" class="article archive-panel" aria-label="文章归档" data-archive>
       <h1>Archive</h1>
+      <TagsCloud tags={tags} total={notes.length} />
+      <p class="archive-filter-status" data-archive-status hidden>
+        <span>筛选 <b data-filter-label></b> · <span data-filter-count></span> 篇</span>
+        <button type="button" data-tag-clear>清除</button>
+      </p>
       <ArchiveList notes={notes} />
+      <p class="notes-empty archive-empty" data-archive-empty hidden></p>
     </section>
   </Landing>
 </BaseLayout>

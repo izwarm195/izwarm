@@ -3,14 +3,14 @@ import { url } from '../../lib/notes';
 import { media } from '../../config/media';
 
 interface Props {
-  active: 'home' | 'article' | 'archive' | 'tags';
+  active: 'home' | 'article' | 'archive';
 }
 
 const { active } = Astro.props;
 
+// 标签已经并进 Archive（归档页顶部就是标签条），导航里不再单列 Tags
 const items = [
   { label: 'Home', href: url('/notes/'), key: 'home' },
-  { label: 'Tags', href: url('/notes/tags/'), key: 'tags' },
   { label: 'Archive', href: url('/notes/archive/'), key: 'archive' },
 ];
 

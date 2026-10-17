@@ -1858,7 +1858,7 @@ html {
   background: var(--bg-obsidian-soft);
 }
 
-/* ---- 归档 ---- */
+/* ---- 归档（标签筛选 + 时间线） ---- */
 .notes-page-title {
   font-size: clamp(22px, 3vw, 30px);
   font-weight: 400;
@@ -1867,25 +1867,122 @@ html {
 
 /* 归档内容沿用文章底板；标题留出与文章标题一致的下距 */
 .archive-panel > h1 {
-  margin-bottom: 28px;
+  margin-bottom: 22px;
+}
+
+/* 标签条：就在归档标题下面，没有自己的小标题 —— 它是一排筛选开关，不是导航入口。
+   用 button 而不是 a：点它只筛不跳（见 scripts/archive-filter.ts）。 */
+.archive-tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+}
+.tag-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 6px 12px;
+  /* 边框要有颜色：纯白 8% 在深色卡片上几乎看不见，会显得按钮没有轮廓 */
+  border: 1px solid rgba(62, 117, 117, 0.55);
+  border-radius: 10px 10px 10px 0;
+  background: rgba(62, 117, 117, 0.07);
+  color: var(--text-dim);
+  font-family: inherit;
+  font-size: 12.5px;
+  line-height: 1.45;
+  cursor: pointer;
+  transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+.tag-chip .count {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.6;
+}
+.tag-chip:hover {
+  color: var(--text-primary);
+  border-color: rgba(127, 192, 192, 0.85);
+  background: rgba(62, 117, 117, 0.14);
+}
+.tag-chip[aria-pressed='true'] {
+  color: #a9dcdc;
+  border-color: #3e7575;
+  background: rgba(62, 117, 117, 0.22);
+}
+.tag-chip[aria-pressed='true'] .count {
+  opacity: 0.85;
+}
+
+/* 筛选状态：只在筛选时出现 —— 筛的是谁、还剩几篇、怎么退 */
+.archive-filter-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0 0;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.archive-filter-status[hidden] {
+  display: none;
+}
+.archive-filter-status b {
+  font-weight: normal;
+  color: #a9dcdc;
+}
+.archive-filter-status button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #7fc0c0;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.archive-filter-status button:hover {
+  color: #a2d6d6;
+}
+
+.archive-body {
+  margin-top: 24px;
+}
+.archive-body.is-filtering {
+  animation: archive-filter-in 0.3s ease both;
+}
+@keyframes archive-filter-in {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.archive-empty {
+  margin-top: 18px;
 }
 
 .archive-year {
-  margin-bottom: 46px;
+  position: relative;
+  margin-bottom: 42px;
+  --tl-date-col: 84px;
+  /* 时间轴那条线：整条连续，只有圆点压在上面 */
+  --archive-wire: rgba(62, 117, 117, 0.55);
 }
 .archive-year:last-child {
   margin-bottom: 0;
 }
+.archive-year[hidden] {
+  display: none;
+}
 
-/* 年份头：左侧 2026 + 主题色大点，右侧上方为当年文章数 */
+/* 年份头：左侧 2026 + 主题色大点，右侧当年文章数 */
 .archive-year-head {
   position: relative;
   display: grid;
   grid-template-columns: var(--tl-date-col) minmax(0, 1fr) minmax(120px, 1fr);
   gap: 0 14px;
   align-items: center;
-  margin-bottom: 5px;
-  --tl-date-col: 84px;
+  margin-bottom: 6px;
 }
 .archive-year-main {
   position: relative;
@@ -1918,64 +2015,78 @@ html {
   font-size: 13px;
   color: var(--text-dim);
 }
+.archive-year-count b {
+  font-weight: normal;
+}
 
-/* 年份大点到首条记录之间的连线 */
-.archive-year-head::before {
+/* 年份大点 → 首条记录：从大点的圆心起笔，落到第一条记录的顶端，中间不留缝 */
+.archive-year-head::after {
   content: '';
   position: absolute;
   left: calc(var(--tl-date-col) - 3.5px);
-  top: calc(50% + 9px);
-  bottom: -5px;
+  top: 50%;
+  bottom: -6px;
   width: 1px;
-  background: rgba(62, 117, 117, 0.5);
+  background: var(--archive-wire);
 }
 
 /* 时间线条目：日期 | 标题 | 标签 */
 .archive-entry {
+  --archive-pad: 6px;
+  --archive-line-h: 20px;
+  /* 圆点圆心距行顶的距离：上内边距 + 日期行高的一半 */
+  --archive-dot-y: calc(var(--archive-pad) + var(--archive-line-h) / 2);
   position: relative;
   display: grid;
   grid-template-columns: var(--tl-date-col) minmax(0, 1fr) minmax(120px, 1fr);
   gap: 0 14px;
   align-items: baseline;
-  padding: 5px 0;
+  padding: var(--archive-pad) 0;
   scroll-margin-top: 18px;
-  --tl-date-col: 84px;
+}
+.archive-entry[hidden] {
+  display: none;
 }
 
-/* 每条记录的上、下两段连线，与小点之间留出空隙（锚定在日期行上） */
-.archive-date::before,
-.archive-date::after {
+/* 主线：每条记录把自己这一行画满，行与行首尾相接 —— 整条时间轴是连续的。
+   圆点直接压在线上面，不再像原来那样在圆点两侧各留一段空白（看着像虚线缺口）。 */
+.archive-entry::before {
   content: '';
   position: absolute;
   left: calc(var(--tl-date-col) - 3.5px);
+  top: 0;
+  bottom: 0;
   width: 1px;
-  background: rgba(62, 117, 117, 0.5);
+  background: var(--archive-wire);
 }
-.archive-date::before {
-  top: -5px;
-  bottom: calc(50% + 6px);
-}
-.archive-date::after {
-  top: calc(50% + 6px);
-  bottom: -5px;
-}
-.archive-entry:last-child .archive-date::after {
-  display: none;
+/* 每年最后一条：线收在自己的圆点上，不往下拖一截 */
+.archive-entry.is-last::before {
+  bottom: auto;
+  height: var(--archive-dot-y);
 }
 
 .archive-date {
   position: relative;
   display: flex;
   justify-content: flex-end;
-  align-items: baseline;
+  align-items: center;
   gap: 8px;
   padding-right: 12px;
   min-width: 0;
+  height: var(--archive-line-h);
   font-family: 'CMU Classical Serif', 'FandolSong', 'SimSun', 'Songti SC', 'STSong', 'NSimSun', serif;
   font-size: 13px;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.03em;
   color: var(--text-dim);
+  transition: color 0.18s ease;
+}
+.archive-date time {
+  white-space: nowrap;
+}
+/* 同一天只显示一次日期：留白但保留位置，筛掉当天第一条后还能接回来 */
+.archive-entry.is-repeat .archive-date time {
+  visibility: hidden;
 }
 .archive-date-dot {
   position: absolute;
@@ -1985,6 +2096,14 @@ html {
   height: 6px;
   border-radius: 50%;
   background: #2e5c5c;
+  transition: background 0.18s ease, box-shadow 0.18s ease;
+}
+.archive-entry:hover .archive-date {
+  color: #c3cfcf;
+}
+.archive-entry:hover .archive-date-dot {
+  background: #7fc0c0;
+  box-shadow: 0 0 0 3px rgba(62, 117, 117, 0.18);
 }
 
 .archive-title {
@@ -2019,9 +2138,10 @@ html {
   color: var(--text-dim);
   text-decoration: none;
   white-space: nowrap;
+  transition: color 0.18s ease;
 }
 .archive-tags a:hover {
-  color: var(--text-primary);
+  color: #7fc0c0;
 }
 
 @media (max-width: 820px) {
@@ -2036,31 +2156,6 @@ html {
   .archive-tags {
     justify-content: flex-start;
   }
-}
-
-/* ---- 标签 ---- */
-.tags-cloud {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-.tags-cloud a {
-  padding: 9px 14px;
-  background: var(--bg-obsidian-soft);
-  border: 1px solid var(--edge-line);
-  color: var(--text-dim);
-  text-decoration: none;
-  font-size: 13px;
-  transition: color 0.2s ease, border-color 0.2s ease;
-}
-.tags-cloud a:hover {
-  color: var(--text-primary);
-  border-color: var(--metal-highlight);
-}
-.tags-cloud .count {
-  margin-left: 6px;
-  font-size: 11px;
-  opacity: 0.65;
 }
 
 /* ---- 空状态 / 焦点 / 减少动态 ---- */
@@ -2425,12 +2520,9 @@ html {
   .notes-stat {
     padding: 12px 10px;
   }
-  .tags-cloud {
-    gap: 8px;
-  }
-  .tags-cloud a {
-    padding: 12px 16px;
-    font-size: 14px;
+  .tag-chip {
+    padding: 8px 13px;
+    font-size: 13px;
   }
   .notes-calendar-years a {
     padding: 7px 11px;
@@ -2443,8 +2535,7 @@ html {
   .notes-cal-row {
     gap: 3px;
   }
-  .archive-year-head,
-  .archive-entry {
+  .archive-year {
     --tl-date-col: 62px;
   }
   .archive-year-text {
@@ -2454,7 +2545,7 @@ html {
     font-size: 12px;
   }
   .archive-entry {
-    padding: 7px 0;
+    --archive-pad: 7px;
   }
   .archive-date {
     padding-right: 10px;

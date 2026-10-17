@@ -1,4 +1,14 @@
 ---
+/**
+ * 归档时间线。
+ *
+ * 时间轴那条竖线由每一条记录自己画满整行（.archive-entry::before），
+ * 行与行之间严丝合缝 —— 所以线是连续的，只有圆点压在上面（见 notes.css）。
+ * 每年最后一条加 .is-last，让线收在圆点上，不往下拖一截。
+ *
+ * 每条记录带 data-date / data-tags，供 archive-filter.ts 就地过滤后
+ * 重算「同一天只显示一次日期」与「末行」。
+ */
 import { formatDate, getArchiveData, noteUrl, url } from '../../lib/notes';
 import type { Note } from '../../lib/notes';
 
@@ -8,49 +18,64 @@ interface Props {
 
 const { notes } = Astro.props;
 const archive = getArchiveData(notes);
+const tagHref = (tag: string): string => url(`/notes/archive/?tag=${encodeURIComponent(tag)}`);
 ---
 
 {archive.length === 0 ? (
   <p class="notes-empty">暂无文章。</p>
 ) : (
-  archive.map((year) => {
-    const entries = year.months.flatMap((month) =>
-      month.notes.map((note) => ({ date: formatDate(note.data.publishDate), note })),
-    );
-    return (
-      <section class="archive-year">
-        <header class="archive-year-head">
-          <div class="archive-year-main">
-            <span class="archive-year-text">{year.year}</span>
-            <span class="archive-year-dot" aria-hidden="true"></span>
-          </div>
-          <p class="archive-year-count">{entries.length} 篇</p>
-        </header>
-        <ol class="archive-timeline">
-          {entries.map(({ date, note }, i) => {
-            // 同一天的多篇文章只展示一次日期（锚点挂在当天第一条上，供日历跳转）
-            const firstOfDate = i === 0 || date !== entries[i - 1].date;
-            return (
-              <li class="archive-entry" id={firstOfDate ? date : undefined}>
-                <div class="archive-date">
-                  {firstOfDate && <time datetime={date}>{date.slice(5)}</time>}
-                  <span class="archive-date-dot" aria-hidden="true"></span>
-                </div>
-                <a class="archive-title" href={noteUrl(note)}>
-                  {note.data.title}
-                </a>
-                <ul class="archive-tags">
-                  {note.data.tags.map((tag) => (
-                    <li>
-                      <a href={url(`/notes/tags/${encodeURIComponent(tag)}/`)}>#{tag}</a>
-                    </li>
-                  ))}
-                </ul>
-              </li>
-            );
-          })}
-        </ol>
-      </section>
-    );
-  })
+  <div class="archive-body" data-archive-body>
+    {archive.map((year) => {
+      const entries = year.months.flatMap((month) =>
+        month.notes.map((note) => ({ date: formatDate(note.data.publishDate), note })),
+      );
+      return (
+        <section class="archive-year" data-archive-year>
+          <header class="archive-year-head">
+            <div class="archive-year-main">
+              <span class="archive-year-text">{year.year}</span>
+              <span class="archive-year-dot" aria-hidden="true"></span>
+            </div>
+            <p class="archive-year-count">
+              <b data-year-count>{entries.length}</b> 篇
+            </p>
+          </header>
+          <ol class="archive-timeline">
+            {entries.map(({ date, note }, i) => {
+              // 同一天的多篇文章只展示一次日期（锚点挂在当天第一条上，供日历跳转）
+              const firstOfDate = i === 0 || date !== entries[i - 1].date;
+              return (
+                <li
+                  class:list={[
+                    'archive-entry',
+                    { 'is-repeat': !firstOfDate, 'is-last': i === entries.length - 1 },
+                  ]}
+                  id={firstOfDate ? date : undefined}
+                  data-date={date}
+                  data-tags={note.data.tags.join('|')}
+                >
+                  <div class="archive-date">
+                    <time datetime={date}>{date.slice(5)}</time>
+                    <span class="archive-date-dot" aria-hidden="true"></span>
+                  </div>
+                  <a class="archive-title" href={noteUrl(note)}>
+                    {note.data.title}
+                  </a>
+                  <ul class="archive-tags">
+                    {note.data.tags.map((tag) => (
+                      <li>
+                        <a href={tagHref(tag)} data-tag={tag}>
+                          #{tag}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              );
+            })}
+          </ol>
+        </section>
+      );
+    })}
+  </div>
 )}
