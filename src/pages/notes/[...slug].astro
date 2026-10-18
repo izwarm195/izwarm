@@ -69,7 +69,8 @@ const answerCount = (note.body?.match(answerFoldRe) ?? []).length;
             </button>
           </div>
         )}
-        <div class="article-body">
+        {/* data-series 给 CSS 一个按系列调样式的抓手（如数电的图统一 45%，见 notes.css） */}
+        <div class="article-body" data-series={note.data.series.at(-1)}>
           <Content />
         </div>
       </article>

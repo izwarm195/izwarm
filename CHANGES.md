@@ -725,6 +725,22 @@
   无头 Edge 截图 `signals/dcs/ch1`（两张题图约 300px 宽、居中，不再撑满）、
   `nndl/26-10-13-transformer`（架构图约 510px，仍清晰）。
 
+## 47. 数电系列的正文图片统一 45%
+
+- **原因**：数电（`signals/dcs/*`，series 末级 `数字电路与系统`）的图是从整页扫描里裁出来的
+  小块，按默认 66% 显示偏大、放大后发虚，整个系列都不合适。
+- **做法**：`src/pages/notes/[...slug].astro` 给 `.article-body` 加上
+  `data-series={note.data.series.at(-1)}`（frontmatter 的 series 末级）；
+  `notes.css` 里 `.article-body[data-series='数字电路与系统'] { --article-img-width: 45% }`。
+  走变量而不是直接写 `width`：img 那条规则读的就是这个变量，所以
+  - 单张图的 `![说明|360](url)` 行内 width 仍然优先；
+  - 手机 ≤900px 那条 `width: 100%` 仍能正常覆盖（同优先级、位置更后）。
+- **影响**：只有这 16 篇数电笔记的正文图变成 45%，其他笔记、封面、徽标、缩略图不变。
+- **验证**：`npm run build` **177 页**通过；`dist/notes/signals/dcs/ch1/index.html` 的
+  `.article-body` 带 `data-series="数字电路与系统"`，`physics/ch9` 是 `data-series="Physics"`
+  （不命中该规则）；无头 Edge 截图：桌面 1600px 下题图约 347px（正文栏 772px 的 45%），
+  手机 430px 下仍满栏。
+
 ## 验证方式汇总
 
 - TypeScript 检查：`npm run typecheck`

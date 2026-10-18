@@ -253,5 +253,9 @@ vault 里的图几乎都是 Obsidian 导出的公式 SVG 与代码 / 曲线截�
 - **图片写在表格单元格里时**，`|` 会被当成列分隔符，要写成 `![说明\|360](url)`（GFM 转义），
   否则整张表会被拆列。表格外的图不用转义。
 - 正文之外（首页、About 等手写 Astro 组件里的图）不走这套规则，直接改组件或 CSS。
+- **按系列改默认比例**：`[...slug].astro` 把 frontmatter 里 `series` 的末级写到
+  `.article-body[data-series]`，所以 `notes.css` 可以按系列下发变量，例如数电
+  （`数字电路与系统`）整组压到 45%：`.article-body[data-series='数字电路与系统'] { --article-img-width: 45% }`。
+  新增一个系列要换比例，照这个写法加一条即可，不用动内容。
 
 

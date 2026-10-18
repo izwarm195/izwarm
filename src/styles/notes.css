@@ -1289,6 +1289,14 @@ html {
   padding: 0.6em 0.8em;
   border: 1px solid rgba(255, 255, 255, 0.14);
 }
+/* 数电系列（Signals / 数字电路与系统）：题图是整页扫描里裁出来的小块，按默认 66% 显示偏大
+   且被放大得发虚，整个系列统一压到 45%。用变量下发而不是直接写 width —— img 那条规则读的
+   就是这个变量，单张图的 `![说明|360](url)` 行内 width 仍然优先，手机端也能照常回满整栏。
+   data-series 由 src/pages/notes/[...slug].astro 按 frontmatter 的 series 末级写入。 */
+.article-body[data-series='数字电路与系统'] {
+  --article-img-width: 45%;
+}
+
 .article-body img {
   display: block;
   /* 默认宽度 = 正文栏宽的 66%（正文栏约 772px → 约 510px），所有图片统一按这个比例显示。
