@@ -1291,6 +1291,11 @@ html {
 }
 .article-body img {
   display: block;
+  /* 默认宽度 = 正文栏宽的 66%（正文栏约 772px → 约 510px），所有图片统一按这个比例显示。
+     只写 max-width: 100% 的话，公式 SVG / 截图原图都在 1200px 以上，等于一律撑满整栏。
+     要统一改比例只改 --article-img-width；单张图在 vault 里写 `![说明|360](url)`、
+     `![说明|100%](url)`，由 rehype-image-size 转成行内 width 覆盖这条。 */
+  width: var(--article-img-width, 66%);
   max-width: 100%;
   height: auto;
   margin: 1.4em auto;
@@ -2444,6 +2449,8 @@ html {
     padding: 0.5em 0.65em;
   }
   .article-body img {
+    /* 手机上 66% 只剩两百多像素，看不清图里的字：这里回满整栏 */
+    width: 100%;
     margin: 1.1em auto;
   }
   .article-body .katex-display {

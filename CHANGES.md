@@ -696,6 +696,35 @@
   `dist/notes/index.html` 里 `2026-08-07` 是 `grid-column:5;grid-row:7`
   （8 月 = 月序 7 → 列 12−7 = 5；7 号 → 第 7 行），顺时针映射正确。
 
+## 46. 正文图片统一按正文栏的 66% 显示 + 逐张尺寸语法
+
+- **问题**：`.article-body img` 只有 `max-width: 100%`，而 vault 里的图都是 Obsidian 导出的
+  公式 SVG / 截图，原图 1200px 以上，于是**几乎每张图都铺满 772px 的正文栏** ——
+  两行的公式也占一整屏宽，正文被图切成一段一段。
+- **默认宽度**：`tokens.css` 新增 `--article-img-width: 66%`，
+  `notes.css` 的 `.article-body img` 改为 `width: var(--article-img-width, 66%); max-width: 100%`。
+  正文栏约 772px → 图约 510px；**所有没单独写尺寸的图都统一到这个比例**（比它小的图等比放大）。
+  想整体改比例只改这一个变量。
+- **手机端**：≤900px 的媒体查询里 `.article-body img` 回到 `width: 100%` ——
+  430px 的屏上 66% 只剩 280px，图里的字看不清。
+- **逐张指定**：新增 `src/lib/rehype-image-size.mjs`（注册在 `astro.config.mjs` 的
+  rehypePlugins 首位，在公式 / 分节插件之前跑）。它认 Obsidian 的尺寸语法
+  `![说明|360](url)` / `![说明|360x240](url)` / `![说明|60%](url)`，把尺寸写进 `img` 的
+  `style`，并把 `|尺寸` 从 `alt` 里剥掉：
+  - 用 `style` 而不是 `width`/`height` 属性 —— 属性里的百分比在部分浏览器被当成像素；
+  - 行内 `width` 优先级高于样式表，`|100%` 能盖掉默认的 66%；行内再补 `max-width: 100%`，
+    `|1200` 这种写超宽的也压回正文栏内；
+  - `|360x240` 只写 `aspect-ratio` 不写 `height`：手机上被压窄时等比缩，不会拉变形。
+- **影响**：正文图片统一 66% 居中；写了尺寸的图按写的来。封面、callout 徽标、
+  文章卡片缩略图、首页配图都不经过这条规则（徽标有自己的 `width/height`）。
+- **验证**：`npm run build` **177 页**通过；插件单测（临时 node 脚本直接跑 hast 树）确认
+  `|360` / `|60%` / `|100%` / `|360x240` 分别产出 `width: 360px` / `width: 60%` /
+  `width: 100%` / `width: 360px; aspect-ratio: 360 / 240`，`alt` 被剥成说明文字，
+  不含 `|` 的 alt 原样不动；临时 note 走完整构建后 `dist` 里 `<img>` 的 `style` 与预期一致；
+  `dist/_astro/*.css` 里能查到 `width:var(--article-img-width,66%)` 与 `--article-img-width:66%`；
+  无头 Edge 截图 `signals/dcs/ch1`（两张题图约 300px 宽、居中，不再撑满）、
+  `nndl/26-10-13-transformer`（架构图约 510px，仍清晰）。
+
 ## 验证方式汇总
 
 - TypeScript 检查：`npm run typecheck`

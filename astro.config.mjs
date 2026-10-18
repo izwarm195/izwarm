@@ -4,6 +4,7 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import rehypeMathLatex from './src/lib/rehype-math-latex.mjs';
 import rehypeSectionFold from './src/lib/rehype-section-fold.mjs';
+import rehypeImageSize from './src/lib/rehype-image-size.mjs';
 import remarkObsidianBreaks from './src/lib/remark-obsidian-breaks.mjs';
 
 // 站点地址：静态构建时用于生成规范链接。
@@ -25,6 +26,9 @@ export default defineConfig({
       remarkObsidianBreaks,
     ],
     rehypePlugins: [
+      // 图片尺寸（`![说明|360](url)`）只改 img 的属性，先跑，后面的公式 / 分节
+      // 插件都不碰 img 节点
+      rehypeImageSize,
       rehypeMathLatex,
       [
         rehypeKatex,

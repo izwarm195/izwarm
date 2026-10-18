@@ -34,6 +34,10 @@
      中英文名都写：SimSun 与「宋体」在不同浏览器里认的不是同一个名字。
      深浅两个主题共用，不需要各自覆盖。 */
   --font-math: 'IZWarm CMU Italic', 'CMU Serif', Georgia, SimSun, '宋体', FangSong, '仿宋', KaiTi, '楷体', serif;
+  /* 正文图片的默认宽度（相对正文栏宽）。所有没单独写尺寸的图片都按这个比例显示；
+     vault 里用 `![说明|360](url)` / `![说明|100%](url)` 可以逐张覆盖。
+     手机端（≤900px）会回到 100%，见 notes.css 的媒体查询。 */
+  --article-img-width: 66%;
 }
 
 [data-theme='light'] {
