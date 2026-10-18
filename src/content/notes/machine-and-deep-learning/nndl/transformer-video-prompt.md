@@ -4,7 +4,7 @@ slug: "machine-and-deep-learning/nndl/transformer-video-prompt"
 description: "使用 Manim 绘制可视化动画。"
 publishDate: "2026-10-14"
 createdAt: "2026-10-14T00:00:00Z"
-updatedDate: "2026-10-17T18:15:58"
+updatedDate: "2026-10-17T22:53:37"
 tags: ["machine-learning"]
 series: ["Machine & Deep Learning","NNDL"]
 ---
@@ -195,3 +195,8 @@ series: ["Machine & Deep Learning","NNDL"]
       - 右边用 -> K,V -> K,V 的文字表示
     - matmul 和 softmax，改成数学公式。一个三合一箭头由QKV 引出连接其上方，下方箭头引出 proj 部分。 
   - 4：0：26，两个代码不应隐藏后再显示，而是直接融入对应模块。
+
+# Results
+- 保持之前的风格不变，绘制两个训练结果视频R 1，R 2，R 3，分别对应 D:\搞学术\大二暑\Obsidian\Machine & Deep Learning\NNDL\NNDL 26-10-13 手写 Transformer.md 中的原始模型，Model 1~6和Model X。
+- 效果类似数据集展示，但是没有滚动。左边是原文，右边是译文。
+- 原文选择：“翻译对照”部分中 24句隔一句选一句。翻译结果，除了原始模型都能在notebook中找到，因此需要你用原始模型再翻一遍这 12个句子。

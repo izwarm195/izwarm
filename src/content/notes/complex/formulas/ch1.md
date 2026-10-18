@@ -4,7 +4,7 @@ slug: "complex/formulas/ch1"
 description: "复数不能比较大小； z 0 当且仅当实部、虚部同时为零。"
 publishDate: "2026-10-17"
 createdAt: "2026-10-17T00:00:00Z"
-updatedDate: "2026-10-17T20:03:50"
+updatedDate: "2026-10-18T08:44:13"
 tags: ["complex","complex-formula"]
 series: ["Complex","复变函数定理公式总结"]
 ---

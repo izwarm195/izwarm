@@ -115,6 +115,10 @@
     "feat(notes): 文章各级标题可整行点击折叠 —— 收起标题变灰、内容淡出、下方滑上来"
   ],
   "2026-10-17": [
+    "chore(notes): Transformer 视频演示 prompt 补代号，URL 全站不再带中文",
     "feat(notes): 复变定理公式总结上线，URL 压成 complex/formulas/chN"
+  ],
+  "2026-10-18": [
+    "feat(notes): Tags 并进 Archive —— 标签条就地筛选，时间轴补满断线"
   ]
 }

@@ -4,6 +4,7 @@ slug: "complex/formulas/ch2"
 description: "要求 Delta z to0 的方式任意，极限同值。"
 publishDate: "2026-10-17"
 createdAt: "2026-10-17T00:00:00Z"
+updatedDate: "2026-10-18T08:50:07"
 tags: ["complex","complex-formula"]
 series: ["Complex","复变函数定理公式总结"]
 ---
@@ -160,9 +161,13 @@ $$
 - $b\in\mathbb{Z}$ 单值；$b=\frac{p}{q}$ 取 $q$ 个值；$b$ 为无理数或复数时无穷多值。
 
   $$
-  a^{\frac{p}{q}}=\mathrm{e}^{\frac{p}{q}\ln|a|}\left[\cos\frac{p}{q}(\arg a+2k\pi)+\mathrm{i}\sin\frac{p}{q}(\arg a+2k\pi)\right]
+  \begin{aligned}
+  a^{\frac{p}{q}}&=\mathrm{e}^{\frac{p}{q}\left[\ln|a|+\mathrm{i}(\arg a+2k\pi)\right]}\\
+  &=\mathrm{e}^{\frac{p}{q}\ln|a|}\left[\cos\frac{p}{q}(\arg a+2k\pi)+\mathrm{i}\sin\frac{p}{q}(\arg a+2k\pi)\right]
+  \end{aligned}
   \tag{2.2.6}
   $$
+- $p,q$ 互素、$q>0$；取 $k=0,1,\cdots,q-1$ 得 $q$ 个值。
 
   $$
   z^{b}=\mathrm{e}^{b\,\mathrm{Ln}\,z},\qquad (z^{b})'=bz^{b-1}

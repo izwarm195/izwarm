@@ -4,44 +4,44 @@ slug: "signals/dcs/ch5"
 description: "题5.1图(a) 题5.1图(b)"
 publishDate: "2026-09-29"
 createdAt: "2026-09-29T00:00:00Z"
-updatedDate: "2026-09-29T13:27:31"
+updatedDate: "2026-10-18T11:19:36"
 tags: ["signals"]
 series: ["Signals","数字电路与系统"]
 ---
 
 ## 5.1 分析题 5.1 图所示电路，写出真值表和逻辑函数表达式。
 
-![题5.1图(a)](https://s3.su.bcebos.com/izwarm-obsidian/2026/09/c08e465d4b05bb496cb6478136f4d8ae.jpg) ![题5.1图(b)](https://s3.su.bcebos.com/izwarm-obsidian/2026/09/ea36aa979e75746500ff1cc78af0178e.jpg)
+![题5.1图(a)](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/e6489b32bc5a082fdee2c4642fe38fc4.svg) ![题5.1图(b)](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/71af12b2bfa36390ce544e9042018ec2.svg)
 
 ## 5.2 分析题 5.2 图所示电路的逻辑功能，写出逻辑函数表达式和真值表。
 
-![题5.2图](https://s3.su.bcebos.com/izwarm-obsidian/2026/09/2c59080148aba16297b5ca97508911bb.jpg)
+![题5.2图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/7f8b6cc9bbb0da7f5dfd82d4401f5b06.svg)
 
 ## 5.3 写出题 5.3 图所示两个电路的逻辑表达式和真值表。
 
-![题5.3图(a)](https://s3.su.bcebos.com/izwarm-obsidian/2026/09/e41b306f393053ac788397ed8e39baa9.jpg) ![题5.3图(b)](https://s3.su.bcebos.com/izwarm-obsidian/2026/09/4e558093a0e1baa9fb8dff4e1dc11937.jpg)
+![题5.3图(a)](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/cb33d78486eb1bcf97f687d07c08cffa.svg) ![题5.3图(b)](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/7c01a40a883bb9452541516a4db0846c.svg)
 
 ## 5.4 用真值表、卡诺图和逻辑图（与或）表示逻辑函数 $L = A\bar{B} + B\bar{C} + C\bar{A}$。
 
 ## 5.5 分析题 5.5 图所示组合逻辑电路，写出与或逻辑表达式，列出其真值表。
 
-![题5.5图](https://s3.su.bcebos.com/izwarm-obsidian/2026/09/d8fb4ab6756020e033ae6b46b1ffb219.jpg)
+![题5.5图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/b7513d14238ed206802a6b6b1d457faa.svg)
 
 ## 5.6 逻辑电路如题 5.6 图所示，写出其逻辑表达式和真值表。
 
-![题5.6图](https://s3.su.bcebos.com/izwarm-obsidian/2026/09/9099a4a23c0744ef37f99697c4d9d362.jpg)
+![题5.6图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/a569a03c6bd84dffd3c031e4c0497b4d.svg)
 
 ## 5.7 试分析题 5.7 图所示的逻辑电路，写出逻辑表达式和真值表。
 
-![题5.7图](https://s3.su.bcebos.com/izwarm-obsidian/2026/09/0f5fdc811ed6b1814834b5f1bf21f996.jpg)
+![题5.7图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/b57fc019db54987902cc2c8458132e23.svg)
 
 ## 5.8 试分析题 5.8 图所示的逻辑电路，写出逻辑表达式和真值表。
 
-![题5.8图](https://s3.su.bcebos.com/izwarm-obsidian/2026/09/75dd7f20e32001b91b6dc6d1d1c1efe8.jpg)
+![题5.8图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/dd7b68d2c5d728089c52e52816bc82a9.svg)
 
 ## 5.9 写出题 5.9 图所示电路的逻辑表达式和真值表。
 
-![题5.9图](https://s3.su.bcebos.com/izwarm-obsidian/2026/09/2927f85b337d7e01ed10b501737b91e8.jpg)
+![题5.9图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/0ea171c967c7ff351a21df1489ce43f8.svg)
 
 ## 5.10 A、B 是两个 1 位的二进制数，设计比较 A、B 大小或者相等的逻辑电路。写出真值表和逻辑表达式，并画出逻辑图。
 
@@ -55,7 +55,7 @@ $F = A\bar{B}C\bar{D} + \bar{A}\bar{B}C\bar{D} + A\bar{B}\bar{C}D + \bar{A}\bar{
 
 ## 5.13 写出题 5.13 图所示电路输出信号的逻辑表达式，并采用最少的与非门实现该函数。
 
-![题5.13图](https://s3.su.bcebos.com/izwarm-obsidian/2026/09/5e57e810b138a38167d139636dc09895.jpg)
+![题5.13图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/beaad3bdab51a01362050a12b3529287.svg)
 
 ## 5.14 试分别用二输入与非门和或非门实现下列逻辑函数，写出相应的表达式，画出逻辑图。
 
@@ -84,7 +84,7 @@ $F = A\bar{B}C\bar{D} + \bar{A}\bar{B}C\bar{D} + A\bar{B}\bar{C}D + \bar{A}\bar{
 
 ## 5.23 题 5.23 图所示为一用水容器示意图，图中阴影表示水，A、B、C 电极被水浸没时会有高电平信号输出，试用与非门构成的电路来实现下述控制逻辑：水面在 A、B 间，为正常状态，亮绿灯 G；水面在 B、C 间或在 A 以上为警戒状态，点亮黄灯 Y；水面在 C 以下为缺水状态，点亮红灯 R。
 
-![题5.23图](https://s3.su.bcebos.com/izwarm-obsidian/2026/09/da626bd1f49035ba74edcc33456deebb.jpg)
+![题5.23图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/881355d56718ec2f27f41e3b88e22039.svg)
 
 ## 5.24 设计一判断人类输血和受血是否匹配的电路。人类有四种基本血型 A、B、O、AB，输血和受血的规则是：A 型血可以输给 A 型血和 AB 型血的病人，B 型血可以输给 B 型血和 AB 型血的病人，O 型血可以输给所有血型病人，AB 型血只能输给 AB 型血的病人。
 
@@ -92,17 +92,17 @@ $F = A\bar{B}C\bar{D} + \bar{A}\bar{B}C\bar{D} + A\bar{B}\bar{C}D + \bar{A}\bar{
 
 ## 5.26 判别题 5.26 图所示组合逻辑电路是否存在冒险现象，在什么情况下会产生冒险。
 
-![题5.26图](https://s3.su.bcebos.com/izwarm-obsidian/2026/09/4f00ce67fcea774e84108a78bf9b26a8.jpg)
+![题5.26图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/ffd8cf79866cd6b10e1907a5e48b8f87.svg)
 
 ## 5.27 试分析逻辑函数 $Y = \bar{A}\bar{B}D + B\bar{D} + \bar{A}B\bar{C} + A\bar{B}\bar{C}$，当输入变量 A、B、C、D 分别发生 0110→1100，1111→1010，0011→0110 变化时，是否存在功能冒险。
 
 ## 5.28 分析题 5.28 图所示电路，指出电路什么情况下会发生逻辑冒险，用改变逻辑设计的方式消除冒险。
 
-![题5.28图](https://s3.su.bcebos.com/izwarm-obsidian/2026/09/e209317b4b76f54252ec5a2d965a8b84.jpg)
+![题5.28图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/644dddcb24659ef1767cc25bf9f90712.svg)
 
 ## 5.29 已知 $Y(A,B,C,D) = \sum m(0,3,7,8,9,10,11,12,13) + \sum d(1,2,4)$，求 Y 的无逻辑冒险的与或式。
 
 ## 5.30 某一组合电路如题 5.30 图所示，输入变量 $(A,B,D)$ 的取值不可能发生 $(0,1,0)$ 的输入组合。分析它的竞争冒险现象，如果存在逻辑冒险，则通过修改电路来消除冒险。
 
-![题5.30图](https://s3.su.bcebos.com/izwarm-obsidian/2026/09/d502bdb31b17423efe589eb1cf6f242c.jpg)
+![题5.30图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/f1c090eaf817158426fcda4f3f20db7d.svg)
 

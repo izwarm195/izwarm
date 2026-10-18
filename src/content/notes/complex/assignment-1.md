@@ -3,8 +3,8 @@ title: "复变函数 - 第1次作业"
 slug: "complex/assignment-1"
 publishDate: "2026-10-12"
 createdAt: "2026-10-12T00:00:00Z"
-updatedDate: "2026-10-12T17:49:13"
-tags: ["complex","复变函数","homework","math"]
+updatedDate: "2026-10-18T08:30:56"
+tags: ["complex","homework","math"]
 series: ["Complex"]
 ---
 

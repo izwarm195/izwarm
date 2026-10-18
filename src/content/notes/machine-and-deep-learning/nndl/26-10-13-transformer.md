@@ -1399,4 +1399,12 @@ ax.legend(); ax.grid(alpha=.2); fig.tight_layout(); plt.show()
 # 七、视频记录
 > 完整代码（一）的录制和 Manim 演示视频的剪辑。演示视频制作 prompt：[Transformer 视频演示 prompt](/notes/machine-and-deep-learning/nndl/transformer-video-prompt/)
 
+**手写 Transformer**（6:50）
+
+<iframe src="https://player.bilibili.com/player.html?bvid=BV12mJq6eEWm&page=1&high_quality=1&danmaku=1&autoplay=0"
+width="100%" height="450" scrolling="no" frameborder="no" framespacing="0"
+allowfullscreen="true" style="max-width:100%;border:0;border-radius:8px;"></iframe>
+
+原视频：https://www.bilibili.com/video/BV12mJq6eEWm
+
 
