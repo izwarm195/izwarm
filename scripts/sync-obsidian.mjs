@@ -40,6 +40,17 @@ const WEB_REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..'
 // 子路径部署（GitHub Pages 的 /izwarm/）时，站内链接带上 base 前缀；本地为空
 const SITE_BASE = (process.env.ASTRO_BASE ?? '').replace(/\/$/, '');
 
+// ASTRO_BASE 只该是部署子路径（`/izwarm`），不能是本机磁盘路径。曾经在
+// `ASTRO_BASE=D:/…/izwarm` 的环境里跑过一次同步：66 篇笔记里的站内链接与 callout
+// 图标全被写成 `D:/…` 绝对路径，页面上的图标和跳转一起废掉，而脚本一声不响。
+// 这里直接拦下来，让人先去清环境变量。
+if (/^[A-Za-z]:[\\/]/.test(SITE_BASE) || SITE_BASE.startsWith('file:')) {
+  throw new Error(
+    `ASTRO_BASE 看起来是本机路径（${SITE_BASE}），同步会把整串路径写进笔记的链接和图标里。` +
+      '请先清掉这个环境变量（子路径部署才需要，写成 /izwarm 这种形式）再跑。',
+  );
+}
+
 // ---------- 纯函数（可单测） ----------
 const PREFIX_DATE = /^(?:CS|CE|WD|WS)\s+(\d{2})-(\d{2})-(\d{2})[\s:：]*(.*)$/;
 
