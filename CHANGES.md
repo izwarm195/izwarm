@@ -741,6 +741,40 @@
   （不命中该规则）；无头 Edge 截图：桌面 1600px 下题图约 347px（正文栏 772px 的 45%），
   手机 430px 下仍满栏。
 
+## 48. 新系列 Text-to-Audio / Papers（vault 改名 + 白名单 + 空别名）
+
+- **背景**：科研笔记一直放在 vault 的 `Research Vault/`（一个独立工作区，含 `AGENTS.md`、
+  `Templates/` 与 Zotero 桥接脚本），从未进白名单，站点上还没有这条线。
+- **vault 侧改名**：`Research Vault/` → `Text-to-Audio/`（`git mv`，历史保留）。
+  `Papers/` 继续按「一篇论文一个目录」存放（`Papers/AudioLDM/AudioLDM.md`、
+  `Papers/CLAP/CLAP.md` + `CLAP_QNA.md`、`Papers/X-LANCE 研读清单.md`）。
+  同时把 4 处指向旧目录名的说明同步掉：`Text-to-Audio/AGENTS.md`、
+  `Text-to-Audio/.dshwolf/cerebrum.md`、`Log/AudioLDM 前置知识覆盖计划（大二上）.md`、`Style.md`。
+- **白名单**：`scripts/sync-obsidian.mjs` 的 `ROOTS` 加 `Text-to-Audio`，
+  `CATEGORY_TAG` 加 `text-to-audio`。系列树因此是
+  `Text-to-Audio → Papers → AudioLDM / CLAP`，主系列名与目录名一致（系列由目录结构推导，
+  不在前端另做一层显示名映射）。
+- **代理文档不算笔记**：新增 `SKIP_FILES = ['AGENTS.md']`。第一版同步把
+  `Text-to-Audio/AGENTS.md` 当成一篇笔记发到了 `/notes/text-to-audio/agents/`——
+  它是写给 AI 代理的工作区说明，不是内容。
+- **空别名**：`scripts/slug-aliases.mjs` 允许值为 `''`，表示「这一段不进 URL」。
+  论文笔记靠目录定身份，标题置空后路径是 `text-to-audio/papers/clap`，
+  而不是再重复一遍 60 字的论文全名；`CLAP 追问记录` → `.../clap/qna`、
+  `X-LANCE 研读清单` → `.../papers/reading-list`。两篇撞到同一 slug 仍由原有的
+  冲突检查直接抛错，不会静默覆盖。
+- **摘要只取散文**：`firstParagraph()` 现在跳过表格行、HTML 行与 `---` 分隔线。
+  CLAP 正文以 `---` + `<div><img></div>` 开头，摘要曾变成一截被剥掉引号的 HTML
+  （`<div style "text align center" <img src …`）。顺带修好 8 篇以表格开头的旧笔记
+  （`complex/formulas/ch5`、`cpp/summaries/*`、`signals/dcs/ch10` 等），
+  它们的 `description` 从表头变成正文第一段散文。
+- **顺带补代号**：新同步进来的 `Python 杂记 12 - einsum` → `12-einsum`、
+  `Pytorch 练习` → `pytorch-practice`，同步告警清零。
+- **影响**：新增 4 篇笔记；构建 **196 页**（原 177）。既有笔记的 slug 与正文不变，
+  变的只有上面那 8 篇的 `description`。
+- **验证**：`node scripts/sync-obsidian.mjs --selftest` 通过（含新增的空别名断言）；
+  同步 145 篇、无「未加代号」告警；`npm run typecheck` 通过；`npm run build` 196 页，
+  产出 `dist/notes/text-to-audio/papers/{audioldm,clap,clap/qna,reading-list}/`。
+
 ## 验证方式汇总
 
 - TypeScript 检查：`npm run typecheck`

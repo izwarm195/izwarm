@@ -23,8 +23,12 @@ const ROOTS = [
   'Signals/数字电路与系统',
   'Physics',
   'Complex',
+  'Text-to-Audio',
 ];
 const SKIP_DIRS = new Set(['.obsidian', '.trash', 'Templates', 'Daily', 'Journal', 'Canvas', 'Private', 'Attachments', '_QuickAdd']);
+// 白名单根目录里可能躺着写给 AI 代理看的说明文件（如 Text-to-Audio/AGENTS.md）：
+// 它们是工作区文档，不是笔记，按文件名排除（目录名排除已经在 SKIP_DIRS 里）。
+const SKIP_FILES = new Set(['AGENTS.md']);
 const _posArg = process.argv.slice(2).find((a) => !a.startsWith('--'));
 const VAULT = _posArg || process.env.OBSIDIAN_VAULT || 'D:\\搞学术\\大二暑\\Obsidian';
 const OUT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../src/content/notes');
@@ -207,6 +211,7 @@ async function walk(dir, vaultRel = '') {
   }
   for (const e of entries) {
     if (e.name.startsWith('.') || SKIP_DIRS.has(e.name)) continue;
+    if (e.isFile() && SKIP_FILES.has(e.name)) continue;
     const full = path.join(dir, e.name);
     const rel = path.join(vaultRel, e.name);
     if (e.isDirectory()) out.push(...(await walk(full, rel)));
@@ -338,7 +343,19 @@ function firstParagraph(body) {
       continue;
     }
     if (inFold) continue;
-    if (!trimmed || trimmed.startsWith('>') || trimmed.startsWith('#') || trimmed.startsWith('```')) continue;
+    // 摘要只该是「散文」：标题、引用、代码、表格行、HTML 块、分隔线都不是。
+    // 少了后面两类，CLAP 那种「正文以 --- 和 <div><img> 开头」的笔记，摘要会变成
+    // 一截被剥掉引号的 HTML（`<div style "text align:center" <img src …`）。
+    if (
+      !trimmed ||
+      trimmed.startsWith('>') ||
+      trimmed.startsWith('#') ||
+      trimmed.startsWith('```') ||
+      trimmed.startsWith('<') ||
+      trimmed.startsWith('|') ||
+      /^(-{3,}|\*{3,}|_{3,})$/.test(trimmed)
+    )
+      continue;
     const t = trimmed
       // 链接/图片只留文字：否则摘要会带上内部 slug，如 "Numpy 函数汇总 (/notes/machine and deep learning/python/numpy 函数汇总/)"
       .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1')
@@ -797,6 +814,7 @@ const CATEGORY_TAG = {
   Signals: 'signals',
   Physics: 'physics',
   Complex: 'complex',
+  'Text-to-Audio': 'text-to-audio',
 };
 
 async function main() {
@@ -1188,11 +1206,23 @@ function selftest() {
   assert(aliasedSegment('第三次作业') === null, '第N 后面不是章/节就不算章节');
   assert(aliasedSegment('第1节 引言') === 's1', 'section');
   assert(aliasedSegment('没编号的中文标题') === null, 'unaliased returns null');
-  // 别名表的值必须是纯 ASCII 片段，否则 URL 里照样会冒出百分号编码
+  // 别名表的值必须是纯 ASCII 片段，否则 URL 里照样会冒出百分号编码。
+  // 空串是唯一例外：表示「这一段不进 URL」，由上级目录直接当叶子（见 Papers/ 的用法）。
   const badAlias = Object.entries(SEGMENT_ALIASES).find(
-    ([key, value]) => !/^[a-z0-9][a-z0-9-]*$/.test(value)
+    ([key, value]) => value !== '' && !/^[a-z0-9][a-z0-9-]*$/.test(value)
   );
   assert(badAlias === undefined, 'alias values are ascii slugs', badAlias, undefined);
+  // 空别名 = 该段落从 URL 里消失：论文笔记靠「一篇一个目录」定身份，标题不再重复进路径
+  assert(
+    deriveSlug(
+      'Text-to-Audio',
+      `Papers${path.sep}CLAP`,
+      'CLAP: Learning Audio Concepts From Natural Language Supervision'
+    ) === 'text-to-audio/papers/clap',
+    'empty alias drops the segment',
+    deriveSlug('Text-to-Audio', `Papers${path.sep}CLAP`, 'CLAP: Learning Audio Concepts From Natural Language Supervision'),
+    'text-to-audio/papers/clap'
+  );
 
   // ---- 折叠 callout → <details> ----
   // 块内必须留成普通 markdown（空行 + 内容 + 空行）：公式、真值表、列表都靠这个

@@ -6,7 +6,8 @@
  * 本站要的是短、稳定、纯 ASCII 的路径，所以中文段落在这里统一换成代号。
  *
  * 键 = **原文段落**（笔记标题或目录名，一字不差，包括 `&`、`（）`、全角引号）。
- * 值 = URL 片段，只允许小写字母 / 数字 / 连字符（selftest 会校验）。
+ * 值 = URL 片段，只允许小写字母 / 数字 / 连字符（selftest 会校验）；
+ *      空串 `''` 表示这一段不进入 URL（由上级目录充当叶子，用于「一篇一个目录」的论文笔记）。
  * 章节类（`第3章 …` / `第九章 …` / `附录`）由 sync-obsidian.mjs 的规则自动处理，**不要写在这里**；
  * 表里的键优先于规则，所以想让某一章自定义（如 `ch9-oscillation`）也可以直接写一行覆盖。
  *
@@ -74,6 +75,8 @@ export const SEGMENT_ALIASES = {
   'Python 杂记 09 - Path 常用方法': '09-path-methods',
   'Python 杂记 10 - ignore_index(-100) 与 CrossEntropy': '10-ignore-index',
   'Python 杂记 11 - register_buffer': '11-register-buffer',
+  'Python 杂记 12 - einsum': '12-einsum',
+  'Pytorch 练习': 'pytorch-practice',
 
   // ---- 英语 ----
   '数学英语词汇': 'math-vocab',
@@ -97,4 +100,16 @@ export const SEGMENT_ALIASES = {
   // ---- C++ 技巧 ----
   '位运算': 'bitwise',
   '逗号表达式': 'comma-operator',
+
+  // ---- Text-to-Audio / Papers ----
+  // 论文笔记按 vault 的「一篇一个目录」存放（Papers/<短标识>/<短标识>.md），
+  // 目录本身已经是 ASCII 短标识，所以标题这一段直接置空 —— 路径就是
+  // text-to-audio/papers/audiodlm，而不是再重复一遍 60 字的论文全名。
+  // 空串 = 该段落不进 URL（上级目录当叶子），撞车仍会被 slug 冲突检查拦下。
+  'AudioLDM: Text-to-Audio Generation with Latent Diffusion Models': '',
+  'CLAP: Learning Audio Concepts From Natural Language Supervision': '',
+  // 追问记录挂在主笔记目录下：papers/clap/qna
+  'CLAP 追问记录': 'qna',
+  // 阅读清单直接躺在 Papers/ 下
+  'X-LANCE 研读清单': 'reading-list',
 };

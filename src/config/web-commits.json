@@ -119,6 +119,12 @@
     "feat(notes): 复变定理公式总结上线，URL 压成 complex/formulas/chN"
   ],
   "2026-10-18": [
+    "feat(notes): 正文图片统一按 66% 宽显示，并支持 ![说明|宽度] 逐张指定",
+    "chore(content): 同步 vault —— 数电第 1–15 章上线，标签与更新时间刷新",
+    "fix(sync): ASTRO_BASE 是本机路径时直接报错，别把 D:/… 写进笔记链接",
     "feat(notes): Tags 并进 Archive —— 标签条就地筛选，时间轴补满断线"
+  ],
+  "2026-10-19": [
+    "feat(notes): 数电系列正文图片统一 45%"
   ]
 }

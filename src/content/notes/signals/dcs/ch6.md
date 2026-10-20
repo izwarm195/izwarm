@@ -42,21 +42,21 @@ series: ["Signals","数字电路与系统"]
 
 (2) 当译码器 U1 工作时，写出对应 A、B 的取值时， $\overline{Y}_{10} \sim \overline{Y}_{13}$ 的输出。
 
-![题6.6图](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//77e56f99-4c6a-4ddd-bb7d-adb14575e874/markdown_2/imgs/img_in_image_box_292_81_667_837.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A53Z%2F-1%2F%2Fd1867a685151926db779e02aa6cb107a65c8b8b54ad48798678c66110fe3435f)
+![题6.6图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/18f34621b12c29f7f85535af42f98c54.svg)
 
 ## 6.7 试用一个优先编码器 74148 和一个译码器 74138 将 3 位格雷码转换为 3 位二进制码。
 
 ## 6.8 写出题 6.8 图所示电路的逻辑函数，并将其化简为最简与 - 或表达式。
 
-![题6.8图](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//77e56f99-4c6a-4ddd-bb7d-adb14575e874/markdown_2/imgs/img_in_image_box_299_966_677_1254.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A54Z%2F-1%2F%2F9f6c51228225291cba476c02b328b35f40e2da2f2be0a67b3832bccd50da9f0a)
+![题6.8图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/62b5243be03d6b2354c98825b2931296.svg)
 
 ## 6.9 用74138译码器构成题6.9图所示电路，写出输出F的逻辑表达式，列出真值表并说明电路功能。
 
-![题6.9图](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//313e5767-ee83-4d47-9adf-9d4b6d5649ae/markdown_0/imgs/img_in_image_box_143_75_521_375.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A51Z%2F-1%2F%2Fc932b564c002f8653abf754df041c6eac0a4ad054a43f49a3a933c33a552074e)
+![题6.9图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/cd5c440ea3a87b9e17315469223c457a.svg)
 
 ## 6.10 题6.10图所示电路是由译码器74138及门电路构成的地址译码电路。试列出此译码电路每个输出对应的地址，要求输入地址 $A_{7}\sim A_{0}$用十六进制数码表示。
 
-![题6.10 图](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//313e5767-ee83-4d47-9adf-9d4b6d5649ae/markdown_0/imgs/img_in_image_box_636_87_910_379.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A52Z%2F-1%2F%2F511f95a53c306fcefd71d90643bd45502d2e5fe48a8a3be309d3e2653199993a)
+![题6.10 图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/3e2716dd7186277a16b1db115788ed94.svg)
 
 ## 6.11 试画出译码器74138和门电路产生如下多输出逻辑函数的逻辑图。
 
@@ -82,7 +82,7 @@ series: ["Signals","数字电路与系统"]
 
 ## 6.15 写出题6.15图中 $Z_{1}$、 $Z_{2}$、 $Z_{3}$的逻辑函数式，并化简为最简的与-或表达式。
 
-![题6.15 图](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//313e5767-ee83-4d47-9adf-9d4b6d5649ae/markdown_0/imgs/img_in_image_box_332_857_714_1165.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A52Z%2F-1%2F%2F5ea66056cbc9854c8109ece2fb2f75b3ffa18a68566dcfcf70e89e9d7677d66f)
+![题6.15 图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/4bfeddee0a8632d3218dc24aafd1dd7b.svg)
 
 ## 6.16 用二-十进制编码器、译码器、七段显示器，组成一个1位数码显示电路。当0~9十个输入端中某一个接地时，显示相应数码，画出逻辑图。
 
@@ -90,19 +90,19 @@ series: ["Signals","数字电路与系统"]
 
 ## 6.18 根据题6.18图所示4选1数据选择器74153（1/2），写出输出Z的最简与-或表达式。
 
-![题6.18 图](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//313e5767-ee83-4d47-9adf-9d4b6d5649ae/markdown_1/imgs/img_in_image_box_330_80_629_322.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A53Z%2F-1%2F%2Fe13b0abaa2d656efeca9f70084246701f4131211dd74d875b5a54420b8d5f44a)
+![题6.18 图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/0c7b496ccf500c4b1190bd75f320c917.svg)
 
 ## 6.19 由4选1数据选择器74153构成的组合逻辑电路如题6.19图(a)所示，画出题6.19图(b)所示输入
 
 信号作用下，F的输出波形。
 
-![题6.19 图(a)](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//313e5767-ee83-4d47-9adf-9d4b6d5649ae/markdown_1/imgs/img_in_image_box_207_411_500_652.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A53Z%2F-1%2F%2F56bb53ef13179788b4256e4c6c30ea207f21c9065c3dfe127154734e0e2a90e3)
+![题6.19 图(a)](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/985a8245dd4cde92ae808aa9d870a9c0.svg)
 
-![题6.19 图(b)](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//313e5767-ee83-4d47-9adf-9d4b6d5649ae/markdown_1/imgs/img_in_image_box_576_443_741_644.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A53Z%2F-1%2F%2F5a8441acaf991f7beaceccffc37d23990e81283a20cffa9ab4fb8397e819febc)
+![题6.19 图(b)](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/74a90e0738d9fdf3588f8ac3e0d13cdf.svg)
 
 ## 6.20 由4选1数据选择器74153和门电路构成的组合逻辑电路如题6.20图所示，试写出输出F的最简逻辑函数表达式。
 
-![题6.20图](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//313e5767-ee83-4d47-9adf-9d4b6d5649ae/markdown_1/imgs/img_in_image_box_246_807_703_1103.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A53Z%2F-1%2F%2Fbca69cc9639ecc653e48360da255d3c1cb573bf14d9860e417d609cfa00b047d)
+![题6.20图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/5e5d145b4612194a7678cfb0d04e96b5.svg)
 
 ## 6.21 题 6.21 图是用两个 4 选 1 数据选择器组成的逻辑电路，试写出输出 F 与输入 M、N、P、Q 之间的逻辑函数。
 
@@ -132,11 +132,11 @@ $$
 
 ## 6.27 已知用数据选择器 74151 构成的逻辑电路如题 6.27 图所示，写出输出 F 的逻辑函数表达式，并化成最简与 - 或表达式。
 
-![题6.27 图](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//313e5767-ee83-4d47-9adf-9d4b6d5649ae/markdown_2/imgs/img_in_image_box_341_618_686_827.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A54Z%2F-1%2F%2F71951a4585702406567e2cdfc1ad69b5217f5cf147122048c37f30a6b006363b)
+![题6.27 图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/eefd7d05f54f2574ac6e4a8045a0e1c9.svg)
 
 ## 6.28 分析题 6.28 图所示电路，写出输出 F 的逻辑函数式。
 
-![题6.28 图](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//313e5767-ee83-4d47-9adf-9d4b6d5649ae/markdown_2/imgs/img_in_image_box_340_921_694_1168.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A54Z%2F-1%2F%2F134542c9c0e00d29a2332e5dd104496ad6b9a0afe26a4e047738727a539031ab)
+![题6.28 图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/2e1cdff536c4d63cbb42e68170511ace.svg)
 
 ## 6.29 试用1片8选1数据选择器设计一个8421BCD码的非法码（0~9以外的4位二进制代码）检测器，画出逻辑图。
 
@@ -156,7 +156,7 @@ $$
 
 ## 6.32 题6.32图是74138作数据分配器的逻辑图，当EN=1,D=0，在地址输入端轮流输入000~111时，画输出端 $Y_{0}\sim Y_{7}$的波形。
 
-![题6.32 图](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//9005024a-7a18-4ef0-89d4-8bd6b775508c/markdown_0/imgs/img_in_image_box_341_232_587_467.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A41Z%2F-1%2F%2F76c1896a2a88950f9787e4b09556b3f2a9c0ffaf6b00332f1a454e9d24ef55b1)
+![题6.32 图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/669795661e5d4a7613b46dc81c7583d9.svg)
 
 ## 6.33 试用3片4位数值比较器7485实现两个12位二进制数比较。
 

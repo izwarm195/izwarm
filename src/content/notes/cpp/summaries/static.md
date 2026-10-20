@@ -1,7 +1,7 @@
 ---
 title: "static"
 slug: "cpp/summaries/static"
-description: "位置 含义 生命周期 可见性"
+description: "不加 static 的全局变量默认具有 外部链接 ，可以被其他 .cpp 文件通过 extern 访问。加了 static 后变为 内部链接 ，符号只在当前翻译单元（即当前 .cpp 文件）内可见。"
 publishDate: "2026-07-10"
 createdAt: "2026-07-10T00:00:00Z"
 tags: ["cpp","summaries"]

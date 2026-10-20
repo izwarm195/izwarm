@@ -1,7 +1,7 @@
 ---
 title: "第五章 留数及其应用 定理公式总结"
 slug: "complex/formulas/ch5"
-description: "类型 洛朗级数特征 lim limits_{z to z_{0}}f(z)"
+description: "z_{0} 为 m 级极点的充要条件。"
 publishDate: "2026-10-17"
 createdAt: "2026-10-17T00:00:00Z"
 tags: ["complex","complex-formula"]

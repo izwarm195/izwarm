@@ -1,7 +1,7 @@
 ---
 title: "二级C++上机综合案例三例"
 slug: "cpp/summaries/c2-exam-cases"
-description: "案例 主线 覆盖的核心语法 真题原型"
+description: "设计一个 Student 类，保存姓名（ char ，动态申请）、分数、学号；要求："
 publishDate: "2026-09-18"
 createdAt: "2026-09-18T00:00:00Z"
 tags: ["cpp","summaries","ncre","上机题"]

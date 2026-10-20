@@ -1,7 +1,7 @@
 ---
 title: "二级C++选择题公共基础知识速补"
 slug: "cpp/summaries/c2-basics"
-description: "题号 模块 高频考法"
+description: "口诀： 1–4 结构，5–7 工程，8–10 数据库 。第 10 题几乎每年都是 关系代数看图判断运算 ；第 4 或第 3 题常是 二叉树结点数计算 。"
 publishDate: "2026-09-18"
 createdAt: "2026-09-18T00:00:00Z"
 updatedDate: "2026-09-18T21:29:02"

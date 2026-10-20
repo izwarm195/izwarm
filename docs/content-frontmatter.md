@@ -8,8 +8,9 @@
 
 - **白名单目录**：`CPP`、`English`、`Machine & Deep Learning`、
   `Signals/Signals & Systems`（精确到该子目录）、`Signals/数字电路与系统`、`Physics`、
-  `Complex`
+  `Complex`、`Text-to-Audio`（整个目录，含 `Papers/` 与每篇论文自己的子目录）
   内的所有 Markdown **默认公开**，无需逐篇添加字段。`Signals` 下的其他子目录不在白名单内。
+  白名单根目录里的 `AGENTS.md` 是写给 AI 代理的工作区说明，按文件名排除，不会成为笔记。
 - **单篇退出**：笔记 Frontmatter 写 `publish: false` 则不公开。
 - **草稿 / 归档**：`status: draft` 不发布；`draft: true` 在生产构建隐藏、
   开发环境可预览。
@@ -66,7 +67,9 @@
   1. `scripts/slug-aliases.mjs` 的人工别名表，键是**原文段落**（标题或目录名，一字不差，
      含 `&`、`（）`、全角引号），值只允许 `[a-z0-9-]`。同一张表既管目录名也管笔记标题，
      所以 `数学英语词汇` 目录和它里面的同名笔记一行就够。想让某一章自定义（如
-     `ch9-oscillation`）也直接在这一行覆盖规则。
+     `ch9-oscillation`）也直接在这一行覆盖规则。值是**空串 `''`** 时该段落不进 URL
+     （由上级目录充当叶子）：论文笔记按「一篇一个目录」存放，标题置空后路径就是
+     `text-to-audio/papers/clap`，不会再把论文全名重复进 URL。
   2. 章节规则：`第3章…` / `第九章…` → `ch3` / `ch9`（阿拉伯与中文数字都认）；`第1节…` → `s1`；`附录` → `appendix`。
   3. 都没有 → 保留 slugify 后的中文（不会静默丢字），并在同步结尾用 `warn` 把段落原文列出来，
      照着往别名表补一行即可。
@@ -80,7 +83,7 @@
   `CPP/Summaries` → `["CPP", "Summaries"]`；
   `English/Words Summary/数学英语词汇` → `["English", "Words Summary", "数学英语词汇"]`。
 - **tags**：保留 Obsidian `tags`；缺失时为空数组；另自动加入分类标签
-  （`cpp` / `english` / `machine-learning` / `signals` / `physics`）。
+  （`cpp` / `english` / `machine-learning` / `signals` / `physics` / `complex` / `text-to-audio`）。
 - **updatedDate**：只认笔记里的 `updated_at`（Time Things 插件写入的真实编辑时间）。
   该字段是热力图与"更新于"的唯一真实时间来源，因此不再回退 Git 最近提交日期。
   注意插件的 `modifiedKeyFormat` 必须用 `YYYY` 这样的合法 token；若写成 `YY-MM-DD[T]HH:mm:ss`，

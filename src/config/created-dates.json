@@ -44,6 +44,8 @@
   "English/Words Daily/WD 26-08-26.md": "2026-08-26",
   "English/Words Daily/WD 26-08-31.md": "2026-08-31",
   "English/Words Daily/WD 26-09-02.md": "2026-09-02",
+  "English/Words Daily/WD 26-10-19.md": "2026-10-19",
+  "English/Words Daily/WD 26-10-20.md": "2026-10-20",
   "English/Words Summary/数学英语词汇/Stage 1 - Early Elementary.md": "2026-08-03",
   "English/Words Summary/数学英语词汇/Stage 10 - Math Language.md": "2026-08-03",
   "English/Words Summary/数学英语词汇/Stage 2 - Upper Elementary.md": "2026-08-03",
@@ -82,6 +84,8 @@
   "Machine & Deep Learning/Python/Python 杂记/Python 杂记 09 - Path 常用方法.md": "2026-10-11",
   "Machine & Deep Learning/Python/Python 杂记/Python 杂记 10 - ignore_index(-100) 与 CrossEntropy.md": "2026-10-11",
   "Machine & Deep Learning/Python/Python 杂记/Python 杂记 11 - register_buffer.md": "2026-10-12",
+  "Machine & Deep Learning/Python/Python 杂记/Python 杂记 12 - einsum.md": "2026-10-18",
+  "Machine & Deep Learning/Python/Python 杂记/Pytorch 练习.md": "2026-10-18",
   "Signals/Signals & Systems/SS-QNA/SS-QNA-01.md": "2026-08-02",
   "Signals/Signals & Systems/SS-QNA/SS-QNA-02.md": "2026-08-02",
   "Signals/Signals & Systems/SS-QNA/SS-QNA-03.md": "2026-08-03",
@@ -115,6 +119,8 @@
   "Signals/数字电路与系统/第7章 触发器.md": "2026-10-18",
   "Signals/数字电路与系统/第8章 时序逻辑电路的分析与设计.md": "2026-10-18",
   "Signals/数字电路与系统/第9章 常用的时序逻辑电路模块.md": "2026-10-18",
+  "Physics/Exercise/第九章 振动 习题.md": "2026-10-19",
+  "Physics/Exercise/第十章 波动 习题.md": "2026-10-19",
   "Physics/《物理学》下册公式总结.md": "2026-09-23",
   "Physics/第九章 振动 公式总结.md": "2026-09-23",
   "Physics/第十一章 光学 公式总结.md": "2026-09-23",
@@ -133,5 +139,9 @@
   "Complex/复变函数定理公式总结/第二章 解析函数 定理公式总结.md": "2026-10-17",
   "Complex/复变函数定理公式总结/第五章 留数及其应用 定理公式总结.md": "2026-10-17",
   "Complex/复变函数定理公式总结/第六章 共形映射 定理公式总结.md": "2026-10-17",
-  "Complex/复变函数定理公式总结/第四章 复变函数项级数 定理公式总结.md": "2026-10-17"
+  "Complex/复变函数定理公式总结/第四章 复变函数项级数 定理公式总结.md": "2026-10-17",
+  "Text-to-Audio/Papers/AudioLDM/AudioLDM.md": "2026-08-22",
+  "Text-to-Audio/Papers/CLAP/CLAP.md": "2026-10-20",
+  "Text-to-Audio/Papers/CLAP/CLAP_QNA.md": "2026-10-20",
+  "Text-to-Audio/Papers/X-LANCE 研读清单.md": "2026-09-24"
 }
