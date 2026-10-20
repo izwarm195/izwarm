@@ -110,6 +110,7 @@ export const SEGMENT_ALIASES = {
   'CLAP: Learning Audio Concepts From Natural Language Supervision': '',
   // 追问记录挂在主笔记目录下：papers/clap/qna
   'CLAP 追问记录': 'qna',
-  // 阅读清单直接躺在 Papers/ 下
+  // 阅读清单直接躺在 Papers/ 下；这篇目前是 publish: false（个人阅读路径不进站），
+  // 代号留着：万一以后要发，URL 也不会变成中文。
   'X-LANCE 研读清单': 'reading-list',
 };

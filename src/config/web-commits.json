@@ -126,5 +126,9 @@
   ],
   "2026-10-19": [
     "feat(notes): 数电系列正文图片统一 45%"
+  ],
+  "2026-10-20": [
+    "chore: 重新触发部署（vault 改名已先一步推送，确保 CI 拉到 Text-to-Audio）",
+    "feat(notes): 新系列 Text-to-Audio / Papers"
   ]
 }

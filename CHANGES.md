@@ -759,9 +759,11 @@
   它是写给 AI 代理的工作区说明，不是内容。
 - **空别名**：`scripts/slug-aliases.mjs` 允许值为 `''`，表示「这一段不进 URL」。
   论文笔记靠目录定身份，标题置空后路径是 `text-to-audio/papers/clap`，
-  而不是再重复一遍 60 字的论文全名；`CLAP 追问记录` → `.../clap/qna`、
-  `X-LANCE 研读清单` → `.../papers/reading-list`。两篇撞到同一 slug 仍由原有的
-  冲突检查直接抛错，不会静默覆盖。
+  而不是再重复一遍 60 字的论文全名；`CLAP 追问记录` → `.../clap/qna`。
+  两篇撞到同一 slug 仍由原有的冲突检查直接抛错，不会静默覆盖。
+- **阅读清单不进站**：`Papers/X-LANCE 研读清单.md` 是个人阅读路径，写 `publish: false`
+  （规范里的单篇退出开关）后不产出；同步结果为 `published: 144, skipped: 1`。
+  别名表里仍留着 `X-LANCE 研读清单 → reading-list`，万一以后要发，URL 也不会变成中文。
 - **摘要只取散文**：`firstParagraph()` 现在跳过表格行、HTML 行与 `---` 分隔线。
   CLAP 正文以 `---` + `<div><img></div>` 开头，摘要曾变成一截被剥掉引号的 HTML
   （`<div style "text align center" <img src …`）。顺带修好 8 篇以表格开头的旧笔记
@@ -769,11 +771,12 @@
   它们的 `description` 从表头变成正文第一段散文。
 - **顺带补代号**：新同步进来的 `Python 杂记 12 - einsum` → `12-einsum`、
   `Pytorch 练习` → `pytorch-practice`，同步告警清零。
-- **影响**：新增 4 篇笔记；构建 **196 页**（原 177）。既有笔记的 slug 与正文不变，
-  变的只有上面那 8 篇的 `description`。
+- **影响**：新增 3 篇笔记（AudioLDM / CLAP / CLAP 追问）；构建 **195 页**（原 177）。
+  既有笔记的 slug 与正文不变，变的只有上面那 8 篇的 `description`。
 - **验证**：`node scripts/sync-obsidian.mjs --selftest` 通过（含新增的空别名断言）；
-  同步 145 篇、无「未加代号」告警；`npm run typecheck` 通过；`npm run build` 196 页，
-  产出 `dist/notes/text-to-audio/papers/{audioldm,clap,clap/qna,reading-list}/`。
+  同步 144 篇 / 跳过 1 篇、无「未加代号」告警；`npm run typecheck` 通过；
+  `npm run build` 195 页，产出
+  `dist/notes/text-to-audio/papers/{audioldm,clap,clap/qna}/`，没有 `reading-list/`。
 
 ## 验证方式汇总
 
