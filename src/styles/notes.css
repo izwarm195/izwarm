@@ -1271,23 +1271,45 @@ html {
   border-color: rgba(127, 192, 192, 0.5);
   background: rgba(62, 117, 117, 0.3);
 }
+/* ---- 表格：LaTeX 风格 + 代码块同款底色块 ----
+   只留表头下面一条中线：竖线、表头底色、上下两条边线全部去掉，横向分隔交给这条线，
+   其余交给底色块本身 —— 比原来「每格一个 1px 方框」干净得多，格子也能压紧
+   （min-width、padding、line-height 都比以前小）。
+   底色块和 pre 同色同圆角（12px 12px 12px 0），等于把表格当成一段「数据代码块」。 */
 .article-body table {
   display: block;
   width: max-content;
   max-width: 100%;
-  margin: 1.3em auto;
+  margin: 1.5em auto;
   overflow-x: auto;
   border-collapse: collapse;
-}
-.article-body th {
-  color: #eef1f4;
-  background: rgba(62, 117, 117, 0.16);
+  /* 左右 12px = 圆角半径，内容与圆角之间留出的空隙刚好是一个圆弧的量 */
+  padding: 0 12px 14px;
+  border: 0;
+  border-radius: 12px 12px 12px 0;
+  background-color: #202329;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  /* 比正文小半号：表格本来就是"数据"，缩一点更紧凑，也和代码块 0.9em 对得上。
+     line-height 必须自己收：正文的 1.72 会把每行撑成一格一格的"空行"。 */
+  font-size: 0.94em;
+  line-height: 1.45;
 }
 .article-body th,
 .article-body td {
-  min-width: 7em;
-  padding: 0.6em 0.8em;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  /* 列宽交给内容 + padding 决定：真值表那种「一格一个 0/1」的表不该被撑出横向滚动 */
+  min-width: 3.2em;
+  padding: 0.28em 0.72em;
+  border: 0;
+}
+.article-body th {
+  padding-top: 0.72em;
+  padding-bottom: 0.4em;
+  color: #eef1f4;
+  /* 表头不填底色，只靠下面这条中线与表体分开 */
+  background: none;
+  border-bottom: 1px solid rgba(238, 241, 244, 0.3);
+  font-weight: normal;
+  letter-spacing: 0.02em;
 }
 /* 数电系列（Signals / 数字电路与系统）：题图是整页扫描里裁出来的小块，按默认 66% 显示偏大
    且被放大得发虚，整个系列统一压到 45%。用变量下发而不是直接写 width —— img 那条规则读的
