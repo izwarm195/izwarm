@@ -46,5 +46,22 @@ const { title = site.title } = Astro.props;
         />
       </div>
     </div>
+
+    <!--
+      正文图片预览（点正文里的图片打开）：滚轮缩放、拖动平移、Esc / 点空白关闭。
+      同样挂在 <body> 直下 —— 理由和上面的收款卡弹层一样（底板里的 backdrop-filter
+      会成为 position:fixed 的包含块，塞进底板里就只能盖住底板）。
+      交互见 scripts/image-viewer.ts，样式见 styles/global.css。
+    -->
+    <div class="img-viewer" id="imgViewer" hidden role="dialog" aria-modal="true" aria-label="图片预览">
+      <img class="img-viewer-img" alt="" decoding="async" draggable="false" />
+      <div class="img-viewer-bar">
+        <span class="img-viewer-scale" data-viewer-scale>100%</span>
+        <button class="img-viewer-btn" type="button" data-viewer-reset>复位</button>
+        <button class="img-viewer-btn img-viewer-btn--close" type="button" data-viewer-close aria-label="关闭预览">
+          ×
+        </button>
+      </div>
+    </div>
   </body>
 </html>

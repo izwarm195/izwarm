@@ -97,3 +97,97 @@ body {
   color: #f0f2f5;
   border-color: rgba(127, 192, 192, 0.5);
 }
+
+/* ---- 正文图片预览（点图放大、滚轮带惯性缩放、拖动平移）----
+   标记同样在 BaseLayout <body> 直下（理由见上面的收款卡弹层）。
+   z-index 88：略低于收款卡 90 —— 收款卡是从操作底板主动打开的，必须能盖住预览。 */
+.img-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 88;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  /* 触摸时既不滚背景，也不让浏览器接管双指缩放：缩放全部交给脚本 */
+  touch-action: none;
+  background: rgba(5, 5, 10, 0.9);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  transition: opacity 0.22s ease;
+}
+/* display:flex 会盖掉 [hidden] 的 display:none，必须显式补回来 */
+.img-viewer[hidden] {
+  display: none;
+}
+.img-viewer.is-open {
+  opacity: 1;
+}
+
+/* 盒子固定成"视口内可用的最大区域"，图片用 contain 摆进去：
+   缩放和平移都作用在这个盒子上，图片自身的宽高比不用管。 */
+.img-viewer-img {
+  width: min(92vw, 1600px);
+  height: 86vh;
+  object-fit: contain;
+  transform-origin: 50% 50%;
+  will-change: transform;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-drag: none;
+  /* 缩放由脚本逐帧写 transform，这里绝不能加 transition，否则会和弹簧互相拉扯 */
+}
+.img-viewer-img.is-dragging {
+  cursor: grabbing;
+}
+
+/* 底部一条小工具条：当前比例 / 复位 / 关闭 */
+.img-viewer-bar {
+  position: absolute;
+  left: 50%;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 5px 4px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px 10px 10px 0;
+  background: rgba(26, 28, 33, 0.92);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5);
+  transform: translateX(-50%);
+  cursor: default;
+}
+.img-viewer-scale {
+  min-width: 4.4em;
+  color: #a4aab5;
+  font-family: 'JetBrains Mono', 'Cascadia Mono', Consolas, monospace;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+.img-viewer-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  min-width: 26px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 7px 7px 7px 0;
+  background: transparent;
+  color: var(--text-dim);
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.18s ease, background 0.18s ease;
+}
+.img-viewer-btn:hover,
+.img-viewer-btn:focus-visible {
+  color: #f0f2f5;
+  background: rgba(127, 192, 192, 0.14);
+}
+.img-viewer-btn--close {
+  font-size: 16px;
+}

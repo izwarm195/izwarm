@@ -24,6 +24,7 @@ import {
 } from './panel-nav';
 import { site } from '../config/site';
 import { initArchiveFilter } from './archive-filter';
+import { initImageViewer } from './image-viewer';
 
 const shellEl = document.getElementById('notesShell');
 const notesBase = import.meta.env.BASE_URL.replace(/\/$/, '') + '/notes';
@@ -620,3 +621,6 @@ initToc();
 initTocMath();
 syncArticleFolds();
 initAnswerFolds();
+// 正文图片预览（点图放大 / 滚轮缩放）：只初始化一次，内部走 document 委托，
+// 所以 SPA 换页后正文里的新图片同样生效，不需要每次换页重绑
+initImageViewer();
