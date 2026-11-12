@@ -1,6 +1,6 @@
 ---
 title: "第一章 复数与复变函数 核心题型"
-slug: "complex/复变函数核心题型汇总/ch1"
+slug: "complex/core-problems/ch1"
 description: "题 1 z_1 3+4 mathrm{i}, z_2 1 2 mathrm{i} ，求 dfrac{z_1}{z_2} 、 overline{ left( dfrac{z_1}{z_2} right)} ，并验证 overline{ left( dfrac{z_1}{z_2} r…"
 publishDate: "2026-11-05"
 createdAt: "2026-11-05T00:00:00Z"

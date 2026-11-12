@@ -778,6 +778,43 @@
   `npm run build` 195 页，产出
   `dist/notes/text-to-audio/papers/{audioldm,clap,clap/qna}/`，没有 `reading-list/`。
 
+## 49. 物理习题补档：Exercise 一章多篇的 slug，以及复变 / TTA 代号补齐
+
+- **背景**：`Physics/Exercise/` 下同一个章节号不止一篇（教材习题 + 各讲作业 + 周作业），
+  而「第N章 …」规则会把它们统统压成 `ch9` / `ch10` / `ch11`，slug 撞车后同步直接抛错中止
+  —— 这正是习题目录长期停在 `ch9` / `ch10` 两篇、后面九篇一直没上线的真正原因
+  （定时部署同样卡在这里，不是网络或 vault 的问题）。
+- **做法（别名表）**：`scripts/slug-aliases.mjs` 里给作业类逐篇定代号，章节号打头 +
+  作业轮次后缀：`ch9-hw1` / `ch9-hw2` / `ch9-hw5`、`ch10-hw3` / `ch10-hw4` / `ch10-hw5`、
+  `ch11-hw6` / `ch11-hw7`；不挂在某一章作业序列里的两篇单独起名
+  `quiz-osc-wave`（单元测验-振动波动）、`exam2-optics`（月考二 错题复盘 光学）。
+  「第N章」规则本身不动 —— 教材习题仍走规则，产出 `physics/exercise/ch9`、`ch10`。
+- **补齐漏掉的段落代号**（同步告警原来有 7 条，URL 里带中文，每字编码成 9 个字符）：
+  `Python 杂记 13 - 梯度监控` → `13-gradient-monitor`；`复变函数 - 第3次作业` →
+  `assignment-3`；`复变函数核心题型汇总`（子目录）→ `core-problems`，
+  同名 MOC `《复变函数》核心题型汇总` → `toc`（与 `formulas` / `toc` 同一套读法）；
+  三篇追问记录 `BEATs 追问记录` / `PE-A-Frame 追问记录` / `论文简称 追问记录` → `qna`
+  （父目录不同，共用 `qna` 不会撞车）。顺带把 BEATs / PE-A-Frame / TMUSystem 三篇论文主笔记
+  也用空别名置空标题段，与 CLAP / AudioLDM 一致 —— 论文 URL 是
+  `papers/<短标识>`，不再重复 60 字的论文全名。
+- **影响**：笔记数 175 篇（跳过 1 篇 = `X-LANCE 研读清单` 的 `publish: false`）。
+  新增/改名的 URL：`physics/exercise/ch9-hw1` … `ch11-hw7`、`physics/exercise/quiz-osc-wave`、
+  `physics/exercise/exam2-optics`、`complex/assignment-3`、`complex/core-problems/ch1…ch7`
+  + `core-problems/toc`、`python/misc/13-gradient-monitor`、
+  `text-to-audio/papers/{beats,pe-a-frame,tmusystem}` 及各自 `/qna`。
+- **注意（旧的公式总结链接会 404）**：vault 把公式总结整理进了 `Physics/Formula/` 子目录，
+  系列树因此变成 `Physics → Formula`，URL 也随之从 `/notes/physics/ch9` 改成
+  `/notes/physics/formula/ch9`（ch9–ch16 + `formulas-vol2`，共 9 篇）。
+  静态站没有重定向，站外若存过旧链接就会 404；正文内的相对链接由同步脚本按标题重写，
+  站内没有残留死链。想改回旧路径只需在别名表加一行 `'Formula': ''`（该段不进 URL），
+  这一步没有做，因为与 `complex/formulas/`「子目录进 URL」的既有读法冲突。
+- **验证**：`node scripts/sync-obsidian.mjs --selftest` 通过；同步 `published: 175, skipped: 1`，
+  **「未加代号」告警清零**；`npm run typecheck` 通过；`npm run build` **240 页**通过，
+  产物里 `dist/notes/physics/exercise/{ch9-hw1,ch9-hw2,ch9-hw5,ch10-hw3,ch10-hw4,ch10-hw5,
+  ch11-hw6,ch11-hw7,quiz-osc-wave,exam2-optics}/` 齐全，公式总结落在
+  `dist/notes/physics/formula/ch9…ch16`、`…/formulas-vol2`；习题 12 篇正文互相之间有
+  系列内上一篇 / 下一篇导航（构建产物里每篇都链得到 `physics/exercise/ch9-hw1/`）。
+
 ## 验证方式汇总
 
 - TypeScript 检查：`npm run typecheck`

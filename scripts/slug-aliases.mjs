@@ -27,12 +27,16 @@ export const SEGMENT_ALIASES = {
   // 而旧名字留在表里不占成本，还能兜住 vault 侧再改回去的情况。
   '复变函数 - 第1次作业': 'assignment-1',
   '复变函数 - 第2次作业': 'assignment-2',
+  '复变函数 - 第3次作业': 'assignment-3',
   '复变函数 - 第一次作业': 'assignment-1',
   '第一次作业': 'assignment-1',
   // 定理公式总结在 vault 里自成一个子目录：目录名压成 formulas，
   // 章节走规则（第一章 → ch1），MOC 沿用总目录的 toc —— 与物理「公式总结」同一套读法。
   '复变函数定理公式总结': 'formulas',
   '《复变函数》定理公式总结': 'toc',
+  // 「核心题型汇总」同样是「子目录 + 同名 MOC」：目录压成 core-problems，MOC 走 toc。
+  '复变函数核心题型汇总': 'core-problems',
+  '《复变函数》核心题型汇总': 'toc',
 
   // ---- 信号与系统 ----
   'Signals & System 总目录': 'toc',
@@ -90,6 +94,7 @@ export const SEGMENT_ALIASES = {
   'Python 杂记 10 - ignore_index(-100) 与 CrossEntropy': '10-ignore-index',
   'Python 杂记 11 - register_buffer': '11-register-buffer',
   'Python 杂记 12 - einsum': '12-einsum',
+  'Python 杂记 13 - 梯度监控': '13-gradient-monitor',
   'Pytorch 练习': 'pytorch-practice',
 
   // ---- 英语 ----
@@ -122,8 +127,15 @@ export const SEGMENT_ALIASES = {
   // 空串 = 该段落不进 URL（上级目录当叶子），撞车仍会被 slug 冲突检查拦下。
   'AudioLDM: Text-to-Audio Generation with Latent Diffusion Models': '',
   'CLAP: Learning Audio Concepts From Natural Language Supervision': '',
-  // 追问记录挂在主笔记目录下：papers/clap/qna
+  'BEATs: Audio Pre-Training with Acoustic Tokenizers': '',
+  'Pushing the Frontier of Audiovisual Perception with Large-Scale Multimodal Correspondence Learning': '',
+  'The TMU System for the XACLE Challenge: Training Large Audio Language Models with CLAP Pseudo-Labels': '',
+  // 追问记录挂在主笔记目录下：papers/clap/qna、papers/beats/qna …
+  // 三篇的追问笔记在 vault 里都叫「…追问记录」，各自的父目录不同，共用 qna 不会撞车。
   'CLAP 追问记录': 'qna',
+  'BEATs 追问记录': 'qna',
+  'PE-A-Frame 追问记录': 'qna',
+  '论文简称 追问记录': 'qna',
   // 阅读清单直接躺在 Papers/ 下；这篇目前是 publish: false（个人阅读路径不进站），
   // 代号留着：万一以后要发，URL 也不会变成中文。
   'X-LANCE 研读清单': 'reading-list',

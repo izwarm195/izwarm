@@ -1,6 +1,6 @@
 ---
 title: "第二章 解析函数 核心题型"
-slug: "complex/复变函数核心题型汇总/ch2"
+slug: "complex/core-problems/ch2"
 description: "题 1 用定义证 f(z) dfrac1z (z neq0) 可导，并求 f'(z) 。"
 publishDate: "2026-11-05"
 createdAt: "2026-11-05T00:00:00Z"

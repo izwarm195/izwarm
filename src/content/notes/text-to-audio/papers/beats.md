@@ -1,6 +1,6 @@
 ---
 title: "BEATs: Audio Pre-Training with Acoustic Tokenizers"
-slug: "text-to-audio/papers/beats/beats-audio-pre-training-with-acoustic-tokenizers"
+slug: "text-to-audio/papers/beats"
 description: "BEATs 迭代预训练架构全图"
 publishDate: "2026-10-21"
 createdAt: "2026-10-21T00:00:00Z"
@@ -15,7 +15,7 @@ series: ["Text-to-Audio","Papers","BEATs"]
 > <img class="callout-badge" src="/media/icons/document.svg" alt="abstract">**摘要**
 > 把语音/视觉/语言里成功的「离散标签预测」搬到通用音频，用**声学 tokenizer 与音频 SSL 模型交替迭代**的方式互相提升：tokenizer 产出语义离散标签，SSL 模型以 75% 掩码预测这些标签；收敛后再用 SSL 模型作 teacher 蒸馏出更强的 tokenizer。ViT 骨干 90M，AudioSet-2M 上 mAP 50.6%（集成）、ESC-50 98.1%，均刷新 SOTA 且参数与数据比对手少得多。
 >
-> **在计划中的位置**：AudioLDM 前置知识覆盖计划（大二上） §3 Batch A 第 6 篇「最强的通用音频编码器之一，几乎必然进你的集成」；TMU 系统用它作音频塔（[TMUSystem](/notes/text-to-audio/papers/tmusystem/the-tmu-system-for-the-xacle-challenge-training-large-audio-language-models-with-clap-pseudo-labels/)），XACLE 2027 基线的 M2D-CLAP 与它同属通用音频表征这一族。
+> **在计划中的位置**：AudioLDM 前置知识覆盖计划（大二上） §3 Batch A 第 6 篇「最强的通用音频编码器之一，几乎必然进你的集成」；TMU 系统用它作音频塔（[TMUSystem](/notes/text-to-audio/papers/tmusystem/)），XACLE 2027 基线的 M2D-CLAP 与它同属通用音频表征这一族。
 
 ---
 

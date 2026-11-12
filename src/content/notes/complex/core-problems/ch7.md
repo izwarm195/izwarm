@@ -1,6 +1,6 @@
 ---
 title: "第七章 解析函数在科技中的应用选讲 核心题型"
-slug: "complex/复变函数核心题型汇总/ch7"
+slug: "complex/core-problems/ch7"
 description: "题 1 复势 f(z) (2+ mathrm{i})z 。"
 publishDate: "2026-11-05"
 createdAt: "2026-11-05T00:00:00Z"

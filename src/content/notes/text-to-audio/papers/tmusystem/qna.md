@@ -1,6 +1,6 @@
 ---
 title: "论文简称 追问记录"
-slug: "text-to-audio/papers/tmusystem/论文简称-追问记录"
+slug: "text-to-audio/papers/tmusystem/qna"
 description: "根据论文描述，BEATs 的使用方式如下："
 publishDate: "2026-10-21"
 createdAt: "2026-10-21T00:00:00Z"
@@ -30,7 +30,7 @@ series: ["Text-to-Audio","Papers","TMUSystem"]
 
    因此，可以概括为：**BEATs 以冻结方式对 10 秒音频做完整前向编码，输出 500 个 768 维时序 token；随后池化到 100 个 token，再经 MLP 投影送入 LLM。** 论文没有使用 BEATs 的完整分类流程，而是把它当作冻结的音频特征编码器。
 
-# 二、在 [TMUSystem](/notes/text-to-audio/papers/tmusystem/the-tmu-system-for-the-xacle-challenge-training-large-audio-language-models-with-clap-pseudo-labels/) 的前向中，BEATs具体到哪？
+# 二、在 [TMUSystem](/notes/text-to-audio/papers/tmusystem/) 的前向中，BEATs具体到哪？
 
 结合你提供的图片和论文内容，论文中对 BEATs 的使用**具体到图片中的“ViT 输出表示：\(B \times T \times 768\)”这一步**，并且**忽略了图片最下方的 MeanPool 和线性分类器**。
 

@@ -1,6 +1,6 @@
 ---
 title: "第五章 留数及其应用 核心题型"
-slug: "complex/复变函数核心题型汇总/ch5"
+slug: "complex/core-problems/ch5"
 description: "题 1 判断 z 0 对 f(z) dfrac{ mathrm{e}^z 1 z}{z^2} 的类型。"
 publishDate: "2026-11-05"
 createdAt: "2026-11-05T00:00:00Z"

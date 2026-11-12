@@ -1,6 +1,6 @@
 ---
 title: "第三章 复变函数的积分 核心题型"
-slug: "complex/复变函数核心题型汇总/ch3"
+slug: "complex/core-problems/ch3"
 description: "题 1 displaystyle int_C z^2 mathrm{d}z ， C ： 0 to1+2 mathrm{i} 直线段。"
 publishDate: "2026-11-05"
 createdAt: "2026-11-05T00:00:00Z"

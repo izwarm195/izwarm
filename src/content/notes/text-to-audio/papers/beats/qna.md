@@ -1,6 +1,6 @@
 ---
 title: "BEATs 追问记录"
-slug: "text-to-audio/papers/beats/beats-追问记录"
+slug: "text-to-audio/papers/beats/qna"
 description: "下面按 BEATs 下游推理任务 给出形状；同时区分 tokenizer 推理和 MAM 预测。"
 publishDate: "2026-10-21"
 createdAt: "2026-10-21T00:00:00Z"
@@ -14,7 +14,7 @@ series: ["Text-to-Audio","Papers","BEATs"]
 > 二、输出 $B \times C$，也就是对于单个音频而言是一个长为 $C$ 的一维向量，每个 $C$ 对应一个自监督学习的无标签类别。
 > 三、对于一个冻结的 BEATs，我能不能只使用部分前向过程，如直接将 ViT 输出表示作为输出并进入其他子模块处理？
 
-> <img class="callout-badge" src="/media/icons/note.svg" alt="note">**主笔记：[BEATs](/notes/text-to-audio/papers/beats/beats-audio-pre-training-with-acoustic-tokenizers/)**
+> <img class="callout-badge" src="/media/icons/note.svg" alt="note">**主笔记：[BEATs](/notes/text-to-audio/papers/beats/)**
 
 # 一、给出推理任务的输入输出形状
 

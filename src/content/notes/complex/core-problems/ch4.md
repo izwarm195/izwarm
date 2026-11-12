@@ -1,6 +1,6 @@
 ---
 title: "第四章 复变函数项级数 核心题型"
-slug: "complex/复变函数核心题型汇总/ch4"
+slug: "complex/core-problems/ch4"
 description: "题 1 讨论 displaystyle sum_{n 0}^{ infty} Big( frac{1+ mathrm{i}}{2} Big)^n 。"
 publishDate: "2026-11-05"
 createdAt: "2026-11-05T00:00:00Z"

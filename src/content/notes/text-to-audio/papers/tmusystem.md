@@ -1,6 +1,6 @@
 ---
 title: "The TMU System for the XACLE Challenge: Training Large Audio Language Models with CLAP Pseudo-Labels"
-slug: "text-to-audio/papers/tmusystem/the-tmu-system-for-the-xacle-challenge-training-large-audio-language-models-with-clap-pseudo-labels"
+slug: "text-to-audio/papers/tmusystem"
 description: "TMU System 完整模型架构与训练/预测流程"
 publishDate: "2026-10-21"
 createdAt: "2026-10-21T00:00:00Z"

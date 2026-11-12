@@ -1,6 +1,6 @@
 ---
 title: "Pushing the Frontier of Audiovisual Perception with Large-Scale Multimodal Correspondence Learning"
-slug: "text-to-audio/papers/pe-a-frame/pushing-the-frontier-of-audiovisual-perception-with-large-scale-multimodal-correspondence-learning"
+slug: "text-to-audio/papers/pe-a-frame"
 description: "PE A Frame 帧级音频 文本对齐全流程"
 publishDate: "2026-10-23"
 createdAt: "2026-10-23T00:00:00Z"
@@ -18,7 +18,7 @@ series: ["Text-to-Audio","Papers","PE-A-Frame"]
 > <img class="callout-badge" src="/media/icons/document.svg" alt="abstract">**摘要**
 > PE-AV 是从 PE（视觉编码器）扩展出的音视频文本编码器家族，用 10 对 sigmoid 对比把音-文-视对齐到同一 1024 维空间，数据侧靠音视频数据引擎为 O(100M) 对合成字幕。**本文的 PE-A-Frame** 在此之上再加一层帧级对比，把话语级表征拆成 25 Hz 的帧级音频-文本对齐，用于开集与闭集声音事件检测（SED），在所有基准上取得最佳 PSDS1T。
 >
-> **在计划中的位置**：AudioLDM 前置知识覆盖计划（大二上） §3 Batch A 的可选篇（`facebook/pe-a-frame-small`，白名单内）；与 [CLAP](/notes/text-to-audio/papers/clap/)、[BEATs](/notes/text-to-audio/papers/beats/beats-audio-pre-training-with-acoustic-tokenizers/)、M2D-CLAP 同属音频-语言对齐这一族，区别是它对齐到**帧**。
+> **在计划中的位置**：AudioLDM 前置知识覆盖计划（大二上） §3 Batch A 的可选篇（`facebook/pe-a-frame-small`，白名单内）；与 [CLAP](/notes/text-to-audio/papers/clap/)、[BEATs](/notes/text-to-audio/papers/beats/)、M2D-CLAP 同属音频-语言对齐这一族，区别是它对齐到**帧**。
 
 ---
 

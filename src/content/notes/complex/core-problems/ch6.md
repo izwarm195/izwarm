@@ -1,6 +1,6 @@
 ---
 title: "第六章 共形映射 核心题型"
-slug: "complex/复变函数核心题型汇总/ch6"
+slug: "complex/core-problems/ch6"
 description: "题 1 w z^3 在 z mathrm{i} 处的伸缩率与转动角；过 mathrm{i} 平行实轴的方向映成何方向？"
 publishDate: "2026-11-05"
 createdAt: "2026-11-05T00:00:00Z"

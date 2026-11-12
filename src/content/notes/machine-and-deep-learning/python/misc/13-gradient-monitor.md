@@ -1,6 +1,6 @@
 ---
 title: "Python 杂记 13 - 梯度监控"
-slug: "machine-and-deep-learning/python/misc/python-杂记-13-梯度监控"
+slug: "machine-and-deep-learning/python/misc/13-gradient-monitor"
 description: "检查神经网络层间的梯度状况，核心思路是从“ 看绝对数值 ”转向“ 看相对关系与健康趋势 ”。单纯观察某一层的梯度大小很容易误判，因为梯度的绝对量级受参数尺度、损失函数尺度等多种因素影响。精准的诊断与优化，需要建立一套系统的监控指标，并据此采取分层级的应对策略。"
 publishDate: "2026-10-21"
 createdAt: "2026-10-21T00:00:00Z"

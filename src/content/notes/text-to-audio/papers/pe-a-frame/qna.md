@@ -1,6 +1,6 @@
 ---
 title: "PE-A-Frame 追问记录"
-slug: "text-to-audio/papers/pe-a-frame/pe-a-frame-追问记录"
+slug: "text-to-audio/papers/pe-a-frame/qna"
 description: "环境： D: 搞学术 大二暑 TTA xacle .venv_peaf ，权重 D: 搞学术 大二暑 TTA xacle baseline _mine peaf_weights pe a frame small （ model.safetensors 1.76 GB）。"
 publishDate: "2026-10-23"
 createdAt: "2026-10-23T00:00:00Z"
@@ -11,7 +11,7 @@ series: ["Text-to-Audio","Papers","PE-A-Frame"]
 > <img class="callout-badge" src="/media/icons/document.svg" alt="abstract">**总览**
 > 一、输入经过 PE-A-Frame 各层，形状怎么变？举一个具体例子。
 
-> <img class="callout-badge" src="/media/icons/note.svg" alt="note">**主笔记：[PE-A-Frame](/notes/text-to-audio/papers/pe-a-frame/pushing-the-frontier-of-audiovisual-perception-with-large-scale-multimodal-correspondence-learning/)**
+> <img class="callout-badge" src="/media/icons/note.svg" alt="note">**主笔记：[PE-A-Frame](/notes/text-to-audio/papers/pe-a-frame/)**
 
 # 一、输入经过 PE-A-Frame 各层，形状怎么变？举一个具体例子。
 

@@ -1,6 +1,6 @@
 ---
 title: "复变函数 - 第3次作业"
-slug: "complex/复变函数-第3次作业"
+slug: "complex/assignment-3"
 publishDate: "2026-10-29"
 createdAt: "2026-10-29T00:00:00Z"
 tags: ["complex","homework","math"]

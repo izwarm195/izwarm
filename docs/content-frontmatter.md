@@ -57,7 +57,10 @@
     `signals/signals-and-systems/ss-qna/ss-qna-01`
   - `Signals/数字电路与系统/第3章 逻辑函数及其简化.md` →
     `signals/dcs/ch3`
-  - `Physics/第九章 振动 公式总结.md` → `physics/ch9`
+  - `Physics/Formula/第九章 振动 公式总结.md` → `physics/formula/ch9`
+  - `Physics/Exercise/第九章 振动 习题.md` → `physics/exercise/ch9`
+  - `Physics/Exercise/第九章 振动 第1讲作业（9-8 ~ 9-30）.md` →
+    `physics/exercise/ch9-hw1`（**同一章有多篇时必须逐篇给别名**，见下方代号来源）
 
   **为什么要换**：`slugify` 保留中文（`\p{L}`），而浏览器把每个中文字符百分号编码成 9 个字符，
   于是 `signals/数字电路与系统/第3章-逻辑函数及其简化` 会变成 168 字符的 URL。换代号后
