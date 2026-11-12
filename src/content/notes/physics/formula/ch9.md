@@ -1,12 +1,12 @@
 ---
 title: "第九章 振动 公式总结"
-slug: "physics/ch9"
+slug: "physics/formula/ch9"
 description: "k 为弹簧的弹性系数，负号表示力始终指向平衡位置。"
 publishDate: "2026-09-23"
 createdAt: "2026-09-23T00:00:00Z"
 updatedDate: "2026-09-23T18:53:44"
 tags: ["physics","physics-formula"]
-series: ["Physics"]
+series: ["Physics","Formula"]
 ---
 
 # 第九章 振动 公式总结
@@ -398,5 +398,5 @@ $$
 
   ---
 
-  [总目录](/notes/physics/formulas-vol2/) · [第十章 波动 →](/notes/physics/ch10/)
+  [总目录](/notes/physics/formula/formulas-vol2/) · [第十章 波动 →](/notes/physics/formula/ch10/)
 

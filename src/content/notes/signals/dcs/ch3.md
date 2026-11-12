@@ -4,7 +4,7 @@ slug: "signals/dcs/ch3"
 description: "(1) 有3个输入信号 A、B、C，当3个输入信号中不多于一个输入为1时，输出信号 Y 为1，其余情况下，输出 Y 为0；"
 publishDate: "2026-09-10"
 createdAt: "2026-09-10T00:00:00Z"
-updatedDate: "2026-10-13T15:58:11"
+updatedDate: "2026-11-05T11:29:42"
 tags: ["signals"]
 series: ["Signals","数字电路与系统"]
 ---

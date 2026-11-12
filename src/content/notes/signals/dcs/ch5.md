@@ -675,15 +675,21 @@ $Y=(A+B)(\bar B+C)=A\bar B+AC+BC=\sum m(3,4,5,7)$
 | **11** | 1 | 1 | 0 | 0 |
 | **10** | 1 | 1 | 1 | 1 |
 
-最简与或式（借 $d$）：$Y=\bar B\bar C+\bar ACD+A\bar B+A\bar C$
+圈法：充分利用 $d$，把 $B=0$ 的两行（$m_{0,1,2,3}$ 与 $m_{8,9,10,11}$，其中 $m_{1,2}$ 借 $d$）连成 $2\times4$ 大圈，得 $\bar B$；余下 $m_{12,13}$ 由 $A\bar C$ 覆盖，$m_7$ 由 $\bar ACD$ 覆盖（$\bar ACD$ 同时含 $m_3$，但 $m_3$ 已被 $\bar B$ 圈去，属冗余相邻）。
 
-检查相邻 1 格：$m_3$ 与 $m_{11}$ 分属 $\bar ACD$、$A\bar B$ 两圈且不相交（$B=0,C=D=1$ 时 $A$ 变化）→ 静态 1 冒险。
+最简与或式只有 3 个乘积项：
 
-补冗余项 $\bar BCD$：
+　$Y=\bar B+A\bar C+\bar ACD$
 
-　$Y=\bar B\bar C+\bar ACD+A\bar B+A\bar C+\bar BCD$
+冒险检查：只需看任意一对相邻 1 格是否落在同一个圈内——
 
-此时 $m_{0,8}$ 由 $\bar B\bar C$ 共圈，$m_{3,7}$ 由 $\bar ACD$，$m_{3,11}$ 由 $\bar BCD$，$m_{8,9,10,11}$ 由 $A\bar B$，$m_{8,9,12,13}$ 由 $A\bar C$，任意相邻 1 格都有公共圈，无逻辑冒险。
+- $m_3,m_7$（$B$ 变）同在 $\bar ACD$
+- $m_3,m_{11}$（$A$ 变）、$m_{0,8}$、$m_{10,11}$ 等均在 $\bar B$
+- $m_8,m_9,m_{12},m_{13}$（$A$ 或 $D$ 变）同在 $A\bar C$
+
+  无一对相邻 1 格被拆到两个互不相交的圈里，故该式**本身即无逻辑冒险**，不必再加冗余项。
+
+  （注：若按 $\bar B\bar C+\bar ACD+A\bar B+A\bar C$ 四圈圈法，$m_3$ 与 $m_{11}$ 分属 $\bar ACD$、$A\bar B$ 且无公共圈，才需补冗余项 $\bar BCD$；借 $d$ 充分合并成 $\bar B$ 后这一冒险项自然消失。）
 
 </details>
 
@@ -715,4 +721,111 @@ $Y=(A+B)(\bar B+C)=A\bar B+AC+BC=\sum m(3,4,5,7)$
   　$F=\bar A\bar B\bar D+B\bar C\bar D+AD+AB\bar C$
 
 </details>
+
+## 附 异或、同或运算性质
+
+$$
+A\oplus B=\bar AB+A\bar B=(A+B)(\bar A+\bar B)
+$$
+
+$$
+A\odot B=\overline{A\oplus B}=AB+\bar A\bar B=(A+\bar B)(\bar A+B)
+$$
+
+| $A$ | $B$ | $A\oplus B$ | $A\odot B$ |
+| --- | --- | --- | --- |
+| 0 | 0 | 0 | 1 |
+| 0 | 1 | 1 | 0 |
+| 1 | 0 | 1 | 0 |
+| 1 | 1 | 0 | 1 |
+
+**常量与自身**
+
+$$
+A\oplus0=A,\quad A\oplus1=\bar A,\quad A\oplus A=0,\quad A\oplus\bar A=1
+$$
+
+$$
+A\odot0=\bar A,\quad A\odot1=A,\quad A\odot A=1,\quad A\odot\bar A=0
+$$
+
+**交换律与结合律**
+
+$$
+A\oplus B=B\oplus A,\quad(A\oplus B)\oplus C=A\oplus(B\oplus C)
+$$
+
+$$
+A\odot B=B\odot A,\quad(A\odot B)\odot C=A\odot(B\odot C)
+$$
+
+**分配律**
+
+$$
+A(B\oplus C)=AB\oplus AC,\quad A+(B\odot C)=(A+B)\odot(A+C)
+$$
+
+**取反**
+
+$$
+\overline{A\oplus B}=A\odot B,\quad\overline{A\odot B}=A\oplus B
+$$
+
+$$
+\bar A\oplus B=A\oplus\bar B=A\odot B,\quad\bar A\odot B=A\odot\bar B=A\oplus B
+$$
+
+$$
+\bar A\oplus\bar B=A\oplus B,\quad\bar A\odot\bar B=A\odot B
+$$
+
+**消去**
+
+$$
+A\oplus B\oplus B=A,\quad A\oplus B\oplus A=B,\quad(A\oplus B)\oplus(A\oplus C)=B\oplus C
+$$
+
+$$
+A\oplus AB=A\bar B,\quad A\oplus\bar AB=A+B,\quad A\oplus B\oplus AB=A+B
+$$
+
+**最小项形式**
+
+$$
+A\oplus B=A\bar B+\bar AB=(A\bar B)\oplus(\bar AB)
+$$
+
+$$
+A\odot B=AB+\bar A\bar B=(AB)\oplus(\bar A\bar B)
+$$
+
+**多变量**
+
+$$
+\bigoplus_{i=1}^{n}A_i=\left(\sum_{i=1}^{n}A_i\right)\bmod 2
+$$
+
+$$
+\bigodot_{i=1}^{n}A_i=\begin{cases}\bigoplus_{i=1}^{n}A_i, & n\equiv1\pmod2\\[6pt]\overline{\bigoplus_{i=1}^{n}A_i}, & n\equiv0\pmod2\end{cases}
+$$
+
+**门级与常用形式**
+
+$$
+A\oplus B=\overline{\overline{A\cdot\overline{AB}}\cdot\overline{B\cdot\overline{AB}}}
+$$
+
+- 4 个与非门
+
+  $$
+  S=A\oplus B,\quad C=AB
+  $$
+
+- 半加器
+
+  $$
+  Y_{A=B}=\prod_{i=0}^{3}(A_i\odot B_i)
+  $$
+
+- 4 位相等比较
 

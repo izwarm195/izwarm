@@ -4,7 +4,7 @@ slug: "text-to-audio/papers/clap"
 description: "X_a in mathbb{R}^{F times T} 是 log Mel 谱（ F 64 个梅尔带、 T 个时间帧）； hat{X}_a in mathbb{R}^{N times V} 、 hat{X}_t in mathbb{R}^{N times U} 为 batch …"
 publishDate: "2026-10-20"
 createdAt: "2026-10-20T00:00:00Z"
-updatedDate: "2026-10-20T17:27:37"
+updatedDate: "2026-10-21T23:55:04"
 tags: ["文献","CLAP","跨模态对齐","contrastive-learning","L4","text-to-audio"]
 series: ["Text-to-Audio","Papers","CLAP"]
 ---
@@ -21,6 +21,7 @@ series: ["Text-to-Audio","Papers","CLAP"]
 ## 一、结构图
 
 <div style="text-align:center"><img src="https://s3.su.bcebos.com/izwarm-obsidian/2026/10/ffcbbac48c6d9cb718852268a1e378a3.png"/></div>
+
 ---
 
 ## 二、主要前向公式

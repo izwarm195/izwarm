@@ -12,9 +12,9 @@ series: ["Signals","数字电路与系统"]
 
 ## 8.2 试画出题8.2图(a)所示电路的输出Y、Z波形。输入信号A和时钟CP的波形如题8.2图(b)所示，触发器的初始状态为0。
 
-![题8.2 图(a)](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//aa506a3d-0b97-4b4d-b39e-a70e5fdd1052/markdown_1/imgs/img_in_image_box_296_923_705_1082.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A49Z%2F-1%2F%2F1261d1f3a018798887aa3793d5c3614c408c146594b95559dd0a1b1bd454c57c)
+![题8.2 图(a)](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/93e3cea411090277f002703207c7ae2f.svg)
 
-![题8.2 图(b)](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//aa506a3d-0b97-4b4d-b39e-a70e5fdd1052/markdown_1/imgs/img_in_image_box_290_1107_732_1204.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A50Z%2F-1%2F%2F9e4289fe515286f1a700982447774d4d6ed196d8557c7bb472e2e2c1e478da05)
+![题8.2 图(b)](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/d79bf2117a9a8b0dfc4a20acf46b24a8.svg)
 
 ## 8.3 电路的时序图如题8.3图所示，画出电路的状态转换图，其中Y为输出。
 

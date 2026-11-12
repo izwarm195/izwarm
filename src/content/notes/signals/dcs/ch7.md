@@ -10,9 +10,9 @@ series: ["Signals","数字电路与系统"]
 
 ## 7.1 题7.1图(a)所示电路是锁存器，试画出在如题7.1图(b)所示输入 $\overline{R}$， $\overline{S}$的波形作用下，Q端的输出波形。
 
-![题7.1 图(a)](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//adc8d0cf-6099-4538-92bf-23e45d0c49a9/markdown_2/imgs/img_in_image_box_243_1068_444_1267.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A43Z%2F-1%2F%2F8238f5760b0a89874ddf1d318d03ca7a0a9afafe1f9607ab6fd659ba0b138ac1)
+![题7.1 图(a)](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/6670e5388514d85d8f36d74dc6d3dde4.svg)
 
-![题7.1 图(b)](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//adc8d0cf-6099-4538-92bf-23e45d0c49a9/markdown_2/imgs/img_in_image_box_482_1082_728_1247.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A43Z%2F-1%2F%2F16ddb61c74734dba831ec25ba62f718dbcf75acbaca824e725b08fc5be5b1906)
+![题7.1 图(b)](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/4b3d1b0257df009aaa0bd1d3ef4ce879.svg)
 
 ## 7.2 试分析题 7.2 图所示电路的逻辑功能，列出状态转移真值表。
 
@@ -20,17 +20,17 @@ series: ["Signals","数字电路与系统"]
 
 ## 7.3 画出题7.3图(a)所示由或非门组成的锁存器输出端Q的电压波形，输入端S，R的电压波形如图7.3图(b)所示。
 
-![题7.3 图(a)](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//ca580a30-eaae-4445-8a53-c053a0303984/markdown_0/imgs/img_in_image_box_393_122_595_341.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A39Z%2F-1%2F%2Fedc99b413710d74d3d4f21b141e4f99a058f1cfc097936ee46177929b42efa58)
+![题7.3 图(a)](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/f76cb64b0eeb49ccfa38c9d8e3a2c5a3.svg)
 
-![题7.3 图(b)](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//ca580a30-eaae-4445-8a53-c053a0303984/markdown_0/imgs/img_in_image_box_627_141_876_338.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A39Z%2F-1%2F%2Fbd7d043b1aa11f21e1ce423560937e55d8764c185af4e3902074aba085537d32)
+![题7.3 图(b)](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/dd089e1e92e0b3ba18d0031d2d12d47a.svg)
 
 ## 7.4 由或非门组成的锁存器和输入端信号如题7.4图所示，设锁存器的初始状态为1，画出输出端Q的波形。
 
-![题7.4 图](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//ca580a30-eaae-4445-8a53-c053a0303984/markdown_0/imgs/img_in_image_box_190_493_763_668.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A39Z%2F-1%2F%2F2df43bc7976fb34f038c2584a10a7fe62454f2e12a9d629e06e4672c3d7b6eb9)
+![题7.4 图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/04802a79e4d6940b652c2c7dcb3beb55.svg)
 
 ## 7.5 题 7.5 图(a)是为防抖动输出的开关电路，其中的锁存器是由两个与非门构成的。当拨动开关 S 时，开关触点会在瞬间发生抖动。假设拨动开关 S 时， $\overline{S}_{D}$、 $\overline{R}_{D}$ 的电压波形如题 7.5 图(b)所示，试画出 Q 端对应的输出波形。
 
-![题7.5 图(a)](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//ca580a30-eaae-4445-8a53-c053a0303984/markdown_0/imgs/img_in_image_box_233_819_726_1023.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A40Z%2F-1%2F%2F5aace9d9d0ba9ae3bb5fdc20fd4fd1db0a397ef588232c00383c72525ec37851)
+![题7.5 图(a)](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/5c5e17c2f2d3d4a1d872a534e05e82a9.svg)
 
 ## 7.6 在题7.6图所示电路中，若 CP、S、R 的电压波形如图中所示，试画出 Q 端的电压波形。假定锁存器的初始状态为 Q=0。
 
@@ -42,25 +42,25 @@ series: ["Signals","数字电路与系统"]
 
 ## 7.8 门控 R-S 锁存器如题 7.8 图所示，设锁存器的初始状态为 0，画出在门控端作用下，对应于 R、S 输入信号波形的输出端 O 的波形。
 
-![题7.8 图](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//ca580a30-eaae-4445-8a53-c053a0303984/markdown_1/imgs/img_in_image_box_201_577_420_700.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A41Z%2F-1%2F%2F57e7b1b0eef64e9ce642fb40134ecf0019e8b011be51cda965876ac95335c05e)
+![题7.8 图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/e7a5f6fd19e05f7e2e1b445f8ff2abff.svg)
 
-![题7.8图](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//ca580a30-eaae-4445-8a53-c053a0303984/markdown_1/imgs/img_in_image_box_464_488_846_698.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A41Z%2F-1%2F%2F9dac336bb4178f012b9511fed4c1492f5d0941c8a2e07cd5ae1b9aa621ed9f5a)
+![题7.8图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/f282e67b8c9eba9bf3a3eef527a0bd53.svg)
 
 ## 7.9 电路及 CP 波形如题 7.9 图所示，试画出输出 $Q_{1}$ 端的波形，设触发器的起始状态为 0。
 
-![题7.9图](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//ca580a30-eaae-4445-8a53-c053a0303984/markdown_1/imgs/img_in_image_box_206_786_854_903.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A41Z%2F-1%2F%2Fd0020de580ab7f6ab94ca2712cf95349b96d7cce57c083825ed615f97739bcfd)
+![题7.9图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/1c328c9474ac8f99bcc038ee49985ff0.svg)
 
 ## 7.10 电路及 CP, D 的波形如题 7.10 图所示，试画出对应的 Q 端波形。
 
-![题7.10 图](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//ca580a30-eaae-4445-8a53-c053a0303984/markdown_1/imgs/img_in_image_box_206_986_864_1129.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A41Z%2F-1%2F%2F03b39f528b60ab5708ec39defcf2e89de543b782a8f3ecbc94748a5b5506398f)
+![题7.10 图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/fd30976161a6c78f9466eb90654c88ff.svg)
 
 ## 7.11 电路及 CP 波形如题 7.11 图所示，试画出输出 Q 端的波形，设触发器的起始状态为 0。
 
-![题7.11 图](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//ca580a30-eaae-4445-8a53-c053a0303984/markdown_1/imgs/img_in_image_box_207_1215_871_1353.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A41Z%2F-1%2F%2Fcfd13ca8f5e2fa4e2508d1c3bbec1a32d70e4021935403e0204444866301cca8)
+![题7.11 图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/8dec3215bdc290994d44d469f743dfae.svg)
 
 ## 7.12 在题7.12图所示电路中，已知输入信号 $V_{1}$的电压波形，试画出与之对应的输出电压 $V_{0}$的波形。触发器初始状态为Q=0。
 
-![题7.12图](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//ca580a30-eaae-4445-8a53-c053a0303984/markdown_2/imgs/img_in_image_box_168_144_816_317.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A42Z%2F-1%2F%2F9d7e974d55978d6d9abd07ef2141c3ef11f9c910dfe2f120eef5730a099f5ef5)
+![题7.12图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/b9f06cc895bbf4b9073f1ddb3bc2c1e0.svg)
 
 ## 7.13 归纳 R-S 锁存器、门控锁存器、主从触发器和边沿触发器翻转的特点。
 
@@ -80,11 +80,11 @@ series: ["Signals","数字电路与系统"]
 
 ## 7.18 画出题7.18图所示触发器在图示波形作用下对应的Q端波形，假设 $S_{n}$为1，Q初始为0。
 
-![题7.18 图](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//61872d2f-fea1-4b3b-952f-33431d16ce1d/markdown_0/imgs/img_in_image_box_193_145_879_327.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A39Z%2F-1%2F%2F35038bd33e2d048780fd7d6eeb97247c8c0f69f08cec643146c7810a0b654787)
+![题7.18 图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/2f9e96e9c6fcb7e18ecd33babfce6f23.svg)
 
 ## 7.19 画出题7.19图所示 D 触发器构成的电路在时钟和输入 S、R 的作用下 Q 端的波形。
 
-![题7.19 图](https://pplines-online.bj.bcebos.com/deploy/official/paddleocr/pp-ocr-vl-16-online//61872d2f-fea1-4b3b-952f-33431d16ce1d/markdown_0/imgs/img_in_image_box_181_421_895_577.jpg?authorization=bce-auth-v1%2FALTAKDN8mY5KlNI7zaRpLmOqrw%2F2026-09-10T02%3A52%3A39Z%2F-1%2F%2Faf1c225c5e3ec380c948bdb1791f44992f3731741b15a3b6b8b21b1eb3225f92)
+![题7.19 图](https://s3.su.bcebos.com/izwarm-obsidian/2026/10/64f70d0b0490bb6098063ecb83dcbdb0.svg)
 
 ## 7.20 画出题7.20图所示 D 触发器构成的电路在时钟和输入的作用下 Q 端的波形。
 

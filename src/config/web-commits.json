@@ -128,7 +128,12 @@
     "feat(notes): 数电系列正文图片统一 45%"
   ],
   "2026-10-20": [
+    "fix(notes): X-LANCE 研读清单不进站",
     "chore: 重新触发部署（vault 改名已先一步推送，确保 CI 拉到 Text-to-Audio）",
     "feat(notes): 新系列 Text-to-Audio / Papers"
+  ],
+  "2026-10-21": [
+    "feat(notes): 正文图片点击预览，滚轮带惯性缩放",
+    "feat(notes): 表格改为代码块同款底色块，只留表头中线"
   ]
 }
