@@ -38,4 +38,7 @@ export const media = {
   // 爱发电收款卡：由 afdian-izwarm.jpg 裁掉外围紫框后导出（只保留圆角矩形卡片，
   // 四角透明）。原图保留在同一目录作为改图来源。
   afdianCard: `${MEDIA_BASE}/afdian-card.png`,
+  // About 页皮肤卡的贴图：64×64 的 Minecraft 皮肤（LittleSkin TID 793546），
+  // 原样保留不缩放 —— 3D 预览按 NearestFilter 采样，缩过一次就会丢像素。
+  skin: `${MEDIA_BASE}/skin-izwarm.png`,
 } as const;

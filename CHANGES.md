@@ -815,6 +815,45 @@
   `dist/notes/physics/formula/ch9…ch16`、`…/formulas-vol2`；习题 12 篇正文互相之间有
   系列内上一篇 / 下一篇导航（构建产物里每篇都链得到 `physics/exercise/ch9-hw1/`）。
 
+## 50. About 页新增皮肤展示卡：64×64 皮肤贴图的 3D 预览
+
+- **背景**：About 页一直只有一行占位文字。作者本人的 Minecraft 皮肤（64×64，逐层绘制）
+  已登记在 LittleSkin（TID 793546 / 上传者 UID 3286009），想把它做成一张会转的 3D 卡片
+  挂在 About 页右侧当装饰。
+- **做法**：
+  1. 新增 `src/components/about/SkinCard.astro`：`<figure>` + `<canvas>`（无说明文字），
+     底板照抄公式块（`rgba(255,255,255,0.045)`、无描边、`12px 12px 12px 0` 的左下直角），
+     右浮动、占栏宽 1/3（860px 面板下实测 258×345），窄屏取消浮动收成居中的 240px 小卡。
+  2. 新增 `src/scripts/skin-card.ts`：用 skinview3d 渲染，**只播站立动画**
+     （`IdleAnimation`，手臂微摆 + 呼吸感），不加行走 / 奔跑。转动写在
+     `playerWrapper.rotation` 上（转人不是转相机，光跟着模型走，和物品栏里转动的方块
+     一个观感），指针位置 → 目标角度，指数平滑逼近；指针移出窗口 / 窗口失焦回静息姿态。
+     触屏（无 hover）只播站立动画不自转；`prefers-reduced-motion` 定格在一个侧身角度。
+  3. `src/pages/about/index.astro` 挂上卡片；`src/styles/notes.css` 加卡片样式与
+     `.page-panel--about { display: flow-root }`（浮块比正文高，底板需要 BFC 兜住）；
+     `src/config/media.ts` 增加 `media.skin`；`public/media/skin-izwarm.png` 放原贴图
+     （不缩放，3D 采样是 NearestFilter，缩过一次就丢像素）。
+  4. `src/scripts/notes.ts` 把 `initSkinCard` 挂到 `izwarm:panel-swap` + 首次载入
+     （与系列树 / 归档筛选同一套）：About 页走 SPA 换页，页面内 `<script>` 只跑一次，
+     换页后必须重新查一次卡片。
+- **为什么按需加载**：three.js + skinview3d 压缩后 504KB（gzip 128KB）。走动态
+  `import('skinview3d')`，Vite 拆成独立 chunk，只有 About 页真的出现这张卡时才拉；
+  离开 About 时 `dispose()` 回收 WebGL 上下文（不回收的话来回切几次，浏览器会丢掉
+  最早那个上下文，表现为「切回来一片空白」）。滚出视口 / 面板收起时 `renderPaused`，
+  不让看不见的画布吃 GPU。
+- **降级**：拉不到 chunk、没有 WebGL、贴图 404 时，卡片切到 `.is-static` 直接铺贴图本身
+  （`image-rendering: pixelated`），不留一块空底板；无脚本时 `<noscript>` 同样铺贴图。
+- **影响**：`/about/` 的 URL、面板状态、字母 M 转场都不变；其它页面只多一次
+  `querySelector('[data-skin-card]')`，不下载任何 3D 代码。新增运行时依赖
+  `skinview3d@3.4.2`（连带 `three@0.156`）。
+- **验证**：`npm run typecheck` 通过；`npm run build` **240 页**通过，产物里
+  `_astro/skinview3d.*.js` 为独立 chunk（504KB / gzip 128KB），`about/index.html`
+  不引用它。无头 Edge（`--enable-unsafe-swiftshader`）加载 `/about/` 实测：
+  卡片 `is-ready`、canvas 230×306（3:4 与 stage 一致）、人物占画布高度约 89%；
+  派发 `pointermove` 到卡片右侧后模型转向另一侧（像素差 12.2/255，朝向明显不同）；
+  替换卡片节点并派发 `izwarm:panel-swap` 后能重新初始化（旧 viewer 已 dispose）；
+  390×844 窄屏下卡片居中、正文接在卡片下方不重叠。
+
 ## 验证方式汇总
 
 - TypeScript 检查：`npm run typecheck`

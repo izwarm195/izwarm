@@ -1,12 +1,15 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Landing from '../../components/home/Landing.astro';
+import SkinCard from '../../components/about/SkinCard.astro';
 ---
 
 <BaseLayout title="About · izwarm">
   <Landing open active="about">
-    <section slot="notes-main" class="page-panel" aria-label="About">
+    <section slot="notes-main" class="page-panel page-panel--about" aria-label="About">
       <h1>About</h1>
+      <!-- 皮肤卡右浮动、占 1/3 栏宽，下面的正文绕着它排 -->
+      <SkinCard />
       <p class="page-desc">关于 izwarm 的介绍，将陆续补充。</p>
       <p class="notes-empty">内容建设中。</p>
     </section>

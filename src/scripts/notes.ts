@@ -25,6 +25,7 @@ import {
 import { site } from '../config/site';
 import { initArchiveFilter } from './archive-filter';
 import { initImageViewer } from './image-viewer';
+import { initSkinCard } from './skin-card';
 
 const shellEl = document.getElementById('notesShell');
 const notesBase = import.meta.env.BASE_URL.replace(/\/$/, '') + '/notes';
@@ -282,6 +283,11 @@ syncSeriesTree();
 // （换页会把归档节点整体换掉，筛选状态只存在 URL 里）
 document.addEventListener('izwarm:panel-swap', initArchiveFilter);
 initArchiveFilter();
+
+// About 的皮肤卡：同理，卡片节点每次换页都会被替换，换页后要重新查一次。
+// 卡片不在页面上时它什么也不做，所以放在这里对其它页面没有成本。
+document.addEventListener('izwarm:panel-swap', initSkinCard);
+initSkinCard();
 
 // ---------- 大纲：点击平滑滚动（并避免默认锚点跳转回顶） ----------
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

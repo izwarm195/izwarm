@@ -1,0 +1,43 @@
+---
+/**
+ * About 页的皮肤展示卡：把 64×64 的皮肤贴图渲染成一个会跟着指针转动的 3D 人物。
+ *
+ * 贴图是本站作者自己逐层绘制的原创皮肤（LittleSkin TID 793546，上传者 UID 3286009），
+ * 原图就在 public/media/skin-izwarm.png。
+ *
+ * 3D 渲染不在这里：three.js + skinview3d 只在这张卡出现时才下载，逻辑全在
+ * scripts/skin-card.ts。About 页与其它面板页共用 SPA 换页（fetch + 原位替换
+ * [data-notes-region] 的子节点），组件内的 <script> 只执行一次，绑在节点上的
+ * 监听下一次换页就丢了 —— 与友链卡的「复制」同一个坑，所以这里只输出 data-* 钩子。
+ */
+import { media } from '../../config/media';
+---
+
+<figure class="about-skin" data-skin-card>
+  <div class="about-skin-stage" data-skin-stage>
+    <canvas
+      class="about-skin-canvas"
+      data-skin-canvas
+      role="img"
+      aria-label="izwarm 的 Minecraft 皮肤 3D 预览，人物随指针转动"></canvas>
+    <!-- WebGL 不可用 / chunk 没拉到时露出来：直接把贴图本身铺上去，别留一块空底板 -->
+    <img
+      class="about-skin-fallback"
+      data-skin-fallback
+      src={media.skin}
+      alt="izwarm 的 Minecraft 皮肤贴图（64×64）"
+      width="64"
+      height="64"
+      hidden
+    />
+    <noscript>
+      <img
+        class="about-skin-fallback"
+        src={media.skin}
+        alt="izwarm 的 Minecraft 皮肤贴图（64×64）"
+        width="64"
+        height="64"
+      />
+    </noscript>
+  </div>
+</figure>

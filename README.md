@@ -26,6 +26,7 @@ izwarm/
 │   │   ├── home/
 │   │   │   └── Landing.astro  # 首页（含 W → 各字母页面转场）
 │   │   ├── notes/             # Notes 工作台组件（三栏骨架、右栏、系列树等）
+│   │   ├── about/             # About 组件（皮肤 3D 展示卡、友链卡）
 │   │   └── common/
 │   │       └── PanelRail.astro  # 两栏页面（Projects/Works/About）右栏字母导航
 │   ├── config/
@@ -50,6 +51,7 @@ izwarm/
 │   │   ├── home.ts       # 首页脚本（字母展开 / 转场 / BGM，由原 home.js 迁移）
 │   │   ├── notes.ts      # Notes 交互（系列树展开、大纲高亮、无缝导航）
 │   │   ├── image-viewer.ts # 正文图片预览（点图放大 / 滚轮惯性缩放 / 拖动平移）
+│   │   ├── skin-card.ts  # About 皮肤卡的 3D 预览（skinview3d，按需加载）
 │   │   └── panel-nav.ts  # 面板无缝导航共享模块（fetch 替换、字母-路径映射）
 │   └── styles/
 │       ├── tokens.css    # 主题变量
@@ -182,6 +184,7 @@ npx astro build --outDir dist-host
 | `ambient-loop.mp3` | 背景音乐（页面两个音频元素共用同一文件） |
 | `Web_expand.mp3` | 展开音效 |
 | `Web_dexpand.mp3` | 收回音效 |
+| `skin-izwarm.png` | About 皮肤卡的 64×64 Minecraft 皮肤贴图（3D 预览的纹理） |
 
 若某些文件缺失，页面按原设计降级（深色底 / 封面 / 无音效），脚本不会报错。
 文件放齐后运行 `npm run dev` 或 `npm run build` 即可从本地加载。
