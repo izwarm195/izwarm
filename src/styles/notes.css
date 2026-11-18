@@ -1770,13 +1770,13 @@ html {
   letter-spacing: 0.14em;
 }
 .notes-toc-wrap,
-.notes-siblings-wrap {
+.notes-series-wrap {
   max-height: 46vh;
   overflow-y: auto;
   scrollbar-width: none;
 }
 .notes-toc-wrap::-webkit-scrollbar,
-.notes-siblings-wrap::-webkit-scrollbar {
+.notes-series-wrap::-webkit-scrollbar {
   display: none;
 }
 .notes-toc {
@@ -1873,24 +1873,101 @@ html {
 .notes-toc strong {
   font-weight: 500;
 }
-.notes-siblings {
+/* ---- 同系列：系列树（总系列 → 子系列 → 文章） ----
+   观感照抄大纲：每行一条 1px 左边线、层级靠 padding 右移、行尾一枚箭头。
+   区别只在语义：大纲的行是锚点链接，系列的行是展开 / 收起按钮（系列没有独立页面）。 */
+.notes-series-tree,
+.notes-series-children {
   list-style: none;
+  margin: 0;
+  padding: 0;
   font-size: 13px;
 }
-.notes-siblings a {
+.notes-series-item {
+  min-width: 0;
+}
+.notes-series-name {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  width: 100%;
+  padding: 5px 4px 5px 12px;
+  border: 0;
+  border-left: 1px solid var(--edge-line);
+  background: none;
+  color: var(--text-dim);
+  font: inherit;
+  line-height: 1.5;
+  text-align: left;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.notes-series-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+/* 行尾箭头：与 .notes-toc-toggle::before 同一枚字形、同一套旋转 */
+.notes-series-chevron {
+  flex: none;
+  width: 20px;
+  font-size: 15px;
+  line-height: 1.5;
+  text-align: center;
+  transform: rotate(90deg);
+  transition: transform 0.18s ease;
+}
+.notes-series-name[aria-expanded='false'] .notes-series-chevron {
+  transform: rotate(0deg);
+}
+.notes-series-name:hover,
+.notes-series-name:focus-visible,
+.notes-series-item.is-current > .notes-series-name {
+  color: var(--text-primary);
+  border-left-color: var(--metal-highlight);
+}
+/* 层级缩进：与大纲 a[data-depth] 完全对齐 */
+.notes-series-name[data-depth='1'],
+.notes-series-note[data-depth='1'] {
+  padding-left: 12px;
+}
+.notes-series-name[data-depth='2'],
+.notes-series-note[data-depth='2'] {
+  padding-left: 22px;
+}
+.notes-series-name[data-depth='3'],
+.notes-series-note[data-depth='3'] {
+  padding-left: 32px;
+}
+.notes-series-name[data-depth='4'],
+.notes-series-note[data-depth='4'] {
+  padding-left: 42px;
+}
+.notes-series-name[data-depth='5'],
+.notes-series-note[data-depth='5'] {
+  padding-left: 52px;
+}
+/* 文章行：与大纲的锚点行同高同边线，当前这篇加底色（长列表里一眼认出「你在这」） */
+.notes-series-note {
   display: block;
-  padding: 6px 10px;
+  padding: 5px 8px 5px 12px;
+  border-left: 1px solid var(--edge-line);
   color: var(--text-dim);
   text-decoration: none;
   line-height: 1.5;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
+  transition: color 0.2s ease, border-color 0.2s ease;
 }
-.notes-siblings a:hover {
+.notes-series-note:hover,
+.notes-series-note.active {
   color: var(--text-primary);
+  border-left-color: var(--metal-highlight);
 }
-.notes-siblings a.active {
-  color: var(--text-primary);
+.notes-series-note.active {
   background: var(--bg-obsidian-soft);
+}
+.notes-series-item.is-collapsed > .notes-series-children {
+  display: none;
 }
 
 /* ---- 归档（标签筛选 + 时间线） ---- */
@@ -2593,9 +2670,32 @@ html {
   .notes-toc-toggle::before {
     font-size: 18px;
   }
-  .notes-siblings a {
-    padding: 12px 10px;
+  .notes-series-name,
+  .notes-series-note {
+    padding-top: 11px;
+    padding-bottom: 11px;
     font-size: 14px;
+  }
+  /* 缩进在触屏上跟着放大，层级差才看得清 */
+  .notes-series-name[data-depth='2'],
+  .notes-series-note[data-depth='2'] {
+    padding-left: 26px;
+  }
+  .notes-series-name[data-depth='3'],
+  .notes-series-note[data-depth='3'] {
+    padding-left: 38px;
+  }
+  .notes-series-name[data-depth='4'],
+  .notes-series-note[data-depth='4'] {
+    padding-left: 50px;
+  }
+  .notes-series-name[data-depth='5'],
+  .notes-series-note[data-depth='5'] {
+    padding-left: 62px;
+  }
+  .notes-series-chevron {
+    width: 44px; /* 展开/收起是触屏上唯一"点得到"的小控件 */
+    font-size: 18px;
   }
   .notes-profile {
     gap: 10px;
@@ -2724,7 +2824,7 @@ html {
   }
   /* 折叠面板整体在页面里滚动，不再各自内部滚动 */
   .notes-toc-wrap,
-  .notes-siblings-wrap {
+  .notes-series-wrap {
     max-height: none;
     overflow: visible;
   }

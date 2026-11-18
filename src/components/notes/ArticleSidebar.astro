@@ -1,17 +1,19 @@
 ---
-import { noteUrl } from '../../lib/notes';
 import { buildTocTree } from '../../lib/toc';
 import TocTree from './TocTree.astro';
-import type { Note, TocItem } from '../../lib/notes';
+import SeriesTree from './SeriesTree.astro';
+import type { Note, SeriesNode, TocItem } from '../../lib/notes';
 
 interface Props {
   note: Note;
-  siblings: Note[];
+  /** 全站系列树（buildSeriesTree），侧栏只按当前文章的路径决定默认展开哪一支 */
+  seriesTree: SeriesNode[];
   toc: TocItem[];
 }
 
-const { note, siblings, toc } = Astro.props;
+const { note, seriesTree, toc } = Astro.props;
 const tocTree = buildTocTree(toc);
+const activePath = note.data.series;
 ---
 
 {/*
@@ -32,26 +34,18 @@ const tocTree = buildTocTree(toc);
     )}
   </details>
 
-  <details class="notes-siblings-wrap notes-fold" open>
+  <details class="notes-series-wrap notes-fold" open>
     <summary class="notes-fold-head">
       <h2 class="notes-section-label">同系列</h2>
     </summary>
-    {siblings.length === 0 ? (
+    {seriesTree.length === 0 ? (
       <p class="notes-empty">暂无同系列文章。</p>
     ) : (
-      <ul class="notes-siblings">
-        {siblings.map((sibling) => (
-          <li>
-            <a
-              class={sibling.slug === note.slug ? 'active' : undefined}
-              href={noteUrl(sibling)}
-              aria-current={sibling.slug === note.slug ? 'true' : undefined}
-            >
-              {sibling.data.title}
-            </a>
-          </li>
+      <ol class="notes-series-tree">
+        {seriesTree.map((node) => (
+          <SeriesTree node={node} activePath={activePath} currentSlug={note.slug} depth={1} />
         ))}
-      </ul>
+      </ol>
     )}
   </details>
 </div>

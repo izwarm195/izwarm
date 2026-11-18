@@ -158,6 +158,16 @@ function sortSeriesNodes(nodes: SeriesNode[]): SeriesNode[] {
     }));
 }
 
+/**
+ * 系列节点路径是否为当前文章系列路径的前缀（含相等）。
+ * 侧栏「同系列」树据此决定默认展开哪一条分支：只有从总系列到当前子系列的整条链展开，
+ * 其余分支收起。空路径（根节点自身）不算激活。
+ */
+export function isSeriesPathActive(nodePath: string[], activePath: string[]): boolean {
+  if (nodePath.length === 0 || nodePath.length > activePath.length) return false;
+  return nodePath.every((segment, index) => segment === activePath[index]);
+}
+
 /** 与当前文章同直接子系列的文章（含自身，供侧栏列表高亮当前项） */
 export function getSiblingNotes(notes: Note[], current: Note): Note[] {
   const key = current.data.series.join('\u0000');

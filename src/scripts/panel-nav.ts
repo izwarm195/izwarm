@@ -134,13 +134,65 @@ export function initAnswerFolds(): void {
   sync();
 }
 
+/**
+ * 「跟随文章」：大纲面板自己滚动，把当前项送到面板垂直居中的位置。
+ *
+ * 只滚 .notes-toc-wrap 这一层，不动页面：桌面端大纲是 46vh 的独立滚动区，
+ * 正文在 .notes-main 里滚，两者互不干扰；手机端这层是 max-height:none / overflow:visible，
+ * 整页在滚，此时若再去改滚动位置就会和用户翻正文抢滚动条，所以没有可滚区间就直接退出。
+ */
+function followToc(link: HTMLAnchorElement): void {
+  const wrap = link.closest<HTMLElement>('.notes-toc-wrap');
+  if (!wrap) return;
+  if (wrap.scrollHeight - wrap.clientHeight < 1) return;
+  const rect = link.getBoundingClientRect();
+  // 所在分支被手动收起时元素没有盒子（rect 全 0）：看不见也就不必跟随
+  if (rect.height === 0) return;
+
+  // 用「相对面板内容顶部的偏移」算目标，而不是直接用 rect.top：
+  // 平滑滚动动画进行中 rect 一直在变，但 (元素 top - 面板 top) + scrollTop 是不变量，
+  // 于是连续换章节时每次都从当前真实位置继续，不会越滚越偏。
+  const offsetInWrap = rect.top - wrap.getBoundingClientRect().top + wrap.scrollTop;
+  const max = wrap.scrollHeight - wrap.clientHeight;
+  const target = Math.max(0, Math.min(max, offsetInWrap - (wrap.clientHeight - rect.height) / 2));
+  if (Math.abs(target - wrap.scrollTop) < 1) return;
+  // 跟随是装饰性动效，关掉系统动效的用户直接跳到位
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  wrap.scrollTo({ top: target, behavior: reduce ? 'auto' : 'smooth' });
+}
+
 function setActiveHeading(id: string): void {
   if (!id || id === activeHeadingId) return;
   activeHeadingId = id;
   document.querySelector<HTMLAnchorElement>('.notes-toc a.active')?.classList.remove('active');
-  document
-    .querySelector<HTMLAnchorElement>(`.notes-toc a[href="#${CSS.escape(id)}"]`)
-    ?.classList.add('active');
+  const link = document.querySelector<HTMLAnchorElement>(`.notes-toc a[href="#${CSS.escape(id)}"]`);
+  if (!link) return;
+  link.classList.add('active');
+  followToc(link);
+}
+
+/**
+ * 首次进入 / SPA 换页后先按当前阅读位置定一次高亮。
+ * 观察器只在标题"进出那条 15%~30% 的带子"时才回调：刚打开文章时第一个标题往往
+ * 正好落在带子下方，于是大纲一片空白，看着像没生效。这里按"已经滚过参考线的最后一个
+ * 标题"补一次，等于把观察器的稳态结果直接摆出来。
+ */
+function primeActiveHeading(headings: HTMLElement[]): void {
+  // 整篇都在一屏里时没有"当前章节"可言，保持空白（不硬点一个）
+  const scroller = headings[0].closest<HTMLElement>('.notes-main');
+  const overflowY = scroller ? getComputedStyle(scroller).overflowY : '';
+  const panelScrolls =
+    !!scroller && (overflowY === 'auto' || overflowY === 'scroll') && scroller.scrollHeight > scroller.clientHeight + 4;
+  const pageScrolls = document.documentElement.scrollHeight > window.innerHeight + 4;
+  if (!panelScrolls && !pageScrolls) return;
+
+  const line = window.innerHeight * 0.3;
+  let current: HTMLElement | null = null;
+  for (const heading of headings) {
+    if (heading.getBoundingClientRect().top > line) break;
+    current = heading;
+  }
+  if (current) setActiveHeading(current.id);
 }
 
 export function initToc(): void {
@@ -165,6 +217,7 @@ export function initToc(): void {
     { rootMargin: '-15% 0px -70% 0px' }
   );
   headings.forEach((h) => tocObserver?.observe(h));
+  primeActiveHeading(headings);
 }
 
 /**
@@ -424,7 +477,7 @@ function leftSkeletonMarkup(): string {
     '<h2 class="notes-section-label">大纲</h2>' +
     `<div class="notes-skeleton-body">${skeletonLines(8)}</div>` +
     '</section>' +
-    '<section class="notes-siblings-wrap">' +
+    '<section class="notes-series-wrap">' +
     '<h2 class="notes-section-label">同系列</h2>' +
     `<div class="notes-skeleton-body">${skeletonLines(3, 4)}</div>` +
     '</section>' +

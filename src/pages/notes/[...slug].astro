@@ -4,7 +4,7 @@ import Landing from '../../components/home/Landing.astro';
 import ArticleSidebar from '../../components/notes/ArticleSidebar.astro';
 import ArticleActions from '../../components/notes/ArticleActions.astro';
 import { getCollection } from 'astro:content';
-import { countWords, formatDate, getPublishedNotes, getSiblingNotes, url } from '../../lib/notes';
+import { buildSeriesTree, countWords, formatDate, getPublishedNotes, url } from '../../lib/notes';
 import type { Note } from '../../lib/notes';
 
 export async function getStaticPaths() {
@@ -17,7 +17,7 @@ export async function getStaticPaths() {
 const { note } = Astro.props as { note: Note };
 const { Content, headings } = await note.render();
 const notes = await getPublishedNotes();
-const siblings = getSiblingNotes(notes, note);
+const seriesTree = buildSeriesTree(notes);
 // 大纲包含一级标题：正文里的 `#` 标题是笔记自己的层级（如教材章），
 // 排除 depth 1 会让"通篇只用 # 分节"的笔记（如 numpy 综合案例）大纲全空。
 const toc = headings.filter((heading) => heading.depth >= 1 && heading.depth <= 4);
@@ -34,7 +34,7 @@ const answerCount = (note.body?.match(answerFoldRe) ?? []).length;
 <BaseLayout title={`${note.data.title} · izwarm`}>
   <Landing open active="article">
     <Fragment slot="notes-left">
-      <ArticleSidebar note={note} siblings={siblings} toc={toc} />
+      <ArticleSidebar note={note} seriesTree={seriesTree} toc={toc} />
     </Fragment>
     <Fragment slot="notes-main">
       <article class="article">

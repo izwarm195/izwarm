@@ -622,6 +622,18 @@ document.addEventListener('click', (e) => {
   btn.setAttribute('aria-label', collapsed ? '展开子标题' : '收起子标题');
 });
 
+// ---------- 同系列：系列树（总系列 → 子系列）的展开 / 收起 ----------
+// 默认展开哪一支是构建期按当前文章算好写进 HTML 的（见 components/notes/SeriesTree.astro），
+// 这里只负责点击后的开合；同样走 document 委托，SPA 换页换上新树后自动生效。
+document.addEventListener('click', (e) => {
+  const btn = (e.target as HTMLElement | null)?.closest?.<HTMLButtonElement>('[data-series-toggle]');
+  if (!btn) return;
+  const item = btn.closest<HTMLElement>('.notes-series-item');
+  if (!item) return;
+  const collapsed = item.classList.toggle('is-collapsed');
+  btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+});
+
 initCodeCopy();
 initToc();
 initTocMath();

@@ -1,0 +1,62 @@
+---
+import { isSeriesPathActive, noteUrl } from '../../lib/notes';
+import type { SeriesNode } from '../../lib/notes';
+
+/**
+ * 文章侧栏的「同系列」树：总系列 → 子系列 → 文章，逐层可展开。
+ *
+ * 默认状态由构建期算好（不是前端补的）：当前文章的系列路径上那一条链全部展开、
+ * 其余分支带 is-collapsed 收起。所以刷新、SPA 换页、无 JS 都能得到同一棵正确的树。
+ */
+interface Props {
+  node: SeriesNode;
+  /** 当前文章的系列路径（note.data.series） */
+  activePath: string[];
+  currentSlug: string;
+  /** 缩进层级：1 = 总系列 */
+  depth: number;
+}
+
+const { node, activePath, currentSlug, depth } = Astro.props;
+// 与大纲一致，最深缩进到第 5 层（再深就靠边框线区分，不再继续右移）
+const level = Math.min(depth, 5);
+const childLevel = Math.min(depth + 1, 5);
+const onPath = isSeriesPathActive(node.path, activePath);
+const isCurrent = onPath && node.path.length === activePath.length;
+const hasBody = node.children.length > 0 || node.notes.length > 0;
+---
+
+<li class:list={['notes-series-item', { 'is-collapsed': !onPath, 'is-current': isCurrent }]}>
+  {/* 系列名不是链接（没有系列索引页），整行就是展开 / 收起开关：
+      与大纲一样在行尾放一枚箭头，方向由 aria-expanded 决定。 */}
+  <button
+    class="notes-series-name"
+    type="button"
+    data-series-toggle
+    data-depth={level}
+    aria-expanded={onPath ? 'true' : 'false'}
+    title="展开 / 收起"
+  >
+    <span class="notes-series-text">{node.name}</span>
+    {hasBody && <span class="notes-series-chevron" aria-hidden="true">›</span>}
+  </button>
+  {hasBody && (
+    <ol class="notes-series-children">
+      {node.children.map((child) => (
+        <Astro.self node={child} activePath={activePath} currentSlug={currentSlug} depth={childLevel} />
+      ))}
+      {node.notes.map((note) => (
+        <li class="notes-series-item">
+          <a
+            class:list={['notes-series-note', { active: note.slug === currentSlug }]}
+            data-depth={childLevel}
+            href={noteUrl(note)}
+            aria-current={note.slug === currentSlug ? 'true' : undefined}
+          >
+            {note.data.title}
+          </a>
+        </li>
+      ))}
+    </ol>
+  )}
+</li>
