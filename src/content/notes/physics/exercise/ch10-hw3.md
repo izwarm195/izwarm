@@ -1,14 +1,14 @@
 ---
-title: "第十章 波动 第3讲作业（10-9 ~ 10-15）"
+title: "第3次作业（10-9 ~ 10-15）"
 slug: "physics/exercise/ch10-hw3"
 description: "10 9 一横波在沿绳子传播时的波动方程为 y 0.20 cos left(2.50 pi t pi x right) ，式中 y 和 x 的单位为 m， t 的单位为 s。（1）求波的振幅、波速、频率及波长；（2）求绳上的质元振动时的最大速度；（3）分别画出 t 1 mathr…"
-publishDate: "2026-11-11"
-createdAt: "2026-11-11T00:00:00Z"
+publishDate: "2026-11-12"
+createdAt: "2026-11-12T00:00:00Z"
 tags: ["physics","exercise"]
-series: ["Physics","Exercise"]
+series: ["Physics","Exercise","第十章 波动"]
 ---
 
-# 第十章 波动 第3讲作业（10-9 ~ 10-15）
+# 第十章 波动 第3次作业（10-9 ~ 10-15）
 
 ## 一. 计算题（共4题，100分）
 
@@ -164,4 +164,5 @@ $$
 方向沿 $y$ 轴正方向。
 
 </details>
+
 

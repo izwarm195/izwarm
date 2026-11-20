@@ -1,14 +1,15 @@
 ---
-title: "第十一章 光学 第六周作业 薄膜干涉 单缝衍射（11-14 ~ 11-28）"
+title: "第7次作业 薄膜干涉 单缝衍射（11-14 ~ 11-28）"
 slug: "physics/exercise/ch11-hw6"
 description: "11 14 如图所示，由点 S 发出的 lambda 600 mathrm{nm} 的单色光，自空气射入折射率 n 1.23 的透明物质，再射入空气。若透明物质的厚度为 d 1.0 mathrm{cm} ，入射角 theta 30^{ circ} ，且 SA BC 5.0 mat…"
-publishDate: "2026-11-11"
-createdAt: "2026-11-11T00:00:00Z"
+publishDate: "2026-11-12"
+createdAt: "2026-11-12T00:00:00Z"
+updatedDate: "2026-11-12T20:23:46"
 tags: ["physics","exercise"]
-series: ["Physics","Exercise"]
+series: ["Physics","Exercise","第十一章 光学"]
 ---
 
-# 第十一章 光学 第六周作业 薄膜干涉 & 单缝衍射（11-14 ~ 11-28）
+# 第十一章 光学 第7次作业 薄膜干涉 单缝衍射（11-14 ~ 11-28）
 
 ## 一. 计算题（共7题，110分）
 
@@ -99,7 +100,7 @@ $$
 
 </details>
 
-### 4.
+### **4.**
 11-23 在利用牛顿环测未知单色光波长的实验中，当用波长为 $589.3\ \mathrm{nm}$ 的钠黄光垂直照射时，测得第 1 和第 4 个暗环的距离为 $\Delta r=4.00\times10^{-3}\ \mathrm{m}$；当用波长未知的单色光垂直照射时，测得第 1 和第 4 个暗环的距离为 $\Delta r'=3.85\times10^{-3}\ \mathrm{m}$。求该单色光的波长。
 
 <details class="answer">
@@ -211,4 +212,5 @@ $$
 即整个图样平移到 $x\approx0.58\ \mathrm{m}$ 附近；又因 $\Delta x=f\tan\theta$ 中 $\tan$ 的斜率随 $\theta$ 增大，条纹间距被放大为原来的 $\dfrac{1}{\cos^{2}i}\approx1.3$ 倍，第一级暗纹、第二级明纹相对零级的距离由 $1.47\ \mathrm{mm}$、$3.68\ \mathrm{mm}$ 变为约 $2.0\ \mathrm{mm}$、$4.9\ \mathrm{mm}$。
 
 </details>
+
 

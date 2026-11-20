@@ -1,14 +1,14 @@
 ---
-title: "第十一章 光学 第七周作业 圆孔衍射 光栅衍射（11-30 ~ 11-35）"
+title: "第8次作业 圆孔衍射 光栅衍射（11-30 ~ 11-35）"
 slug: "physics/exercise/ch11-hw7"
 description: "11 30 已知单缝宽度 b 1.0 times10^{ 4} mathrm{m} ，透镜焦距 f 0.50 mathrm{m} ，用 lambda_1 400 mathrm{nm} 和 lambda_2 760 mathrm{nm} 的单色平行光分别垂直照射，求这两种光的第一级…"
-publishDate: "2026-11-11"
-createdAt: "2026-11-11T00:00:00Z"
+publishDate: "2026-11-12"
+createdAt: "2026-11-12T00:00:00Z"
 tags: ["physics","exercise"]
-series: ["Physics","Exercise"]
+series: ["Physics","Exercise","第十一章 光学"]
 ---
 
-# 第十一章 光学 第七周作业 圆孔衍射 & 光栅衍射（11-30 ~ 11-35）
+# 第十一章 光学 第8次作业 圆孔衍射 光栅衍射（11-30 ~ 11-35）
 
 ## 一. 计算题（共5题，100分）
 
@@ -162,4 +162,5 @@ k=0,\ \pm1,\ \pm2,\ \pm3,\ \pm5,\ \pm6,\ \pm7,\ \pm9\quad\left(\text{共 }15\tex
 $$
 
 </details>
+
 

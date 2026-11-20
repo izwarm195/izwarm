@@ -1,14 +1,14 @@
 ---
-title: "第十章 波动 第4次作业 波的能量 波的干涉（10-21 ~ 10-24）"
+title: "第4次作业 波的能量 波的干涉（10-21 ~ 10-24）"
 slug: "physics/exercise/ch10-hw4"
 description: "10 21 一列波在介质中传播，其波速 u 1.0 times10^{3} mathrm{m cdot s^{ 1}} ，振幅 A 1.0 times10^{ 4} mathrm{m} ，频率 nu 1.0 times10^{3} mathrm{Hz} 。若介质的密度为 rho …"
 publishDate: "2026-11-11"
 createdAt: "2026-11-11T00:00:00Z"
 tags: ["physics","exercise"]
-series: ["Physics","Exercise"]
+series: ["Physics","Exercise","第十章 波动"]
 ---
 
-# 第十章 波动 第4次作业 波的能量 & 波的干涉（10-21 ~ 10-24）
+# 第十章 波动 第4次作业 波的能量 波的干涉（10-21 ~ 10-24）
 
 ## 一. 计算题（共3题，100分）
 
@@ -110,4 +110,5 @@ $$
 故 $AB$ 连线上因干涉而静止的点为 $x=1,3,5,\cdots,29\ \mathrm{m}$（即 $A$、$B$ 之间奇数米处）。
 
 </details>
+
 

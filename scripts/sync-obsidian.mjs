@@ -21,6 +21,7 @@ const ROOTS = [
   'Machine & Deep Learning',
   'Signals/Signals & Systems',
   'Signals/数字电路与系统',
+  'Signals/电子电路基础',
   'Physics',
   'Complex',
   'Text-to-Audio',

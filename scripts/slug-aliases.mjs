@@ -17,9 +17,18 @@
 export const SEGMENT_ALIASES = {
   // ---- 目录 ----
   '数字电路与系统': 'dcs',
+  '电子电路基础': 'ecb',
 
   // ---- 数字电路与系统 ----
   '《数字电路与系统》李文渊第2版 习题&解答': 'dcs-exercises',
+  '器件端口术语表': 'device-ports',
+  '期中复习（一）': 'midterm-review-1',
+
+  // ---- 电子电路基础（模拟部分）----
+  // 目录已压成 ecb/，文件名里的「电子电路基础 」前缀不再进 URL
+  '电子电路基础 基本放大器': 'basic-amplifier',
+  '电子电路基础 差分放大器': 'differential-amplifier',
+  '小信号模型': 'small-signal-model',
 
   // ---- 复变函数（Complex）----
   // 笔记改过两次名：第一次作业 → 复变函数 - 第一次作业 → 复变函数 - 第1次作业。
@@ -46,7 +55,27 @@ export const SEGMENT_ALIASES = {
   '《物理学》下册公式总结': 'formulas-vol2',
   // Physics/Exercise/ 下一章不止一篇（教材习题 + 各讲作业 + 周作业），而「第N章 …」规则
   // 会把它们统统压成 ch9 / ch10 / ch11，一撞车同步直接抛错。所以作业类逐篇给代号：
-  // 章节号打头（与已上线的 physics/exercise/ch9、ch10 对齐），后缀是作业轮次。
+  // 章节号打头（与已上线的 physics/exercise/ch9-hw1 等对齐），后缀是作业轮次。
+  // 2026-11 vault 把习题从平铺改成按章分目录、文件名去掉章名前缀：
+  // 章目录一律置空串（章节号已在代号里，physics/exercise/ch9/ch9-hw1 只是重复），
+  // 新键沿用旧代号，线上 URL 不变；旧键一个不删，兜住改回去的情况。
+  '第九章 振动': '',
+  '第十章 波动': '',
+  '第十一章 光学': '',
+  '振动 习题': 'ch9',
+  '单元测验 振动部分': 'quiz-osc-wave',
+  '波动 习题': 'ch10',
+  '单元测验 波动部分': 'quiz-wave',
+  '第1次作业（9-8 ~ 9-30）': 'ch9-hw1',
+  '第2次作业（9-21 ~ 9-35）': 'ch9-hw2',
+  '第6次作业 振动复习（9-17 ~ 9-41）': 'ch9-hw5',
+  '第3次作业（10-9 ~ 10-15）': 'ch10-hw3',
+  '第4次作业 波的能量 波的干涉（10-21 ~ 10-24）': 'ch10-hw4',
+  '第5次作业 驻波 多普勒效应（10-26 ~ 10-34）': 'ch10-hw5',
+  '第6次作业 杨氏双缝干涉（11-10 ~ 11-12）': 'ch11-hw5',
+  '第7次作业 薄膜干涉 单缝衍射（11-14 ~ 11-28）': 'ch11-hw6',
+  '第8次作业 圆孔衍射 光栅衍射（11-30 ~ 11-35）': 'ch11-hw7',
+  // 旧键（改名前）
   '第九章 振动 第1讲作业（9-8 ~ 9-30）': 'ch9-hw1',
   '第九章 振动 第2讲作业（9-21 ~ 9-35）': 'ch9-hw2',
   '第九章 振动 第五周作业 振动复习 杨氏双缝干涉（9-17 ~ 11-12）': 'ch9-hw5',
@@ -57,7 +86,10 @@ export const SEGMENT_ALIASES = {
   '第十一章 光学 第七周作业 圆孔衍射 光栅衍射（11-30 ~ 11-35）': 'ch11-hw7',
   // 测验与复盘不挂在某一章的作业序列里，单独起名
   '单元测验-振动波动': 'quiz-osc-wave',
+  '错题复盘 光学': 'exam2-optics',
   '月考二 错题复盘 光学': 'exam2-optics',
+  // 半波带 / 缺级 / 光谱重叠专题（Physics 根目录下）
+  '衍射波带重叠 专题（半波带·缺级·光谱重叠）': 'zone-overlap',
 
   // ---- 机器学习 / 深度学习（目录已经是 nndl/，故不再重复前缀）----
   'NNDL 26-09-03 Logistic回归练习': '26-09-03-logistic',
@@ -129,12 +161,14 @@ export const SEGMENT_ALIASES = {
   'CLAP: Learning Audio Concepts From Natural Language Supervision': '',
   'BEATs: Audio Pre-Training with Acoustic Tokenizers': '',
   'Pushing the Frontier of Audiovisual Perception with Large-Scale Multimodal Correspondence Learning': '',
+  'SCLAP: Temporal Structural Alignment Improves Localization in Long-Form Audio': '',
   'The TMU System for the XACLE Challenge: Training Large Audio Language Models with CLAP Pseudo-Labels': '',
   // 追问记录挂在主笔记目录下：papers/clap/qna、papers/beats/qna …
   // 三篇的追问笔记在 vault 里都叫「…追问记录」，各自的父目录不同，共用 qna 不会撞车。
   'CLAP 追问记录': 'qna',
   'BEATs 追问记录': 'qna',
   'PE-A-Frame 追问记录': 'qna',
+  'SCLAP 追问记录': 'qna',
   '论文简称 追问记录': 'qna',
   // 阅读清单直接躺在 Papers/ 下；这篇目前是 publish: false（个人阅读路径不进站），
   // 代号留着：万一以后要发，URL 也不会变成中文。

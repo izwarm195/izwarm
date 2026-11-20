@@ -1,14 +1,14 @@
 ---
-title: "第九章 振动 第1讲作业（9-8 ~ 9-30）"
+title: "第1次作业（9-8 ~ 9-30）"
 slug: "physics/exercise/ch9-hw1"
 description: "9 8 若简谐振动方程为 x 0.10 cos left(20 pi t+ dfrac{ pi}{4} right) ，式中 x 的单位为 m， t 的单位为 s，求：（1）振幅、频率、角频率、周期和初相；（2） t 2 mathrm{s} 时的位移、速度和加速度。"
-publishDate: "2026-11-11"
-createdAt: "2026-11-11T00:00:00Z"
+publishDate: "2026-11-12"
+createdAt: "2026-11-12T00:00:00Z"
 tags: ["physics","exercise"]
-series: ["Physics","Exercise"]
+series: ["Physics","Exercise","第九章 振动"]
 ---
 
-# 第九章 振动 第1讲作业（9-8 ~ 9-30）
+# 第九章 振动 第1次作业（9-8 ~ 9-30）
 
 ## 一. 计算题（共6题，100分）
 
@@ -209,4 +209,5 @@ $$
 $$
 
 </details>
+
 

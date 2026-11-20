@@ -79,6 +79,27 @@ schtasks /delete /tn "AudioNewsDaily" /f                  # 取消计划任务
   收到测试信说明配好了，此后每天 08:30 的日更会自动发到该地址。
 - 留空或仍是占位符时，脚本只写笔记、跳过发信（不报错）。
 
+## 每周整理（固定流程）
+
+每周日 21:00 自动跑一次「类内综合排序」，把整周流水重排成整理卷：
+
+```powershell
+python audio_news.py --weekly-digest            # 预览（默认整理刚结束的这一周）
+python audio_news.py --weekly-digest --write    # 写回笔记
+python audio_news.py --weekly-digest 2026-11-12 # 指定某一天所在的周
+```
+
+**它做什么**（机械部分）：跨日合并 → 同一条只收进最主要的一桶（TTA / 编辑优先）→
+桶内按「来源优先级 → 影响力信号（★stars / 🔥upvotes / downloads）→ 原始顺序」排序 →
+生成速览表 + 每条的 `概述：（待补）` 占位。
+
+**它不做什么**：判断哪条真的重要、写中文概述。这部分留给人（或我）补。
+
+**保护**：笔记 frontmatter 里有 `sorted:` 且不含「骨架」字样时，脚本判定为已人工整理，
+**直接跳过不覆盖**。所以整理过的卷不会被下一次自动任务冲掉。
+
+**概述补写约定**：一句话，写主要创新 / 优点，别复述摘要。
+
 ## 环境注意
 
 - **网络双路自适应**：脚本不假定「代理开着或没开」，而是**按域名分别探测**——
@@ -93,4 +114,14 @@ schtasks /delete /tn "AudioNewsDaily" /f                  # 取消计划任务
   新建「每天 08:30 运行 run_daily.bat」。
 - 本机 `HTTP_PROXY`/`HTTPS_PROXY` 指向 127.0.0.1:7897 但代理**不一定在跑**，
   脚本开头清掉代理环境变量，改由自己的探测决定走哪条路。
+
+## 计划任务一览
+
+| 任务名 | 时间 | 做什事 |
+| --- | --- | --- |
+| `AudioNewsDaily` | 每天 08:30 | `run_daily.bat` → 抓取 + 写当日小节 + 发邮件 |
+| `AudioNewsWeekly` | 每周日 21:00 | `run_weekly.bat` → 整理刚结束那一周（`--weekly-digest --write`） |
+
+两个都设了「错过时间后尽快补跑」+ 失败重启。（白天机器常休眠，这条很关键。）
+删除：`schtasks /delete /tn "AudioNewsWeekly" /f`
 

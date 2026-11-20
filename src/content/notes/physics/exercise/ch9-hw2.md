@@ -1,14 +1,14 @@
 ---
-title: "第九章 振动 第2讲作业（9-21 ~ 9-35）"
+title: "第2次作业（9-21 ~ 9-35）"
 slug: "physics/exercise/ch9-hw2"
 description: "9 21 一单摆摆长为 1.0 mathrm{m} ，最大摆角为 5^{ circ} ，如图所示。（1）求摆的角频率和周期；（2）设开始时摆角最大，试写出此单摆的运动方程；（3）当摆角为 3^{ circ} 时，摆球的角速度和线速度各为多少？"
-publishDate: "2026-11-11"
-createdAt: "2026-11-11T00:00:00Z"
+publishDate: "2026-11-12"
+createdAt: "2026-11-12T00:00:00Z"
 tags: ["physics","exercise"]
-series: ["Physics","Exercise"]
+series: ["Physics","Exercise","第九章 振动"]
 ---
 
-# 第九章 振动 第2讲作业（9-21 ~ 9-35）
+# 第九章 振动 第2次作业（9-21 ~ 9-35）
 
 ## 一. 计算题（共6题，100分）
 
@@ -241,4 +241,5 @@ x=0.052\cos\left(\pi t-\frac{\pi}{12}\right)\ \mathrm{m}
 $$
 
 </details>
+
 

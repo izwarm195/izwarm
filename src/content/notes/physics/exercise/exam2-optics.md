@@ -1,5 +1,5 @@
 ---
-title: "月考二 错题复盘 光学"
+title: "错题复盘 光学"
 slug: "physics/exercise/exam2-optics"
 description: "第 17、18 题是同一个错误：把 b sin theta pm k lambda 当成 明纹 。这是全卷最贵的一处，一错就是两题。"
 publishDate: "2026-11-10"
@@ -501,5 +501,5 @@ $d/b=3\Rightarrow k=3,6$ 缺级。故 0、1、2、4、5 可见，3、6 缺。
 
 ---
 
-[← 第十一章 光学 公式总结](/notes/physics/formula/ch11/) · 第七周作业 光栅衍射 分辨本领
+[← 第十一章 光学 公式总结](/notes/physics/formula/ch11/) · [第8次作业 圆孔衍射 光栅衍射（11-30 ~ 11-35）](/notes/physics/exercise/ch11-hw7/)
 

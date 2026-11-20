@@ -1,11 +1,11 @@
 ---
-title: "第九章 振动 习题"
+title: "振动 习题"
 slug: "physics/exercise/ch9"
 description: "一质量为 m 的物体挂在劲度系数为 k 的轻弹簧下面，振动角频率为 omega 。若把此弹簧分割成二等份，将物体 m 挂在分割后的一根弹簧上，则振动角频率是"
 publishDate: "2026-10-19"
 createdAt: "2026-10-19T00:00:00Z"
 tags: ["physics","exercise"]
-series: ["Physics","Exercise"]
+series: ["Physics","Exercise","第九章 振动"]
 ---
 
 # 第九章 振动 习题

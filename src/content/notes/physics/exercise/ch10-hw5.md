@@ -1,14 +1,14 @@
 ---
-title: "第十章 波动 第5次作业 驻波 多普勒效应（10-26 ~ 10-34）"
+title: "第5次作业 驻波 多普勒效应（10-26 ~ 10-34）"
 slug: "physics/exercise/ch10-hw5"
 description: "10 26 如图所示， x 0 处有一运动方程为 y A cos omega t 的平面波源，产生的波沿 x 轴正、负方向传播。 MN 为波密介质的反射面，距波源 dfrac{3}{4} lambda 。求：（1）波源所发射的波沿波源 O 左右传播的波动方程；（2）在 MN 处反…"
 publishDate: "2026-11-11"
 createdAt: "2026-11-11T00:00:00Z"
 tags: ["physics","exercise"]
-series: ["Physics","Exercise"]
+series: ["Physics","Exercise","第十章 波动"]
 ---
 
-# 第十章 波动 第5次作业 驻波 & 多普勒效应（10-26 ~ 10-34）
+# 第十章 波动 第5次作业 驻波 多普勒效应（10-26 ~ 10-34）
 
 ## 一. 计算题（共7题，100分）
 
@@ -237,4 +237,5 @@ $$
 $$
 
 </details>
+
 
